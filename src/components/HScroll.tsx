@@ -44,6 +44,7 @@ export function HScroll({ children, dark = true }: { children: ReactNode; dark?:
 
   // Edge fade indicators
   const fadeColor = dark ? "rgb(26,26,26)" : "rgb(242,242,242)";
+  const chevronColor = dark ? "text-white" : "text-pogi-dark";
 
   return (
     <div className="relative group">
@@ -63,6 +64,14 @@ export function HScroll({ children, dark = true }: { children: ReactNode; dark?:
         className={`pointer-events-none absolute left-0 top-0 bottom-2 w-16 transition-opacity duration-200 ${canLeft ? "opacity-100" : "opacity-0"}`}
         style={{ background: `linear-gradient(to right, ${fadeColor}, transparent)` }}
       />
+
+      {/* Subtle right chevron — fades in on hover when scrollable */}
+      <div
+        aria-hidden
+        className={`pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 transition-opacity duration-300 ${canRight ? "opacity-0 group-hover:opacity-60" : "opacity-0"} ${chevronColor}`}
+      >
+        <span className="text-4xl font-light leading-none select-none">›</span>
+      </div>
 
       <button
         onClick={() => scroll(-1)}
