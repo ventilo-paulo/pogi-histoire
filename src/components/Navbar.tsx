@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Search, User } from "lucide-react";
+import { Search } from "lucide-react";
 import pogiLogo from "@/assets/pogi-logo.png.asset.json";
 
 export function Navbar() {
@@ -25,10 +25,6 @@ export function Navbar() {
           <button aria-label="Recherche" className="hover:text-pogi-yellow transition-colors">
             <Search size={20} />
           </button>
-          <a href="#" className="flex items-center gap-2 text-sm font-medium hover:text-pogi-yellow transition-colors">
-            <User size={18} />
-            <span className="hidden sm:inline">Compte</span>
-          </a>
         </div>
       </div>
     </header>
