@@ -14,7 +14,7 @@ import cAmericas from "@/assets/coll-americas.jpg";
 import cWWII from "@/assets/coll-wwii.jpg";
 import cIllustres from "@/assets/coll-illustres.jpg";
 import cAfrica from "@/assets/coll-africa.jpg";
-import books from "@/assets/newsletter-books.jpg";
+import pogiLogo from "@/assets/pogi-logo.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -56,19 +56,28 @@ function Home() {
         <img src={heroConcert} alt="Concert" className="absolute inset-0 h-full w-full object-cover" width={1920} height={1280} />
         <div className="absolute inset-0" style={{ background: "rgba(170, 20, 20, 0.55)" }} />
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80" />
+        {/* Cinematic vignette — darkens all 4 edges */}
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: "radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.55) 100%)" }}
+        />
 
-        <div className="absolute top-6 left-6 flex flex-wrap gap-2">
+        <div className="absolute top-6 left-6 flex flex-wrap gap-2 z-10">
           <span className="pill">Dernière sortie</span>
           <span className="pill">Vidéo</span>
           <span className="pill">URSS</span>
         </div>
-        <div className="absolute top-6 right-6">
-          <span className="pogi-logo-outline text-3xl">POGI</span>
+        <div className="absolute top-6 right-6 z-10">
+          <img src={pogiLogo} alt="POGI" className="h-12 w-auto object-contain drop-shadow-lg" />
         </div>
 
         <div className="relative z-10 mx-auto max-w-[1400px] h-full px-6 flex flex-col justify-center">
           <div className="max-w-4xl">
-            <h1 className="hero-title-yellow font-display text-[120px] sm:text-[160px] lg:text-[180px] leading-none">
+            <h1
+              className="hero-title-yellow font-display text-[120px] sm:text-[160px] lg:text-[180px] leading-none"
+              style={{ textShadow: "0 4px 18px rgba(0,0,0,0.55), 0 2px 4px rgba(0,0,0,0.4)" }}
+            >
               1991
             </h1>
             <p className="mt-2 font-display text-[40px] sm:text-[52px] text-pogi-red leading-none">
@@ -128,37 +137,6 @@ function Home() {
         </div>
       </section>
 
-      {/* NEWSLETTER */}
-      <section className="bg-pogi-gray section-pad">
-        <div className="mx-auto max-w-[1400px] px-6 grid md:grid-cols-[3fr_2fr] gap-10 items-center">
-          <div>
-            <h2 className="text-white font-bold text-2xl mb-3">Newsletter</h2>
-            <p className="text-white text-base mb-2">Nos recommandations chaque semaine dans votre boîte mail.</p>
-            <p className="text-white/70 text-[13px] mb-6">
-              En vous abonnant, vous acceptez de recevoir nos communications. Vous pouvez vous désabonner à tout moment.
-            </p>
-            <form className="flex gap-2 max-w-md">
-              <input
-                type="email"
-                placeholder="Votre adresse email"
-                className="flex-1 rounded-[16px] bg-white/10 border border-white/20 px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-pogi-yellow"
-              />
-              <button
-                type="submit"
-                className="rounded-[16px] bg-pogi-yellow text-pogi-dark font-bold px-6 py-3 hover:brightness-105 transition"
-              >
-                S'abonner
-              </button>
-            </form>
-          </div>
-          <div className="relative aspect-square max-w-sm mx-auto rounded-[16px] overflow-hidden">
-            <img src={books} alt="Vieux livres" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
-            <div className="absolute top-4 right-4 bg-pogi-yellow text-pogi-dark font-display text-lg px-3 py-1 rounded-full shadow-lg">
-              POGI
-            </div>
-          </div>
-        </div>
-      </section>
 
       <Footer />
     </div>

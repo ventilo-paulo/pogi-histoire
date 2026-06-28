@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export function HScroll({ children, dark = true }: { children: ReactNode; dark?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -29,22 +28,24 @@ export function HScroll({ children, dark = true }: { children: ReactNode; dark?:
     };
   }, []);
 
-  const scroll = (dir: 1 | -1) => {
+  // Step = width of one card + gap, snapped to the next card boundary
+  const stepScroll = (dir: 1 | -1) => {
     const el = ref.current;
     if (!el) return;
-    el.scrollBy({ left: dir * Math.max(320, el.clientWidth * 0.8), behavior: "smooth" });
+    const first = el.firstElementChild as HTMLElement | null;
+    const styles = getComputedStyle(el);
+    const gap = parseFloat(styles.columnGap || styles.gap || "16") || 16;
+    const cardW = first ? first.getBoundingClientRect().width + gap : Math.max(200, el.clientWidth * 0.6);
+    // Snap target to nearest card boundary so motion stays aligned
+    const current = el.scrollLeft;
+    const next = dir === 1
+      ? Math.floor(current / cardW + 1) * cardW
+      : Math.ceil(current / cardW - 1) * cardW;
+    el.scrollTo({ left: next, behavior: "smooth" });
   };
 
-  const btnBase =
-    "absolute top-1/2 -translate-y-1/2 hidden md:grid h-12 w-12 place-items-center rounded-full backdrop-blur-md transition-all duration-200 z-10";
-  const enabled = dark
-    ? "bg-white/15 text-white hover:bg-pogi-yellow hover:text-pogi-dark hover:scale-110 cursor-pointer opacity-100"
-    : "bg-black/15 text-pogi-dark hover:bg-pogi-yellow hover:scale-110 cursor-pointer opacity-100";
-  const disabled = "opacity-0 pointer-events-none scale-90";
-
-  // Edge fade indicators
-  const fadeColor = dark ? "rgb(26,26,26)" : "rgb(242,242,242)";
   const chevronColor = dark ? "text-white" : "text-pogi-dark";
+  const fadeColor = dark ? "rgb(26,26,26)" : "rgb(242,242,242)";
 
   return (
     <div className="relative group">
@@ -52,40 +53,38 @@ export function HScroll({ children, dark = true }: { children: ReactNode; dark?:
         {children}
       </div>
 
-      {/* Right fade indicator */}
+      {/* Edge fades */}
       <div
         aria-hidden
         className={`pointer-events-none absolute right-0 top-0 bottom-2 w-16 transition-opacity duration-200 ${canRight ? "opacity-100" : "opacity-0"}`}
         style={{ background: `linear-gradient(to left, ${fadeColor}, transparent)` }}
       />
-      {/* Left fade indicator */}
       <div
         aria-hidden
-        className={`pointer-events-none absolute left-0 top-0 bottom-2 w-16 transition-opacity duration-200 ${canLeft ? "opacity-100" : "opacity-0"}`}
+        className={`pointer-events-none absolute left-0 top-0 bottom-2 w-12 transition-opacity duration-200 ${canLeft ? "opacity-100" : "opacity-0"}`}
         style={{ background: `linear-gradient(to right, ${fadeColor}, transparent)` }}
       />
 
-      {/* Subtle right chevron — fades in on hover when scrollable */}
-      <div
-        aria-hidden
-        className={`pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 transition-opacity duration-300 ${canRight ? "opacity-0 group-hover:opacity-60" : "opacity-0"} ${chevronColor}`}
+      {/* Left chevron — clickable, advances by one card */}
+      <button
+        type="button"
+        onClick={() => stepScroll(-1)}
+        aria-label="Précédent"
+        tabIndex={canLeft ? 0 : -1}
+        className={`absolute left-1 top-1/2 -translate-y-1/2 z-10 p-2 transition-opacity duration-300 ${chevronColor} ${canLeft ? "opacity-0 group-hover:opacity-70 hover:!opacity-100 cursor-pointer" : "opacity-0 pointer-events-none"}`}
+      >
+        <span className="text-4xl font-light leading-none select-none">‹</span>
+      </button>
+
+      {/* Right chevron — clickable, advances by one card */}
+      <button
+        type="button"
+        onClick={() => stepScroll(1)}
+        aria-label="Suivant"
+        tabIndex={canRight ? 0 : -1}
+        className={`absolute right-1 top-1/2 -translate-y-1/2 z-10 p-2 transition-opacity duration-300 ${chevronColor} ${canRight ? "opacity-0 group-hover:opacity-70 hover:!opacity-100 cursor-pointer" : "opacity-0 pointer-events-none"}`}
       >
         <span className="text-4xl font-light leading-none select-none">›</span>
-      </div>
-
-      <button
-        onClick={() => scroll(-1)}
-        aria-label="Précédent"
-        className={`${btnBase} left-2 ${canLeft ? enabled : disabled}`}
-      >
-        <ChevronLeft size={22} />
-      </button>
-      <button
-        onClick={() => scroll(1)}
-        aria-label="Suivant"
-        className={`${btnBase} right-2 ${canRight ? enabled : disabled}`}
-      >
-        <ChevronRight size={22} />
       </button>
     </div>
   );
