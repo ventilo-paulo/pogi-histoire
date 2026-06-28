@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { HScroll } from "@/components/HScroll";
+import { supabase } from "@/integrations/supabase/client";
 
 import heroRenaissance from "@/assets/hero-renaissance.jpg";
 import pVersailles from "@/assets/place-versailles.jpg";
@@ -74,6 +76,9 @@ function ArticlesPage() {
           </div>
         </div>
       </section>
+
+      {/* DERNIERS PUBLIÉS (depuis le back office) */}
+      <PublishedArticlesRow />
 
       {/* ON VOUS ACCOMPAGNE */}
       <section className="section-pad">

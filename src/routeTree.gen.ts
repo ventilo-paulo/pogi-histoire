@@ -11,9 +11,14 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VideosRouteImport } from './routes/videos'
 import { Route as CollectionsRouteImport } from './routes/collections'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ArticlesRouteImport } from './routes/articles'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ArticlesLeRoiEtLeGenieRouteImport } from './routes/articles.le-roi-et-le-genie'
+import { Route as AdminVideosRouteImport } from './routes/admin.videos'
+import { Route as AdminArticlesRouteImport } from './routes/admin.articles'
 
 const VideosRoute = VideosRouteImport.update({
   id: '/videos',
@@ -25,9 +30,19 @@ const CollectionsRoute = CollectionsRouteImport.update({
   path: '/collections',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ArticlesRoute = ArticlesRouteImport.update({
   id: '/articles',
   path: '/articles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -35,61 +50,106 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const ArticlesLeRoiEtLeGenieRoute = ArticlesLeRoiEtLeGenieRouteImport.update({
   id: '/le-roi-et-le-genie',
   path: '/le-roi-et-le-genie',
   getParentRoute: () => ArticlesRoute,
 } as any)
+const AdminVideosRoute = AdminVideosRouteImport.update({
+  id: '/videos',
+  path: '/videos',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminArticlesRoute = AdminArticlesRouteImport.update({
+  id: '/articles',
+  path: '/articles',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/articles': typeof ArticlesRouteWithChildren
+  '/auth': typeof AuthRoute
   '/collections': typeof CollectionsRoute
   '/videos': typeof VideosRoute
+  '/admin/articles': typeof AdminArticlesRoute
+  '/admin/videos': typeof AdminVideosRoute
   '/articles/le-roi-et-le-genie': typeof ArticlesLeRoiEtLeGenieRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/articles': typeof ArticlesRouteWithChildren
+  '/auth': typeof AuthRoute
   '/collections': typeof CollectionsRoute
   '/videos': typeof VideosRoute
+  '/admin/articles': typeof AdminArticlesRoute
+  '/admin/videos': typeof AdminVideosRoute
   '/articles/le-roi-et-le-genie': typeof ArticlesLeRoiEtLeGenieRoute
+  '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/articles': typeof ArticlesRouteWithChildren
+  '/auth': typeof AuthRoute
   '/collections': typeof CollectionsRoute
   '/videos': typeof VideosRoute
+  '/admin/articles': typeof AdminArticlesRoute
+  '/admin/videos': typeof AdminVideosRoute
   '/articles/le-roi-et-le-genie': typeof ArticlesLeRoiEtLeGenieRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/articles'
+    | '/auth'
     | '/collections'
     | '/videos'
+    | '/admin/articles'
+    | '/admin/videos'
     | '/articles/le-roi-et-le-genie'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/articles'
+    | '/auth'
     | '/collections'
     | '/videos'
+    | '/admin/articles'
+    | '/admin/videos'
     | '/articles/le-roi-et-le-genie'
+    | '/admin'
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/articles'
+    | '/auth'
     | '/collections'
     | '/videos'
+    | '/admin/articles'
+    | '/admin/videos'
     | '/articles/le-roi-et-le-genie'
+    | '/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
   ArticlesRoute: typeof ArticlesRouteWithChildren
+  AuthRoute: typeof AuthRoute
   CollectionsRoute: typeof CollectionsRoute
   VideosRoute: typeof VideosRoute
 }
@@ -110,11 +170,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CollectionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/articles': {
       id: '/articles'
       path: '/articles'
       fullPath: '/articles'
       preLoaderRoute: typeof ArticlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -124,6 +198,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/articles/le-roi-et-le-genie': {
       id: '/articles/le-roi-et-le-genie'
       path: '/le-roi-et-le-genie'
@@ -131,8 +212,36 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArticlesLeRoiEtLeGenieRouteImport
       parentRoute: typeof ArticlesRoute
     }
+    '/admin/videos': {
+      id: '/admin/videos'
+      path: '/videos'
+      fullPath: '/admin/videos'
+      preLoaderRoute: typeof AdminVideosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/articles': {
+      id: '/admin/articles'
+      path: '/articles'
+      fullPath: '/admin/articles'
+      preLoaderRoute: typeof AdminArticlesRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
+
+interface AdminRouteChildren {
+  AdminArticlesRoute: typeof AdminArticlesRoute
+  AdminVideosRoute: typeof AdminVideosRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminArticlesRoute: AdminArticlesRoute,
+  AdminVideosRoute: AdminVideosRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface ArticlesRouteChildren {
   ArticlesLeRoiEtLeGenieRoute: typeof ArticlesLeRoiEtLeGenieRoute
@@ -148,7 +257,9 @@ const ArticlesRouteWithChildren = ArticlesRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
   ArticlesRoute: ArticlesRouteWithChildren,
+  AuthRoute: AuthRoute,
   CollectionsRoute: CollectionsRoute,
   VideosRoute: VideosRoute,
 }
