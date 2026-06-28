@@ -128,37 +128,6 @@ function Home() {
         </div>
       </section>
 
-      {/* NEWSLETTER */}
-      <section className="bg-pogi-gray section-pad">
-        <div className="mx-auto max-w-[1400px] px-6 grid md:grid-cols-[3fr_2fr] gap-10 items-center">
-          <div>
-            <h2 className="text-white font-bold text-2xl mb-3">Newsletter</h2>
-            <p className="text-white text-base mb-2">Nos recommandations chaque semaine dans votre boîte mail.</p>
-            <p className="text-white/70 text-[13px] mb-6">
-              En vous abonnant, vous acceptez de recevoir nos communications. Vous pouvez vous désabonner à tout moment.
-            </p>
-            <form className="flex gap-2 max-w-md">
-              <input
-                type="email"
-                placeholder="Votre adresse email"
-                className="flex-1 rounded-[16px] bg-white/10 border border-white/20 px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-pogi-yellow"
-              />
-              <button
-                type="submit"
-                className="rounded-[16px] bg-pogi-yellow text-pogi-dark font-bold px-6 py-3 hover:brightness-105 transition"
-              >
-                S'abonner
-              </button>
-            </form>
-          </div>
-          <div className="relative aspect-square max-w-sm mx-auto rounded-[16px] overflow-hidden">
-            <img src={books} alt="Vieux livres" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
-            <div className="absolute top-4 right-4 bg-pogi-yellow text-pogi-dark font-display text-lg px-3 py-1 rounded-full shadow-lg">
-              POGI
-            </div>
-          </div>
-        </div>
-      </section>
 
       <Footer />
     </div>
