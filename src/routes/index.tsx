@@ -56,19 +56,28 @@ function Home() {
         <img src={heroConcert} alt="Concert" className="absolute inset-0 h-full w-full object-cover" width={1920} height={1280} />
         <div className="absolute inset-0" style={{ background: "rgba(170, 20, 20, 0.55)" }} />
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80" />
+        {/* Cinematic vignette — darkens all 4 edges */}
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: "radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.55) 100%)" }}
+        />
 
-        <div className="absolute top-6 left-6 flex flex-wrap gap-2">
+        <div className="absolute top-6 left-6 flex flex-wrap gap-2 z-10">
           <span className="pill">Dernière sortie</span>
           <span className="pill">Vidéo</span>
           <span className="pill">URSS</span>
         </div>
-        <div className="absolute top-6 right-6">
-          <span className="pogi-logo-outline text-3xl">POGI</span>
+        <div className="absolute top-6 right-6 z-10">
+          <img src={pogiLogo} alt="POGI" className="h-12 w-auto object-contain drop-shadow-lg" />
         </div>
 
         <div className="relative z-10 mx-auto max-w-[1400px] h-full px-6 flex flex-col justify-center">
           <div className="max-w-4xl">
-            <h1 className="hero-title-yellow font-display text-[120px] sm:text-[160px] lg:text-[180px] leading-none">
+            <h1
+              className="hero-title-yellow font-display text-[120px] sm:text-[160px] lg:text-[180px] leading-none"
+              style={{ textShadow: "0 4px 18px rgba(0,0,0,0.55), 0 2px 4px rgba(0,0,0,0.4)" }}
+            >
               1991
             </h1>
             <p className="mt-2 font-display text-[40px] sm:text-[52px] text-pogi-red leading-none">
