@@ -55,6 +55,8 @@ function VideosPage() {
     <div className="min-h-screen bg-pogi-light">
       <Navbar />
       <div className="mx-auto max-w-[1400px] px-6 pt-10 pb-20">
+        <PublishedVideosSection />
+
         <VRow title="Vidéos récentes">
           <VCard img={vOradour} title="Oradour, village martyr" subtitle="Mémoire d'un massacre" />
           <VCard img={v536} title="536" subtitle="La pire année de l'histoire ?" />
