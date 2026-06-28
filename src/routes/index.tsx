@@ -14,7 +14,7 @@ import cAmericas from "@/assets/coll-americas.jpg";
 import cWWII from "@/assets/coll-wwii.jpg";
 import cIllustres from "@/assets/coll-illustres.jpg";
 import cAfrica from "@/assets/coll-africa.jpg";
-import books from "@/assets/newsletter-books.jpg";
+import pogiLogo from "@/assets/pogi-logo.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
