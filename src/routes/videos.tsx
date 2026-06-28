@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { HScroll } from "@/components/HScroll";
 import { Play, Lock } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 import vOradour from "@/assets/video-oradour.jpg";
 import v536 from "@/assets/video-536.jpg";
