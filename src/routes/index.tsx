@@ -14,7 +14,7 @@ import cAmericas from "@/assets/coll-americas.jpg";
 import cWWII from "@/assets/coll-wwii.jpg";
 import cIllustres from "@/assets/coll-illustres.jpg";
 import cAfrica from "@/assets/coll-africa.jpg";
-import pogiLogo from "@/assets/pogi-logo.png";
+import pogiLogo from "@/assets/pogi-logo.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -69,7 +69,7 @@ function Home() {
           <span className="pill">URSS</span>
         </div>
         <div className="absolute top-6 right-6 z-10">
-          <img src={pogiLogo} alt="POGI" className="h-12 w-auto object-contain drop-shadow-lg" />
+          <img src={pogiLogo.url} alt="POGI" className="h-12 w-auto object-contain drop-shadow-lg" />
         </div>
 
         <div className="relative z-10 mx-auto max-w-[1400px] h-full px-6 flex flex-col justify-center">
