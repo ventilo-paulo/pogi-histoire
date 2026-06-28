@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { HScroll } from "@/components/HScroll";
+import { supabase } from "@/integrations/supabase/client";
 
 import heroRenaissance from "@/assets/hero-renaissance.jpg";
 import pVersailles from "@/assets/place-versailles.jpg";
@@ -75,6 +77,9 @@ function ArticlesPage() {
         </div>
       </section>
 
+      {/* DERNIERS PUBLIÉS (depuis le back office) */}
+      <PublishedArticlesRow />
+
       {/* ON VOUS ACCOMPAGNE */}
       <section className="section-pad">
         <div className="mx-auto max-w-[1400px] px-6">
@@ -106,3 +111,34 @@ function ArticlesPage() {
     </div>
   );
 }
+
+function PublishedArticlesRow() {
+  const [items, setItems] = useState<any[]>([]);
+  useEffect(() => {
+    supabase.from("articles").select("id,title,slug,excerpt,image_url,category")
+      .eq("published", true).order("published_at", { ascending: false }).limit(12)
+      .then(({ data }) => setItems(data ?? []));
+  }, []);
+  if (items.length === 0) return null;
+  return (
+    <section className="section-pad bg-pogi-light">
+      <div className="mx-auto max-w-[1400px] px-6">
+        <h2 className="font-display text-[32px] text-pogi-dark uppercase mb-5">Derniers publiés</h2>
+        <HScroll dark={false}>
+          {items.map((a) => (
+            <article key={a.id} className="relative shrink-0 w-[280px] h-[360px] rounded-[16px] overflow-hidden card-hover cursor-pointer bg-pogi-dark">
+              {a.image_url && <img src={a.image_url} alt={a.title} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4 text-white">
+                {a.category && <span className="text-xs uppercase tracking-wider text-pogi-yellow">{a.category}</span>}
+                <h3 className="font-display text-xl uppercase leading-tight mt-1">{a.title}</h3>
+                {a.excerpt && <p className="text-white/80 text-sm mt-1 line-clamp-2">{a.excerpt}</p>}
+              </div>
+            </article>
+          ))}
+        </HScroll>
+      </div>
+    </section>
+  );
+}
+
