@@ -99,3 +99,31 @@ function VideosPage() {
     </div>
   );
 }
+
+function PublishedVideosSection() {
+  const [items, setItems] = useState<any[]>([]);
+  useEffect(() => {
+    supabase.from("videos").select("id,title,subtitle,thumbnail_url,video_url,format,category")
+      .eq("published", true).order("published_at", { ascending: false }).limit(12)
+      .then(({ data }) => setItems(data ?? []));
+  }, []);
+  if (items.length === 0) return null;
+  return (
+    <section className="mb-12">
+      <h2 className="font-display text-[36px] text-pogi-dark uppercase mb-5">Nouveautés</h2>
+      <HScroll dark={false}>
+        {items.map((v) => (
+          <a key={v.id} href={v.video_url} target="_blank" rel="noreferrer"
+            className="relative shrink-0 w-[350px] aspect-video rounded-[12px] overflow-hidden card-hover bg-black block">
+            {v.thumbnail_url && <img src={v.thumbnail_url} alt={v.title} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+            <div className="absolute bottom-3 left-4 right-4">
+              <h3 className="text-white font-bold text-lg leading-tight">{v.title}</h3>
+              {v.subtitle && <p className="text-white/85 italic text-sm mt-1">{v.subtitle}</p>}
+            </div>
+          </a>
+        ))}
+      </HScroll>
+    </section>
+  );
+}
