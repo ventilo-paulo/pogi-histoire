@@ -115,11 +115,20 @@ function ArticlesPage() {
 function PublishedArticlesRow() {
   const [items, setItems] = useState<any[]>([]);
   useEffect(() => {
-    supabase.from("articles").select("id,title,slug,excerpt,image_url,category")
+    let cancelled = false;
+    const load = () => supabase.from("articles").select("id,title,slug,excerpt,image_url,category")
       .eq("published", true).order("published_at", { ascending: false }).limit(12)
-      .then(({ data }) => setItems(data ?? []));
+      .then(({ data }) => { if (!cancelled) setItems(data ?? []); });
+    load();
+    const onFocus = () => load();
+    window.addEventListener("focus", onFocus);
+    const ch = supabase.channel("articles-pub")
+      .on("postgres_changes", { event: "*", schema: "public", table: "articles" }, load)
+      .subscribe();
+    return () => { cancelled = true; window.removeEventListener("focus", onFocus); supabase.removeChannel(ch); };
   }, []);
   if (items.length === 0) return null;
+
   return (
     <section className="section-pad bg-pogi-light">
       <div className="mx-auto max-w-[1400px] px-6">
