@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Eye, EyeOff, Pencil, Trash2, Plus, X } from "lucide-react";
+import ImageUpload from "@/components/ImageUpload";
 
 export const Route = createFileRoute("/admin/videos")({ component: AdminVideos });
 
