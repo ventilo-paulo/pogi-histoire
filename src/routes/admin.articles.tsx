@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import RichTextEditor from "@/components/RichTextEditor";
+import ImageUpload from "@/components/ImageUpload";
 import { Eye, EyeOff, Pencil, Trash2, Plus, X, Info, Search, Image as ImageIcon, FileText, Save } from "lucide-react";
 
 export const Route = createFileRoute("/admin/articles")({ component: AdminArticles });
@@ -328,18 +329,8 @@ function ImageTab({ a, setA }: { a: Partial<Article>; setA: (v: Partial<Article>
   return (
     <div className="section-card">
       <h3 className="section-title">Image principale</h3>
-      <FieldRow label="URL de l'image" hint="Collez l'URL d'une image hébergée (CDN, Unsplash, etc.).">
-        <input className="inp" placeholder="https://…" value={a.image_url ?? ""} onChange={(e) => setA({ ...a, image_url: e.target.value })} />
-      </FieldRow>
-      {a.image_url ? (
-        <div className="mt-3 rounded-lg overflow-hidden border border-white/10 bg-black">
-          <img src={a.image_url} alt="" className="w-full max-h-[420px] object-cover" />
-        </div>
-      ) : (
-        <div className="mt-3 border border-dashed border-white/15 rounded-lg p-10 text-center text-white/40">
-          Aucune image. Collez une URL ci-dessus pour prévisualiser.
-        </div>
-      )}
+      <p className="text-white/50 text-sm mb-3">Importez une image depuis votre ordinateur ou glissez-déposez un fichier.</p>
+      <ImageUpload value={a.image_url} onChange={(url) => setA({ ...a, image_url: url })} folder="articles" />
     </div>
   );
 }
