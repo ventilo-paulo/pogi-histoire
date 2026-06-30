@@ -101,7 +101,7 @@ function AdminVideos() {
             <Field label="Titre *"><input className="inp" value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} /></Field>
             <Field label="Sous-titre"><input className="inp" value={editing.subtitle ?? ""} onChange={(e) => setEditing({ ...editing, subtitle: e.target.value })} /></Field>
             <Field label="URL vidéo * (YouTube, Vimeo, mp4…)"><input className="inp" placeholder="https://youtube.com/…" value={editing.video_url ?? ""} onChange={(e) => setEditing({ ...editing, video_url: e.target.value })} /></Field>
-            <Field label="URL miniature"><input className="inp" placeholder="https://…" value={editing.thumbnail_url ?? ""} onChange={(e) => setEditing({ ...editing, thumbnail_url: e.target.value })} /></Field>
+            <Field label="Miniature"><ImageUpload value={editing.thumbnail_url} onChange={(url) => setEditing({ ...editing, thumbnail_url: url })} folder="videos" maxPreviewHeight={240} /></Field>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Format">
                 <select className="inp" value={editing.format ?? "court"} onChange={(e) => setEditing({ ...editing, format: e.target.value as any })}>
