@@ -27,6 +27,8 @@ export type Database = {
           list_text: string | null
           meta_description: string | null
           meta_title: string | null
+          notion_last_edited_at: string | null
+          notion_page_id: string | null
           published: boolean
           published_at: string | null
           related_article_ids: string[]
@@ -46,6 +48,8 @@ export type Database = {
           list_text?: string | null
           meta_description?: string | null
           meta_title?: string | null
+          notion_last_edited_at?: string | null
+          notion_page_id?: string | null
           published?: boolean
           published_at?: string | null
           related_article_ids?: string[]
@@ -65,12 +69,86 @@ export type Database = {
           list_text?: string | null
           meta_description?: string | null
           meta_title?: string | null
+          notion_last_edited_at?: string | null
+          notion_page_id?: string | null
           published?: boolean
           published_at?: string | null
           related_article_ids?: string[]
           slug?: string
           title?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      notion_settings: {
+        Row: {
+          articles_db_id: string | null
+          articles_mapping: Json
+          created_at: string
+          enabled: boolean
+          id: boolean
+          last_sync_at: string | null
+          updated_at: string
+          videos_db_id: string | null
+          videos_mapping: Json
+        }
+        Insert: {
+          articles_db_id?: string | null
+          articles_mapping?: Json
+          created_at?: string
+          enabled?: boolean
+          id?: boolean
+          last_sync_at?: string | null
+          updated_at?: string
+          videos_db_id?: string | null
+          videos_mapping?: Json
+        }
+        Update: {
+          articles_db_id?: string | null
+          articles_mapping?: Json
+          created_at?: string
+          enabled?: boolean
+          id?: boolean
+          last_sync_at?: string | null
+          updated_at?: string
+          videos_db_id?: string | null
+          videos_mapping?: Json
+        }
+        Relationships: []
+      }
+      notion_sync_log: {
+        Row: {
+          action: string | null
+          details: Json | null
+          direction: string
+          entity: string | null
+          id: string
+          message: string | null
+          ok: boolean
+          ref_id: string | null
+          run_at: string
+        }
+        Insert: {
+          action?: string | null
+          details?: Json | null
+          direction: string
+          entity?: string | null
+          id?: string
+          message?: string | null
+          ok?: boolean
+          ref_id?: string | null
+          run_at?: string
+        }
+        Update: {
+          action?: string | null
+          details?: Json | null
+          direction?: string
+          entity?: string | null
+          id?: string
+          message?: string | null
+          ok?: boolean
+          ref_id?: string | null
+          run_at?: string
         }
         Relationships: []
       }
@@ -101,6 +179,8 @@ export type Database = {
           created_at: string
           format: string
           id: string
+          notion_last_edited_at: string | null
+          notion_page_id: string | null
           published: boolean
           published_at: string | null
           subtitle: string | null
@@ -114,6 +194,8 @@ export type Database = {
           created_at?: string
           format?: string
           id?: string
+          notion_last_edited_at?: string | null
+          notion_page_id?: string | null
           published?: boolean
           published_at?: string | null
           subtitle?: string | null
@@ -127,6 +209,8 @@ export type Database = {
           created_at?: string
           format?: string
           id?: string
+          notion_last_edited_at?: string | null
+          notion_page_id?: string | null
           published?: boolean
           published_at?: string | null
           subtitle?: string | null
