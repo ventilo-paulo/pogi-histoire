@@ -146,6 +146,28 @@ function NotionAdmin() {
         )}
       </div>
 
+      {/* Create Notion database */}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <h2 className="font-display text-2xl uppercase mb-2">Créer la base Articles dans Notion</h2>
+        <p className="text-white/60 text-sm mb-4">
+          Lovable crée une base Notion <span className="text-pogi-yellow">« Articles — POGI »</span> avec toutes les colonnes prêtes
+          (Titre, Slug, Statut, Catégorie, Auteur, Extrait, Image, Date publication, lovable_id).
+          Colle l'URL (ou l'ID) d'une <span className="text-white/80">page Notion parent</span> partagée avec l'intégration Lovable.
+        </p>
+        <Field label="Page Notion parent (URL ou ID)">
+          <input className="inp" value={parentPage} onChange={(e) => setParentPage(e.target.value)} placeholder="https://www.notion.so/Ma-Page-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
+        </Field>
+        <button onClick={onCreateDb} disabled={creating || !parentPage} className="mt-4 flex items-center gap-2 bg-pogi-yellow text-pogi-dark font-bold uppercase px-5 py-2 rounded-md disabled:opacity-50">
+          {creating ? <Loader2 className="animate-spin" size={16} /> : <Plus size={16} />} Créer la base
+        </button>
+        {createdUrl && (
+          <p className="mt-3 text-sm">
+            <a href={createdUrl} target="_blank" rel="noreferrer" className="text-pogi-yellow underline">Ouvrir la base dans Notion →</a>
+          </p>
+        )}
+      </div>
+
+
       {/* Sync log */}
       <div className="bg-white/5 border border-white/10 rounded-xl p-6">
         <h2 className="font-display text-2xl uppercase mb-4">Journal de synchronisation</h2>
