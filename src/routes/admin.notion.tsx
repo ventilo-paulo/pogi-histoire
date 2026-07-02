@@ -1,32 +1,38 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { getNotionSettings, saveNotionSettings, listSyncLog, runSyncNow, testNotionConnection, createArticlesNotionDatabase } from "@/lib/notion.functions";
-import { Loader2, RefreshCw, Plug, CheckCircle2, XCircle, Play, Pause, Plus } from "lucide-react";
-
+import {
+  getNotionSettings,
+  saveNotionSettings,
+  listSyncLog,
+  runSyncNow,
+  testNotionConnection,
+  createPogiNotionDatabase,
+} from "@/lib/notion.functions";
+import {
+  Loader2, RefreshCw, Plug, CheckCircle2, XCircle, Play, Pause, Plus, LayoutGrid,
+} from "lucide-react";
 
 export const Route = createFileRoute("/admin/notion")({ component: NotionAdmin });
 
 function NotionAdmin() {
-  const router = useRouter();
   const getSettings = useServerFn(getNotionSettings);
   const save = useServerFn(saveNotionSettings);
   const listLog = useServerFn(listSyncLog);
   const runNow = useServerFn(runSyncNow);
   const test = useServerFn(testNotionConnection);
-  const createDb = useServerFn(createArticlesNotionDatabase);
+  const createDb = useServerFn(createPogiNotionDatabase);
 
   const settingsQ = useQuery({ queryKey: ["notion-settings"], queryFn: () => getSettings() });
   const logsQ = useQuery({ queryKey: ["notion-log"], queryFn: () => listLog(), refetchInterval: 15000 });
 
-  const [articlesDb, setArticlesDb] = useState("");
-  const [videosDb, setVideosDb] = useState("");
+  const [contentDb, setContentDb] = useState("");
   const [enabled, setEnabled] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<any>(null);
   const [running, setRunning] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [parentPage, setParentPage] = useState("");
   const [creating, setCreating] = useState(false);
@@ -34,16 +40,26 @@ function NotionAdmin() {
 
   useEffect(() => {
     if (settingsQ.data?.settings) {
-      setArticlesDb(settingsQ.data.settings.articles_db_id ?? "");
-      setVideosDb(settingsQ.data.settings.videos_db_id ?? "");
+      setContentDb(settingsQ.data.settings.articles_db_id ?? "");
       setEnabled(settingsQ.data.settings.enabled ?? true);
     }
   }, [settingsQ.data]);
 
+  // Auto-test dès qu'on a une clé + un ID
+  useEffect(() => {
+    if (!settingsQ.data?.hasNotionKey) return;
+    (async () => {
+      try {
+        const r = await test({ data: { content_db_id: contentDb || null } });
+        setTestResult(r);
+      } catch (e: any) { setTestResult({ ok: false, message: e.message }); }
+    })();
+  }, [settingsQ.data?.hasNotionKey, contentDb]);
+
   async function onSave() {
     setSaving(true); setMsg(null);
     try {
-      await save({ data: { articles_db_id: articlesDb, videos_db_id: videosDb, enabled } });
+      await save({ data: { content_db_id: contentDb, enabled } });
       setMsg("Réglages enregistrés.");
       settingsQ.refetch();
     } catch (e: any) { setMsg(e.message); } finally { setSaving(false); }
@@ -52,9 +68,9 @@ function NotionAdmin() {
   async function onTest() {
     setTesting(true); setTestResult(null);
     try {
-      const r = await test({ data: { articles_db_id: articlesDb, videos_db_id: videosDb } });
+      const r = await test({ data: { content_db_id: contentDb || null } });
       setTestResult(r);
-    } catch (e: any) { setTestResult({ error: e.message }); } finally { setTesting(false); }
+    } catch (e: any) { setTestResult({ ok: false, message: e.message }); } finally { setTesting(false); }
   }
 
   async function onRun() {
@@ -70,9 +86,9 @@ function NotionAdmin() {
     setCreating(true); setMsg(null); setCreatedUrl(null);
     try {
       const r = await createDb({ data: { parent_page: parentPage } });
-      setArticlesDb(r.database_id);
+      setContentDb(r.database_id);
       setCreatedUrl(r.url);
-      setMsg("Base « Articles — POGI » créée dans Notion avec toutes les colonnes.");
+      setMsg("Base « Chaîne POGI » créée avec toutes les colonnes.");
       settingsQ.refetch();
     } catch (e: any) { setMsg(e.message); } finally { setCreating(false); }
   }
@@ -83,37 +99,33 @@ function NotionAdmin() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-4xl uppercase">Notion</h1>
-        <div className="flex items-center gap-2">
-          <button onClick={onRun} disabled={running || !hasKey} className="flex items-center gap-2 bg-pogi-yellow text-pogi-dark font-bold uppercase px-4 py-2 rounded-md disabled:opacity-50">
-            {running ? <Loader2 className="animate-spin" size={16} /> : <RefreshCw size={16} />} Synchroniser maintenant
-          </button>
-        </div>
+        <h1 className="font-display text-4xl uppercase">Notion — Chaîne POGI</h1>
+        <button onClick={onRun} disabled={running || !hasKey || !contentDb} className="flex items-center gap-2 bg-pogi-yellow text-pogi-dark font-bold uppercase px-4 py-2 rounded-md disabled:opacity-50">
+          {running ? <Loader2 className="animate-spin" size={16} /> : <RefreshCw size={16} />} Synchroniser maintenant
+        </button>
       </div>
 
-      {/* Status */}
       <div className="grid md:grid-cols-3 gap-4">
         <Stat icon={<Plug size={18} />} label="Connexion" value={hasKey ? "Connectée" : "Non connectée"} good={hasKey} />
         <Stat icon={<RefreshCw size={18} />} label="Dernière sync" value={last ? new Date(last).toLocaleString("fr-FR") : "Jamais"} />
-        <Stat icon={enabled ? <Play size={18} /> : <Pause size={18} />} label="Sync automatique" value={enabled ? "Activée (toutes 15 min)" : "En pause"} good={enabled} />
+        <Stat icon={enabled ? <Play size={18} /> : <Pause size={18} />} label="Sync automatique" value={enabled ? "Activée (15 min)" : "En pause"} good={enabled} />
       </div>
 
-      {/* Settings */}
-      <div className="section-card bg-white/5 border border-white/10 rounded-xl p-6">
-        <h2 className="font-display text-2xl uppercase mb-4">Bases Notion</h2>
+      {/* Base unique */}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <h2 className="font-display text-2xl uppercase mb-2">Base Notion</h2>
         <p className="text-white/60 text-sm mb-4">
-          Dans Notion, partage chaque base avec l'intégration <span className="text-pogi-yellow">Lovable</span>, puis copie l'ID de la base ici
-          (partie longue de l'URL, ex: <code className="text-white/80">a1b2c3…</code>).
+          Une seule base Notion <span className="text-pogi-yellow">« Chaîne POGI »</span> contient tout (articles + vidéos, différenciés par la propriété <code className="text-white/80">Type</code>).
+          Partage-la avec l'intégration Lovable dans Notion.
         </p>
-        <div className="grid md:grid-cols-2 gap-4">
-          <Field label="ID base Articles"><input className="inp" value={articlesDb} onChange={(e) => setArticlesDb(e.target.value.trim())} placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" /></Field>
-          <Field label="ID base Vidéos"><input className="inp" value={videosDb} onChange={(e) => setVideosDb(e.target.value.trim())} placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" /></Field>
-        </div>
+        <Field label="ID ou URL de la base « Chaîne POGI »">
+          <input className="inp" value={contentDb} onChange={(e) => setContentDb(e.target.value)} placeholder="https://www.notion.so/... ou 32 caractères" />
+        </Field>
         <label className="flex items-center gap-2 mt-4 text-white/80">
           <input type="checkbox" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} />
           Activer la synchronisation automatique (toutes les 15 minutes)
         </label>
-        <div className="flex gap-2 mt-4">
+        <div className="flex gap-2 mt-4 flex-wrap">
           <button onClick={onSave} disabled={saving} className="bg-pogi-yellow text-pogi-dark font-bold uppercase px-5 py-2 rounded-md disabled:opacity-50">
             {saving ? "…" : "Enregistrer"}
           </button>
@@ -122,37 +134,15 @@ function NotionAdmin() {
           </button>
         </div>
         {msg && <p className="mt-3 text-sm text-white/80">{msg}</p>}
-        {testResult && (
-          <div className="mt-4 grid md:grid-cols-2 gap-4">
-            {(["articles", "videos"] as const).map((k) => {
-              const r = testResult[k];
-              if (!r) return null;
-              return (
-                <div key={k} className="border border-white/10 rounded-lg p-3">
-                  <div className="flex items-center gap-2 mb-2 font-semibold">
-                    {r.ok ? <CheckCircle2 className="text-green-400" size={16} /> : <XCircle className="text-red-400" size={16} />}
-                    <span className="uppercase text-sm">{k}</span>
-                    {r.title && <span className="text-white/50 text-sm">— {r.title}</span>}
-                  </div>
-                  {r.ok ? (
-                    <ul className="text-xs text-white/60 space-y-0.5 max-h-40 overflow-auto">
-                      {r.properties.map((p: any) => <li key={p.name}>· <span className="text-white/80">{p.name}</span> <span className="text-white/40">({p.type})</span></li>)}
-                    </ul>
-                  ) : <p className="text-red-400 text-sm">{r.message}</p>}
-                </div>
-              );
-            })}
-          </div>
-        )}
+        {testResult && <TestResult r={testResult} />}
       </div>
 
-      {/* Create Notion database */}
+      {/* Créer la base */}
       <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-        <h2 className="font-display text-2xl uppercase mb-2">Créer la base Articles dans Notion</h2>
+        <h2 className="font-display text-2xl uppercase mb-2">Créer la base « Chaîne POGI » dans Notion</h2>
         <p className="text-white/60 text-sm mb-4">
-          Lovable crée une base Notion <span className="text-pogi-yellow">« Articles — POGI »</span> avec toutes les colonnes prêtes
-          (Titre, Slug, Statut, Catégorie, Auteur, Extrait, Image, Date publication, lovable_id).
-          Colle l'URL (ou l'ID) d'une <span className="text-white/80">page Notion parent</span> partagée avec l'intégration Lovable.
+          Colle l'URL d'une page Notion parent partagée avec l'intégration Lovable. Lovable crée la base avec toutes les colonnes prêtes :
+          Titre, Type (Article/Vidéo), Statut, Catégorie, Slug, Auteur, Extrait, Image, URL vidéo, Date publication, lovable_id.
         </p>
         <Field label="Page Notion parent (URL ou ID)">
           <input className="inp" value={parentPage} onChange={(e) => setParentPage(e.target.value)} placeholder="https://www.notion.so/Ma-Page-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
@@ -167,6 +157,20 @@ function NotionAdmin() {
         )}
       </div>
 
+      {/* Vue Board */}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <h2 className="font-display text-2xl uppercase mb-2 flex items-center gap-2"><LayoutGrid size={22} /> Vue Board (Kanban)</h2>
+        <p className="text-white/70 text-sm mb-3">
+          L'API Notion ne permet pas encore de créer des <em>vues</em> par code (Notion n'expose pas cet endpoint publiquement).
+          En revanche la base est déjà prête pour un board : les propriétés <span className="text-pogi-yellow">Statut</span> et <span className="text-pogi-yellow">Catégorie</span> sont des Select.
+        </p>
+        <ol className="text-white/70 text-sm space-y-1 list-decimal list-inside">
+          <li>Ouvre la base dans Notion.</li>
+          <li>Clique sur <b>+</b> à côté de « Table » en haut de la base → <b>Board</b>.</li>
+          <li>Dans <b>Group by</b>, choisis <b>Statut</b> (ou <b>Catégorie</b>).</li>
+          <li>Nomme la vue « Kanban » et enregistre — les colonnes reprennent automatiquement les valeurs de la propriété.</li>
+        </ol>
+      </div>
 
       {/* Sync log */}
       <div className="bg-white/5 border border-white/10 rounded-xl p-6">
@@ -197,6 +201,28 @@ function NotionAdmin() {
       </div>
 
       <style>{`.inp{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;padding:.5rem .75rem;border-radius:.375rem;outline:none;font-family:monospace;font-size:.85rem}.inp:focus{border-color:#F5C800}`}</style>
+    </div>
+  );
+}
+
+function TestResult({ r }: { r: any }) {
+  return (
+    <div className="mt-4 border border-white/10 rounded-lg p-3">
+      <div className="flex items-center gap-2 mb-2 font-semibold">
+        {r.ok ? <CheckCircle2 className="text-green-400" size={16} /> : <XCircle className="text-red-400" size={16} />}
+        <span className="uppercase text-sm">{r.ok ? "Connexion OK" : "Erreur"}</span>
+        {r.bot && <span className="text-white/50 text-sm">— intégration : {r.bot}</span>}
+        {r.title && <span className="text-white/50 text-sm">— base : {r.title}</span>}
+      </div>
+      {r.ok && r.properties ? (
+        <ul className="text-xs text-white/60 space-y-0.5 max-h-40 overflow-auto">
+          {r.properties.map((p: any) => <li key={p.name}>· <span className="text-white/80">{p.name}</span> <span className="text-white/40">({p.type})</span></li>)}
+        </ul>
+      ) : r.ok ? (
+        <p className="text-white/60 text-sm">{r.message}</p>
+      ) : (
+        <p className="text-red-400 text-sm">{r.message}</p>
+      )}
     </div>
   );
 }
