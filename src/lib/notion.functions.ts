@@ -74,3 +74,74 @@ export const testNotionConnection = createServerFn({ method: "POST" })
     }
     return results;
   });
+
+function extractPageId(input: string): string {
+  const s = (input || "").trim();
+  // Accept full URL or raw ID (with/without dashes)
+  const m = s.match(/([0-9a-fA-F]{32})|([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/);
+  if (!m) throw new Error("ID / URL de page Notion invalide");
+  return m[0].replace(/-/g, "");
+}
+
+export const createArticlesNotionDatabase = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { parent_page: string }) => d)
+  .handler(async ({ data, context }) => {
+    await ensureAdmin(context);
+    const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
+    const NOTION_API_KEY = process.env.NOTION_API_KEY;
+    if (!LOVABLE_API_KEY || !NOTION_API_KEY) throw new Error("Notion n'est pas connecté");
+    const parentId = extractPageId(data.parent_page);
+
+    const body = {
+      parent: { type: "page_id", page_id: parentId },
+      icon: { type: "emoji", emoji: "📝" },
+      title: [{ type: "text", text: { content: "Articles — POGI" } }],
+      properties: {
+        Titre: { title: {} },
+        Slug: { rich_text: {} },
+        Statut: {
+          select: {
+            options: [
+              { name: "brouillon", color: "gray" },
+              { name: "publié", color: "green" },
+            ],
+          },
+        },
+        Catégorie: {
+          select: {
+            options: [
+              { name: "Moyen Âge", color: "yellow" },
+              { name: "Antiquité", color: "orange" },
+              { name: "Renaissance", color: "purple" },
+              { name: "XIXe siècle", color: "blue" },
+              { name: "XXe siècle", color: "red" },
+              { name: "Autre", color: "default" },
+            ],
+          },
+        },
+        Auteur: { rich_text: {} },
+        Extrait: { rich_text: {} },
+        Image: { url: {} },
+        "Date publication": { date: {} },
+        lovable_id: { rich_text: {} },
+      },
+    };
+
+    const res = await fetch(`https://connector-gateway.lovable.dev/notion/v1/databases`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        "X-Connection-Api-Key": NOTION_API_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.message ?? `HTTP ${res.status}`);
+
+    const dbId: string = json.id;
+    await context.supabase.from("notion_settings").upsert({ id: true, articles_db_id: dbId });
+    return { ok: true, database_id: dbId, url: json.url };
+  });
+

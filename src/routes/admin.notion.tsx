@@ -2,8 +2,9 @@ import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { getNotionSettings, saveNotionSettings, listSyncLog, runSyncNow, testNotionConnection } from "@/lib/notion.functions";
-import { Loader2, RefreshCw, Plug, CheckCircle2, XCircle, Play, Pause } from "lucide-react";
+import { getNotionSettings, saveNotionSettings, listSyncLog, runSyncNow, testNotionConnection, createArticlesNotionDatabase } from "@/lib/notion.functions";
+import { Loader2, RefreshCw, Plug, CheckCircle2, XCircle, Play, Pause, Plus } from "lucide-react";
+
 
 export const Route = createFileRoute("/admin/notion")({ component: NotionAdmin });
 
@@ -14,6 +15,7 @@ function NotionAdmin() {
   const listLog = useServerFn(listSyncLog);
   const runNow = useServerFn(runSyncNow);
   const test = useServerFn(testNotionConnection);
+  const createDb = useServerFn(createArticlesNotionDatabase);
 
   const settingsQ = useQuery({ queryKey: ["notion-settings"], queryFn: () => getSettings() });
   const logsQ = useQuery({ queryKey: ["notion-log"], queryFn: () => listLog(), refetchInterval: 15000 });
@@ -26,6 +28,9 @@ function NotionAdmin() {
   const [running, setRunning] = useState(false);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [parentPage, setParentPage] = useState("");
+  const [creating, setCreating] = useState(false);
+  const [createdUrl, setCreatedUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (settingsQ.data?.settings) {
@@ -59,6 +64,17 @@ function NotionAdmin() {
       setMsg(`Sync terminée. ${JSON.stringify(r.counts)}`);
       logsQ.refetch(); settingsQ.refetch();
     } catch (e: any) { setMsg(e.message); } finally { setRunning(false); }
+  }
+
+  async function onCreateDb() {
+    setCreating(true); setMsg(null); setCreatedUrl(null);
+    try {
+      const r = await createDb({ data: { parent_page: parentPage } });
+      setArticlesDb(r.database_id);
+      setCreatedUrl(r.url);
+      setMsg("Base « Articles — POGI » créée dans Notion avec toutes les colonnes.");
+      settingsQ.refetch();
+    } catch (e: any) { setMsg(e.message); } finally { setCreating(false); }
   }
 
   const hasKey = !!settingsQ.data?.hasNotionKey;
@@ -129,6 +145,28 @@ function NotionAdmin() {
           </div>
         )}
       </div>
+
+      {/* Create Notion database */}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <h2 className="font-display text-2xl uppercase mb-2">Créer la base Articles dans Notion</h2>
+        <p className="text-white/60 text-sm mb-4">
+          Lovable crée une base Notion <span className="text-pogi-yellow">« Articles — POGI »</span> avec toutes les colonnes prêtes
+          (Titre, Slug, Statut, Catégorie, Auteur, Extrait, Image, Date publication, lovable_id).
+          Colle l'URL (ou l'ID) d'une <span className="text-white/80">page Notion parent</span> partagée avec l'intégration Lovable.
+        </p>
+        <Field label="Page Notion parent (URL ou ID)">
+          <input className="inp" value={parentPage} onChange={(e) => setParentPage(e.target.value)} placeholder="https://www.notion.so/Ma-Page-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
+        </Field>
+        <button onClick={onCreateDb} disabled={creating || !parentPage} className="mt-4 flex items-center gap-2 bg-pogi-yellow text-pogi-dark font-bold uppercase px-5 py-2 rounded-md disabled:opacity-50">
+          {creating ? <Loader2 className="animate-spin" size={16} /> : <Plus size={16} />} Créer la base
+        </button>
+        {createdUrl && (
+          <p className="mt-3 text-sm">
+            <a href={createdUrl} target="_blank" rel="noreferrer" className="text-pogi-yellow underline">Ouvrir la base dans Notion →</a>
+          </p>
+        )}
+      </div>
+
 
       {/* Sync log */}
       <div className="bg-white/5 border border-white/10 rounded-xl p-6">
