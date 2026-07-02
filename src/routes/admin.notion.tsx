@@ -2,8 +2,9 @@ import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { getNotionSettings, saveNotionSettings, listSyncLog, runSyncNow, testNotionConnection } from "@/lib/notion.functions";
-import { Loader2, RefreshCw, Plug, CheckCircle2, XCircle, Play, Pause } from "lucide-react";
+import { getNotionSettings, saveNotionSettings, listSyncLog, runSyncNow, testNotionConnection, createArticlesNotionDatabase } from "@/lib/notion.functions";
+import { Loader2, RefreshCw, Plug, CheckCircle2, XCircle, Play, Pause, Plus } from "lucide-react";
+
 
 export const Route = createFileRoute("/admin/notion")({ component: NotionAdmin });
 
