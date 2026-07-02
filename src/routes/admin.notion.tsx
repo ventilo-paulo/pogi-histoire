@@ -66,6 +66,17 @@ function NotionAdmin() {
     } catch (e: any) { setMsg(e.message); } finally { setRunning(false); }
   }
 
+  async function onCreateDb() {
+    setCreating(true); setMsg(null); setCreatedUrl(null);
+    try {
+      const r = await createDb({ data: { parent_page: parentPage } });
+      setArticlesDb(r.database_id);
+      setCreatedUrl(r.url);
+      setMsg("Base « Articles — POGI » créée dans Notion avec toutes les colonnes.");
+      settingsQ.refetch();
+    } catch (e: any) { setMsg(e.message); } finally { setCreating(false); }
+  }
+
   const hasKey = !!settingsQ.data?.hasNotionKey;
   const last = settingsQ.data?.settings?.last_sync_at;
 
