@@ -15,6 +15,7 @@ function NotionAdmin() {
   const listLog = useServerFn(listSyncLog);
   const runNow = useServerFn(runSyncNow);
   const test = useServerFn(testNotionConnection);
+  const createDb = useServerFn(createArticlesNotionDatabase);
 
   const settingsQ = useQuery({ queryKey: ["notion-settings"], queryFn: () => getSettings() });
   const logsQ = useQuery({ queryKey: ["notion-log"], queryFn: () => listLog(), refetchInterval: 15000 });
