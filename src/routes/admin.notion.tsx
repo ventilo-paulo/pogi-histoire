@@ -28,6 +28,9 @@ function NotionAdmin() {
   const [running, setRunning] = useState(false);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [parentPage, setParentPage] = useState("");
+  const [creating, setCreating] = useState(false);
+  const [createdUrl, setCreatedUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (settingsQ.data?.settings) {
