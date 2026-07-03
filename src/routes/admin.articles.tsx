@@ -270,9 +270,10 @@ function GeneralTab({
         </div>
       </FieldRow>
 
-      <FieldRow label="Catégorie">
-        <input className="inp" value={a.category ?? ""} onChange={(e) => setA({ ...a, category: e.target.value })} placeholder="Ex : Le Monde en Guerre" />
+      <FieldRow label="Catégorie" hint="Gérez la liste des catégories ci-dessous.">
+        <CategoryPicker value={a.category ?? ""} onChange={(v) => setA({ ...a, category: v })} />
       </FieldRow>
+
 
       <FieldRow label="Date de publication *">
         <div className="grid grid-cols-[1fr_140px] gap-2">
