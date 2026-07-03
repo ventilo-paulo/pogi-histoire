@@ -20,6 +20,7 @@ import { Route as ArticlesLeRoiEtLeGenieRouteImport } from './routes/articles.le
 import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
 import { Route as AdminVideosRouteImport } from './routes/admin.videos'
 import { Route as AdminNotionRouteImport } from './routes/admin.notion'
+import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 import { Route as AdminArticlesRouteImport } from './routes/admin.articles'
 import { Route as ApiPublicHooksNotionSyncRouteImport } from './routes/api/public/hooks/notion-sync'
 
@@ -78,6 +79,11 @@ const AdminNotionRoute = AdminNotionRouteImport.update({
   path: '/notion',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminArticlesRoute = AdminArticlesRouteImport.update({
   id: '/articles',
   path: '/articles',
@@ -98,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/collections': typeof CollectionsRoute
   '/videos': typeof VideosRoute
   '/admin/articles': typeof AdminArticlesRoute
+  '/admin/categories': typeof AdminCategoriesRoute
   '/admin/notion': typeof AdminNotionRoute
   '/admin/videos': typeof AdminVideosRoute
   '/articles/$slug': typeof ArticlesSlugRoute
@@ -112,6 +119,7 @@ export interface FileRoutesByTo {
   '/collections': typeof CollectionsRoute
   '/videos': typeof VideosRoute
   '/admin/articles': typeof AdminArticlesRoute
+  '/admin/categories': typeof AdminCategoriesRoute
   '/admin/notion': typeof AdminNotionRoute
   '/admin/videos': typeof AdminVideosRoute
   '/articles/$slug': typeof ArticlesSlugRoute
@@ -128,6 +136,7 @@ export interface FileRoutesById {
   '/collections': typeof CollectionsRoute
   '/videos': typeof VideosRoute
   '/admin/articles': typeof AdminArticlesRoute
+  '/admin/categories': typeof AdminCategoriesRoute
   '/admin/notion': typeof AdminNotionRoute
   '/admin/videos': typeof AdminVideosRoute
   '/articles/$slug': typeof ArticlesSlugRoute
@@ -145,6 +154,7 @@ export interface FileRouteTypes {
     | '/collections'
     | '/videos'
     | '/admin/articles'
+    | '/admin/categories'
     | '/admin/notion'
     | '/admin/videos'
     | '/articles/$slug'
@@ -159,6 +169,7 @@ export interface FileRouteTypes {
     | '/collections'
     | '/videos'
     | '/admin/articles'
+    | '/admin/categories'
     | '/admin/notion'
     | '/admin/videos'
     | '/articles/$slug'
@@ -174,6 +185,7 @@ export interface FileRouteTypes {
     | '/collections'
     | '/videos'
     | '/admin/articles'
+    | '/admin/categories'
     | '/admin/notion'
     | '/admin/videos'
     | '/articles/$slug'
@@ -271,6 +283,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminNotionRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/categories': {
+      id: '/admin/categories'
+      path: '/categories'
+      fullPath: '/admin/categories'
+      preLoaderRoute: typeof AdminCategoriesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/articles': {
       id: '/admin/articles'
       path: '/articles'
@@ -290,6 +309,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminArticlesRoute: typeof AdminArticlesRoute
+  AdminCategoriesRoute: typeof AdminCategoriesRoute
   AdminNotionRoute: typeof AdminNotionRoute
   AdminVideosRoute: typeof AdminVideosRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -297,6 +317,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminArticlesRoute: AdminArticlesRoute,
+  AdminCategoriesRoute: AdminCategoriesRoute,
   AdminNotionRoute: AdminNotionRoute,
   AdminVideosRoute: AdminVideosRoute,
   AdminIndexRoute: AdminIndexRoute,
