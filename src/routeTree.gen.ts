@@ -17,6 +17,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ArticlesLeRoiEtLeGenieRouteImport } from './routes/articles.le-roi-et-le-genie'
+import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
 import { Route as AdminVideosRouteImport } from './routes/admin.videos'
 import { Route as AdminNotionRouteImport } from './routes/admin.notion'
 import { Route as AdminArticlesRouteImport } from './routes/admin.articles'
@@ -62,6 +63,11 @@ const ArticlesLeRoiEtLeGenieRoute = ArticlesLeRoiEtLeGenieRouteImport.update({
   path: '/le-roi-et-le-genie',
   getParentRoute: () => ArticlesRoute,
 } as any)
+const ArticlesSlugRoute = ArticlesSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => ArticlesRoute,
+} as any)
 const AdminVideosRoute = AdminVideosRouteImport.update({
   id: '/videos',
   path: '/videos',
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/notion': typeof AdminNotionRoute
   '/admin/videos': typeof AdminVideosRoute
+  '/articles/$slug': typeof ArticlesSlugRoute
   '/articles/le-roi-et-le-genie': typeof ArticlesLeRoiEtLeGenieRoute
   '/admin/': typeof AdminIndexRoute
   '/api/public/hooks/notion-sync': typeof ApiPublicHooksNotionSyncRoute
@@ -107,6 +114,7 @@ export interface FileRoutesByTo {
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/notion': typeof AdminNotionRoute
   '/admin/videos': typeof AdminVideosRoute
+  '/articles/$slug': typeof ArticlesSlugRoute
   '/articles/le-roi-et-le-genie': typeof ArticlesLeRoiEtLeGenieRoute
   '/admin': typeof AdminIndexRoute
   '/api/public/hooks/notion-sync': typeof ApiPublicHooksNotionSyncRoute
@@ -122,6 +130,7 @@ export interface FileRoutesById {
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/notion': typeof AdminNotionRoute
   '/admin/videos': typeof AdminVideosRoute
+  '/articles/$slug': typeof ArticlesSlugRoute
   '/articles/le-roi-et-le-genie': typeof ArticlesLeRoiEtLeGenieRoute
   '/admin/': typeof AdminIndexRoute
   '/api/public/hooks/notion-sync': typeof ApiPublicHooksNotionSyncRoute
@@ -138,6 +147,7 @@ export interface FileRouteTypes {
     | '/admin/articles'
     | '/admin/notion'
     | '/admin/videos'
+    | '/articles/$slug'
     | '/articles/le-roi-et-le-genie'
     | '/admin/'
     | '/api/public/hooks/notion-sync'
@@ -151,6 +161,7 @@ export interface FileRouteTypes {
     | '/admin/articles'
     | '/admin/notion'
     | '/admin/videos'
+    | '/articles/$slug'
     | '/articles/le-roi-et-le-genie'
     | '/admin'
     | '/api/public/hooks/notion-sync'
@@ -165,6 +176,7 @@ export interface FileRouteTypes {
     | '/admin/articles'
     | '/admin/notion'
     | '/admin/videos'
+    | '/articles/$slug'
     | '/articles/le-roi-et-le-genie'
     | '/admin/'
     | '/api/public/hooks/notion-sync'
@@ -238,6 +250,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArticlesLeRoiEtLeGenieRouteImport
       parentRoute: typeof ArticlesRoute
     }
+    '/articles/$slug': {
+      id: '/articles/$slug'
+      path: '/$slug'
+      fullPath: '/articles/$slug'
+      preLoaderRoute: typeof ArticlesSlugRouteImport
+      parentRoute: typeof ArticlesRoute
+    }
     '/admin/videos': {
       id: '/admin/videos'
       path: '/videos'
@@ -286,10 +305,12 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface ArticlesRouteChildren {
+  ArticlesSlugRoute: typeof ArticlesSlugRoute
   ArticlesLeRoiEtLeGenieRoute: typeof ArticlesLeRoiEtLeGenieRoute
 }
 
 const ArticlesRouteChildren: ArticlesRouteChildren = {
+  ArticlesSlugRoute: ArticlesSlugRoute,
   ArticlesLeRoiEtLeGenieRoute: ArticlesLeRoiEtLeGenieRoute,
 }
 
