@@ -80,6 +80,9 @@ function ArticlesPage() {
       {/* DERNIERS PUBLIÉS (depuis le back office) */}
       <PublishedArticlesRow />
 
+      {/* PAR CATÉGORIE */}
+      <ArticlesByCategory />
+
       {/* ON VOUS ACCOMPAGNE */}
       <section className="section-pad">
         <div className="mx-auto max-w-[1400px] px-6">
@@ -112,6 +115,24 @@ function ArticlesPage() {
   );
 }
 
+function ArticleCard({ a }: { a: any }) {
+  return (
+    <Link
+      to="/articles/$slug"
+      params={{ slug: a.slug }}
+      className="relative shrink-0 w-[280px] h-[360px] rounded-[16px] overflow-hidden card-hover cursor-pointer bg-pogi-dark block"
+    >
+      {a.image_url && <img src={a.image_url} alt={a.title} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+      <div className="absolute bottom-4 left-4 right-4 text-white">
+        {a.category && <span className="text-xs uppercase tracking-wider text-pogi-yellow">{a.category}</span>}
+        <h3 className="font-display text-xl uppercase leading-tight mt-1">{a.title}</h3>
+        {a.excerpt && <p className="text-white/80 text-sm mt-1 line-clamp-2">{a.excerpt}</p>}
+      </div>
+    </Link>
+  );
+}
+
 function PublishedArticlesRow() {
   const [items, setItems] = useState<any[]>([]);
   useEffect(() => {
@@ -134,20 +155,62 @@ function PublishedArticlesRow() {
       <div className="mx-auto max-w-[1400px] px-6">
         <h2 className="font-display text-[32px] text-pogi-dark uppercase mb-5">Derniers publiés</h2>
         <HScroll dark={false}>
-          {items.map((a) => (
-            <article key={a.id} className="relative shrink-0 w-[280px] h-[360px] rounded-[16px] overflow-hidden card-hover cursor-pointer bg-pogi-dark">
-              {a.image_url && <img src={a.image_url} alt={a.title} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
-              <div className="absolute bottom-4 left-4 right-4 text-white">
-                {a.category && <span className="text-xs uppercase tracking-wider text-pogi-yellow">{a.category}</span>}
-                <h3 className="font-display text-xl uppercase leading-tight mt-1">{a.title}</h3>
-                {a.excerpt && <p className="text-white/80 text-sm mt-1 line-clamp-2">{a.excerpt}</p>}
-              </div>
-            </article>
-          ))}
+          {items.map((a) => <ArticleCard key={a.id} a={a} />)}
         </HScroll>
       </div>
     </section>
+  );
+}
+
+function ArticlesByCategory() {
+  const [cats, setCats] = useState<{ id: string; name: string; sort_order: number }[]>([]);
+  const [byCat, setByCat] = useState<Record<string, any[]>>({});
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      const [c, a] = await Promise.all([
+        supabase.from("categories").select("id,name,sort_order").order("sort_order"),
+        supabase.from("articles").select("id,title,slug,excerpt,image_url,category")
+          .eq("published", true).order("published_at", { ascending: false }),
+      ]);
+      if (cancelled) return;
+      const grouped: Record<string, any[]> = {};
+      (a.data ?? []).forEach((art: any) => {
+        const key = art.category || "Autres";
+        (grouped[key] ??= []).push(art);
+      });
+      setCats((c.data ?? []) as any);
+      setByCat(grouped);
+    };
+    load();
+    const ch = supabase.channel("articles-by-cat")
+      .on("postgres_changes", { event: "*", schema: "public", table: "articles" }, load)
+      .on("postgres_changes", { event: "*", schema: "public", table: "categories" }, load)
+      .subscribe();
+    return () => { cancelled = true; supabase.removeChannel(ch); };
+  }, []);
+
+  const orderedNames = [
+    ...cats.map((c) => c.name).filter((n) => (byCat[n] ?? []).length > 0),
+    ...Object.keys(byCat).filter((n) => !cats.some((c) => c.name === n)),
+  ];
+
+  if (orderedNames.length === 0) return null;
+
+  return (
+    <>
+      {orderedNames.map((name) => (
+        <section key={name} className="section-pad">
+          <div className="mx-auto max-w-[1400px] px-6">
+            <h2 className="font-display text-[32px] text-pogi-dark uppercase mb-5">{name}</h2>
+            <HScroll dark={false}>
+              {byCat[name].map((a) => <ArticleCard key={a.id} a={a} />)}
+            </HScroll>
+          </div>
+        </section>
+      ))}
+    </>
   );
 }
 
