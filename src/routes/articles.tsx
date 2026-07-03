@@ -1,9 +1,10 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { HScroll } from "@/components/HScroll";
 import { supabase } from "@/integrations/supabase/client";
+import { ArrowRight, Loader2, Search, X } from "lucide-react";
 
 import heroRenaissance from "@/assets/hero-renaissance.jpg";
 import pVersailles from "@/assets/place-versailles.jpg";
@@ -11,6 +12,11 @@ import pLouvre from "@/assets/place-louvre.jpg";
 import pOrsay from "@/assets/place-orsay.jpg";
 import pGiverny from "@/assets/place-giverny.jpg";
 import pCitadelle from "@/assets/place-citadelle.jpg";
+
+type ArticleLite = {
+  id: string; title: string; slug: string; excerpt: string | null;
+  image_url: string | null; category: string | null;
+};
 
 export const Route = createFileRoute("/articles")({
   head: () => ({
@@ -21,6 +27,10 @@ export const Route = createFileRoute("/articles")({
       { property: "og:description", content: "Articles d'histoire, récits et accompagnements de visite." },
       { property: "og:image", content: heroRenaissance },
     ],
+  }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    cat: typeof s.cat === "string" ? s.cat : "",
+    q: typeof s.q === "string" ? s.q : "",
   }),
   component: ArticlesPage,
 });
@@ -34,6 +44,9 @@ const places = [
 ];
 
 function ArticlesPage() {
+  const { cat, q } = Route.useSearch();
+  const filtering = !!(cat || q.trim());
+
   return (
     <div className="min-h-screen bg-pogi-light">
       <Navbar />
@@ -68,20 +81,27 @@ function ArticlesPage() {
               raison, France et Italie. Le récit d'une amitié qui scelle la Renaissance française.
             </p>
             <Link
-              to="/articles/le-roi-et-le-genie"
-              className="inline-block rounded-full border-2 border-white text-white px-8 py-2.5 font-bold tracking-wider hover:bg-white hover:text-pogi-dark transition"
+              to="/articles/$slug"
+              params={{ slug: "le-roi-et-le-genie" }}
+              className="inline-flex items-center gap-2 rounded-full border-2 border-white text-white px-8 py-2.5 font-bold tracking-wider hover:bg-white hover:text-pogi-dark transition"
             >
-              LIRE
+              LIRE <ArrowRight size={18} />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* DERNIERS PUBLIÉS (depuis le back office) */}
-      <PublishedArticlesRow />
+      {/* FILTRE + RECHERCHE */}
+      <ArticlesFilterBar />
 
-      {/* PAR CATÉGORIE */}
-      <ArticlesByCategory />
+      {filtering ? (
+        <FilteredArticles cat={cat} q={q} />
+      ) : (
+        <>
+          <PublishedArticlesRow />
+          <ArticlesByCategory />
+        </>
+      )}
 
       {/* ON VOUS ACCOMPAGNE */}
       <section className="section-pad">
@@ -115,47 +135,221 @@ function ArticlesPage() {
   );
 }
 
-function ArticleCard({ a }: { a: any }) {
+/* -------- Card -------- */
+
+function ArticleCard({ a }: { a: ArticleLite }) {
+  const [loading, setLoading] = useState(false);
   return (
     <Link
       to="/articles/$slug"
       params={{ slug: a.slug }}
-      className="relative shrink-0 w-[280px] h-[360px] rounded-[16px] overflow-hidden card-hover cursor-pointer bg-pogi-dark block"
+      preload="intent"
+      onClick={() => setLoading(true)}
+      aria-busy={loading}
+      className="group relative shrink-0 w-[280px] h-[360px] rounded-[16px] overflow-hidden bg-pogi-dark block outline-none
+        transition-all duration-300 ease-out
+        hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/40
+        focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
     >
-      {a.image_url && <img src={a.image_url} alt={a.title} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />}
+      {a.image_url && (
+        <img
+          src={a.image_url}
+          alt={a.title}
+          loading="lazy"
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+      )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/20" />
+
+      {/* Lire indicator */}
+      <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full bg-white/95 text-pogi-dark px-3 py-1.5 text-xs font-bold uppercase tracking-wider
+        opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+        {loading ? <Loader2 size={14} className="animate-spin" /> : <ArrowRight size={14} />}
+        {loading ? "Ouverture…" : "Lire"}
+      </div>
+
       <div className="absolute bottom-4 left-4 right-4 text-white">
         {a.category && <span className="text-xs uppercase tracking-wider text-pogi-yellow">{a.category}</span>}
         <h3 className="font-display text-xl uppercase leading-tight mt-1">{a.title}</h3>
         {a.excerpt && <p className="text-white/80 text-sm mt-1 line-clamp-2">{a.excerpt}</p>}
       </div>
+
+      {loading && (
+        <div className="absolute inset-0 grid place-items-center bg-black/40">
+          <Loader2 className="animate-spin text-pogi-yellow" size={32} />
+        </div>
+      )}
     </Link>
   );
 }
 
-function PublishedArticlesRow() {
-  const [items, setItems] = useState<any[]>([]);
+/* -------- Filter bar -------- */
+
+function useCategories() {
+  const [cats, setCats] = useState<{ id: string; name: string }[]>([]);
   useEffect(() => {
     let cancelled = false;
-    const load = () => supabase.from("articles").select("id,title,slug,excerpt,image_url,category")
-      .eq("published", true).order("published_at", { ascending: false }).limit(12)
-      .then(({ data }) => { if (!cancelled) setItems(data ?? []); });
+    const load = () => supabase.from("categories").select("id,name,sort_order").order("sort_order")
+      .then(({ data }) => { if (!cancelled) setCats((data ?? []) as any); });
     load();
-    const onFocus = () => load();
-    window.addEventListener("focus", onFocus);
-    const ch = supabase.channel("articles-pub")
+    const ch = supabase.channel("cats-live")
+      .on("postgres_changes", { event: "*", schema: "public", table: "categories" }, load)
+      .subscribe();
+    return () => { cancelled = true; supabase.removeChannel(ch); };
+  }, []);
+  return cats;
+}
+
+function ArticlesFilterBar() {
+  const { cat, q } = Route.useSearch();
+  const navigate = useNavigate({ from: "/articles" });
+  const cats = useCategories();
+  const [text, setText] = useState(q);
+
+  useEffect(() => { setText(q); }, [q]);
+
+  function setCat(next: string) {
+    navigate({ search: (prev) => ({ ...prev, cat: next }) });
+  }
+  function submit(e: React.FormEvent) {
+    e.preventDefault();
+    navigate({ search: (prev) => ({ ...prev, q: text.trim() }) });
+  }
+  function clearAll() {
+    setText("");
+    navigate({ search: () => ({ cat: "", q: "" }) });
+  }
+
+  const active = !!(cat || q);
+
+  return (
+    <section className="bg-pogi-light border-b border-black/5">
+      <div className="mx-auto max-w-[1400px] px-6 py-6 flex flex-col gap-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => setCat("")}
+            className={`px-4 py-1.5 rounded-full text-sm font-semibold uppercase tracking-wider transition
+              ${!cat ? "bg-pogi-dark text-white" : "bg-white text-pogi-dark border border-black/10 hover:border-pogi-dark"}`}
+          >
+            Toutes
+          </button>
+          {cats.map((c) => (
+            <button
+              key={c.id}
+              onClick={() => setCat(c.name)}
+              className={`px-4 py-1.5 rounded-full text-sm font-semibold uppercase tracking-wider transition
+                ${cat === c.name ? "bg-pogi-dark text-white" : "bg-white text-pogi-dark border border-black/10 hover:border-pogi-dark"}`}
+            >
+              {c.name}
+            </button>
+          ))}
+        </div>
+
+        <form onSubmit={submit} className="flex items-center gap-2">
+          <div className="relative flex-1 max-w-md">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="search"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder="Rechercher un article…"
+              className="w-full pl-9 pr-9 py-2 rounded-full bg-white border border-black/10 text-sm text-pogi-dark
+                focus:outline-none focus:ring-2 focus:ring-pogi-yellow"
+            />
+            {text && (
+              <button type="button" onClick={() => setText("")}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-pogi-dark">
+                <X size={14} />
+              </button>
+            )}
+          </div>
+          <button type="submit"
+            className="rounded-full bg-pogi-yellow text-pogi-dark px-5 py-2 text-sm font-bold uppercase tracking-wider hover:brightness-95">
+            Rechercher
+          </button>
+          {active && (
+            <button type="button" onClick={clearAll}
+              className="text-sm text-gray-600 hover:text-pogi-dark underline">
+              Réinitialiser
+            </button>
+          )}
+        </form>
+      </div>
+    </section>
+  );
+}
+
+/* -------- Filtered grid -------- */
+
+function usePublishedArticles() {
+  const [items, setItems] = useState<ArticleLite[] | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    const load = () => supabase.from("articles")
+      .select("id,title,slug,excerpt,image_url,category")
+      .eq("published", true).order("published_at", { ascending: false })
+      .then(({ data }) => { if (!cancelled) setItems((data ?? []) as any); });
+    load();
+    const ch = supabase.channel("articles-live")
       .on("postgres_changes", { event: "*", schema: "public", table: "articles" }, load)
       .subscribe();
-    return () => { cancelled = true; window.removeEventListener("focus", onFocus); supabase.removeChannel(ch); };
+    return () => { cancelled = true; supabase.removeChannel(ch); };
   }, []);
-  if (items.length === 0) return null;
+  return items;
+}
 
+function FilteredArticles({ cat, q }: { cat: string; q: string }) {
+  const items = usePublishedArticles();
+  const filtered = useMemo(() => {
+    if (!items) return null;
+    const needle = q.trim().toLowerCase();
+    return items.filter((a) => {
+      if (cat && (a.category ?? "") !== cat) return false;
+      if (needle) {
+        const hay = `${a.title} ${a.excerpt ?? ""} ${a.category ?? ""}`.toLowerCase();
+        if (!hay.includes(needle)) return false;
+      }
+      return true;
+    });
+  }, [items, cat, q]);
+
+  return (
+    <section className="section-pad">
+      <div className="mx-auto max-w-[1400px] px-6">
+        <h2 className="font-display text-[32px] text-pogi-dark uppercase mb-5">
+          {cat ? cat : "Résultats"}
+          {q && <span className="text-gray-500 text-lg normal-case font-sans ml-2">— "{q}"</span>}
+        </h2>
+
+        {filtered === null && <p className="text-gray-500">Chargement…</p>}
+        {filtered && filtered.length === 0 && (
+          <div className="bg-white rounded-xl border border-black/5 p-10 text-center text-gray-500">
+            Aucun article ne correspond.
+          </div>
+        )}
+        {filtered && filtered.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            {filtered.map((a) => <div key={a.id} className="w-full"><ArticleCard a={a} /></div>)}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/* -------- Default rows -------- */
+
+function PublishedArticlesRow() {
+  const items = usePublishedArticles();
+  if (!items || items.length === 0) return null;
+  const top = items.slice(0, 12);
   return (
     <section className="section-pad bg-pogi-light">
       <div className="mx-auto max-w-[1400px] px-6">
         <h2 className="font-display text-[32px] text-pogi-dark uppercase mb-5">Derniers publiés</h2>
         <HScroll dark={false}>
-          {items.map((a) => <ArticleCard key={a.id} a={a} />)}
+          {top.map((a) => <ArticleCard key={a.id} a={a} />)}
         </HScroll>
       </div>
     </section>
@@ -163,39 +357,22 @@ function PublishedArticlesRow() {
 }
 
 function ArticlesByCategory() {
-  const [cats, setCats] = useState<{ id: string; name: string; sort_order: number }[]>([]);
-  const [byCat, setByCat] = useState<Record<string, any[]>>({});
+  const cats = useCategories();
+  const items = usePublishedArticles();
 
-  useEffect(() => {
-    let cancelled = false;
-    const load = async () => {
-      const [c, a] = await Promise.all([
-        supabase.from("categories").select("id,name,sort_order").order("sort_order"),
-        supabase.from("articles").select("id,title,slug,excerpt,image_url,category")
-          .eq("published", true).order("published_at", { ascending: false }),
-      ]);
-      if (cancelled) return;
-      const grouped: Record<string, any[]> = {};
-      (a.data ?? []).forEach((art: any) => {
-        const key = art.category || "Autres";
-        (grouped[key] ??= []).push(art);
-      });
-      setCats((c.data ?? []) as any);
-      setByCat(grouped);
-    };
-    load();
-    const ch = supabase.channel("articles-by-cat")
-      .on("postgres_changes", { event: "*", schema: "public", table: "articles" }, load)
-      .on("postgres_changes", { event: "*", schema: "public", table: "categories" }, load)
-      .subscribe();
-    return () => { cancelled = true; supabase.removeChannel(ch); };
-  }, []);
+  const byCat = useMemo(() => {
+    const g: Record<string, ArticleLite[]> = {};
+    (items ?? []).forEach((a) => {
+      const k = a.category || "Autres";
+      (g[k] ??= []).push(a);
+    });
+    return g;
+  }, [items]);
 
   const orderedNames = [
     ...cats.map((c) => c.name).filter((n) => (byCat[n] ?? []).length > 0),
     ...Object.keys(byCat).filter((n) => !cats.some((c) => c.name === n)),
   ];
-
   if (orderedNames.length === 0) return null;
 
   return (
@@ -213,4 +390,3 @@ function ArticlesByCategory() {
     </>
   );
 }
-
