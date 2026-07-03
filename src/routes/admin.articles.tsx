@@ -357,3 +357,77 @@ function Toggle({ label, checked, onChange }: { label: string; checked: boolean;
     </label>
   );
 }
+
+function CategoryPicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [cats, setCats] = useState<{ id: string; name: string }[]>([]);
+  const [adding, setAdding] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  async function load() {
+    const { data } = await supabase.from("categories").select("id,name").order("sort_order");
+    setCats((data ?? []) as any);
+  }
+  useEffect(() => { load(); }, []);
+
+  async function addCat() {
+    const name = newName.trim();
+    if (!name) return;
+    setBusy(true); setErr(null);
+    const slug = slugify(name);
+    const { error } = await supabase.from("categories").insert({ name, slug, sort_order: (cats.length + 1) * 10 });
+    setBusy(false);
+    if (error) { setErr(error.message); return; }
+    setNewName(""); setAdding(false);
+    await load();
+    onChange(name);
+  }
+
+  async function removeCat(name: string) {
+    if (!confirm(`Supprimer la catégorie "${name}" ?`)) return;
+    const { error } = await supabase.from("categories").delete().eq("name", name);
+    if (error) { setErr(error.message); return; }
+    if (value === name) onChange("");
+    load();
+  }
+
+  return (
+    <div>
+      <div className="flex gap-2">
+        <select className="inp flex-1" value={value} onChange={(e) => onChange(e.target.value)}>
+          <option value="">— Aucune —</option>
+          {cats.map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}
+        </select>
+        <button type="button" onClick={() => setAdding((s) => !s)}
+          className="px-3 rounded-md bg-white/10 text-sm hover:bg-white/20">
+          {adding ? "Fermer" : "Gérer"}
+        </button>
+      </div>
+      {adding && (
+        <div className="mt-3 p-3 rounded-lg bg-white/5 border border-white/10">
+          <div className="flex gap-2 mb-3">
+            <input className="inp flex-1" placeholder="Nouvelle catégorie" value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCat(); } }} />
+            <button type="button" disabled={busy} onClick={addCat}
+              className="px-3 rounded-md bg-pogi-yellow text-pogi-dark font-bold text-sm disabled:opacity-60">
+              Ajouter
+            </button>
+          </div>
+          {err && <p className="text-red-300 text-xs mb-2">{err}</p>}
+          <ul className="space-y-1 max-h-40 overflow-auto">
+            {cats.map((c) => (
+              <li key={c.id} className="flex items-center justify-between text-sm px-2 py-1 rounded hover:bg-white/5">
+                <span>{c.name}</span>
+                <button type="button" onClick={() => removeCat(c.name)} className="text-red-300 hover:text-red-200 text-xs">Supprimer</button>
+              </li>
+            ))}
+            {cats.length === 0 && <li className="text-white/40 text-sm">Aucune catégorie.</li>}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
