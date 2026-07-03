@@ -74,6 +74,7 @@ function AdminLayout() {
         <aside className="space-y-1">
           <NavItem to="/admin" icon={<LayoutDashboard size={18} />} label="Tableau de bord" exact />
           <NavItem to="/admin/articles" icon={<FileText size={18} />} label="Articles" />
+          <NavItem to="/admin/categories" icon={<Tag size={18} />} label="Catégories" />
           <NavItem to="/admin/videos" icon={<Video size={18} />} label="Vidéos" />
           <NavItem to="/admin/notion" icon={<Database size={18} />} label="Notion" />
         </aside>
