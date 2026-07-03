@@ -210,11 +210,11 @@ function ArticlesFilterBar() {
   useEffect(() => { setText(q); }, [q]);
 
   function setCat(next: string) {
-    navigate({ search: (prev) => ({ ...prev, cat: next }) });
+    navigate({ search: (prev: { cat: string; q: string }) => ({ ...prev, cat: next }) });
   }
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    navigate({ search: (prev) => ({ ...prev, q: text.trim() }) });
+    navigate({ search: (prev: { cat: string; q: string }) => ({ ...prev, q: text.trim() }) });
   }
   function clearAll() {
     setText("");
