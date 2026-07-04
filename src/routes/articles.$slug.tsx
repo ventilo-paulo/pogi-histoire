@@ -105,7 +105,8 @@ function ArticleBySlug() {
 
         <div
           className="mx-auto max-w-[820px] px-6 py-10 prose prose-lg max-w-none prose-headings:font-display prose-headings:uppercase prose-img:rounded-lg"
-          dangerouslySetInnerHTML={{ __html: article.content ?? "" }}
+          dangerouslySetInnerHTML={{ __html: safeHtml }}
+
         />
       </article>
       <Footer />
