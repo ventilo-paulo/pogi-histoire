@@ -1,8 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import DOMPurify from "isomorphic-dompurify";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
+
 
 export const Route = createFileRoute("/articles/$slug")({
   component: ArticleBySlug,
@@ -56,6 +58,15 @@ function ArticleBySlug() {
   if (article === null) throw notFound();
 
   const dt = article.published_at ? new Date(article.published_at) : null;
+  const safeHtml = useMemo(
+    () =>
+      DOMPurify.sanitize(article.content ?? "", {
+        ADD_TAGS: ["iframe"],
+        ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "src", "target", "rel"],
+      }),
+    [article.content],
+  );
+
 
   return (
     <div className="min-h-screen bg-pogi-light text-pogi-dark">
@@ -94,7 +105,8 @@ function ArticleBySlug() {
 
         <div
           className="mx-auto max-w-[820px] px-6 py-10 prose prose-lg max-w-none prose-headings:font-display prose-headings:uppercase prose-img:rounded-lg"
-          dangerouslySetInnerHTML={{ __html: article.content ?? "" }}
+          dangerouslySetInnerHTML={{ __html: safeHtml }}
+
         />
       </article>
       <Footer />
