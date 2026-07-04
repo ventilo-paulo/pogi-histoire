@@ -1,8 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import DOMPurify from "isomorphic-dompurify";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
+
 
 export const Route = createFileRoute("/articles/$slug")({
   component: ArticleBySlug,
