@@ -65,9 +65,16 @@ export default function RichTextEditor({ value, onChange, minHeight = 380 }: Pro
   function handleVideo() {
     const url = prompt("URL d'intégration vidéo (YouTube embed, mp4…) :", "https://");
     if (!url) return;
-    const html = `<div class="my-3"><iframe src="${url}" class="w-full aspect-video rounded" frameborder="0" allowfullscreen></iframe></div>`;
+    let parsed: URL;
+    try { parsed = new URL(url); } catch { alert("URL invalide."); return; }
+    if (parsed.protocol !== "https:") { alert("Seules les URLs https:// sont autorisées."); return; }
+    const safe = parsed.toString()
+      .replace(/&/g, "&amp;").replace(/"/g, "&quot;")
+      .replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const html = `<div class="my-3"><iframe src="${safe}" class="w-full aspect-video rounded" frameborder="0" allowfullscreen></iframe></div>`;
     exec("insertHTML", html);
   }
+
   function handleReadMore() {
     exec("insertHTML", '<hr data-readmore="true" class="my-4 border-pogi-yellow" /><p><em>Lire la suite…</em></p>');
   }
