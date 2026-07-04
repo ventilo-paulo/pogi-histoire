@@ -58,6 +58,15 @@ function ArticleBySlug() {
   if (article === null) throw notFound();
 
   const dt = article.published_at ? new Date(article.published_at) : null;
+  const safeHtml = useMemo(
+    () =>
+      DOMPurify.sanitize(article.content ?? "", {
+        ADD_TAGS: ["iframe"],
+        ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "src", "target", "rel"],
+      }),
+    [article.content],
+  );
+
 
   return (
     <div className="min-h-screen bg-pogi-light text-pogi-dark">
