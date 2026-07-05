@@ -13,8 +13,7 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  vite: {
-    plugins: [mcpPlugin()],
-  },
+  plugins: [mcpPlugin()],
 });
+
 
