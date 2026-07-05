@@ -5,6 +5,7 @@ import { Footer } from "@/components/Footer";
 import { HScroll } from "@/components/HScroll";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowRight, Loader2, Search, X } from "lucide-react";
+import { absUrl } from "@/lib/site";
 
 import heroRenaissance from "@/assets/hero-renaissance.jpg";
 import pVersailles from "@/assets/place-versailles.jpg";
@@ -25,7 +26,8 @@ export const Route = createFileRoute("/articles")({
       { name: "description", content: "Le Roi et le Génie : les piliers de la Renaissance. Articles d'histoire approfondis." },
       { property: "og:title", content: "Articles — POGI Histoire" },
       { property: "og:description", content: "Articles d'histoire, récits et accompagnements de visite." },
-      { property: "og:image", content: heroRenaissance },
+      { property: "og:image", content: absUrl(heroRenaissance) },
+      { name: "twitter:image", content: absUrl(heroRenaissance) },
     ],
   }),
   validateSearch: (s: Record<string, unknown>) => ({
@@ -42,6 +44,7 @@ const places = [
   { img: pGiverny, label: "Giverny" },
   { img: pCitadelle, label: "Citadelle" },
 ];
+
 
 function ArticlesPage() {
   const { cat, q } = Route.useSearch();
