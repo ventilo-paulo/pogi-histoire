@@ -115,9 +115,11 @@ function ArticlesPage() {
           </p>
           <HScroll dark={false}>
             {places.map((p) => (
-              <article
+              <Link
+                to="/collections"
                 key={p.label}
-                className="relative shrink-0 w-[160px] h-[240px] rounded-[16px] overflow-hidden card-hover cursor-pointer"
+                aria-label={`Collections liées à ${p.label}`}
+                className="relative shrink-0 w-[160px] h-[240px] rounded-[16px] overflow-hidden card-hover cursor-pointer block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
               >
                 <img src={p.img} alt={p.label} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-transparent" />
@@ -127,8 +129,9 @@ function ArticlesPage() {
                 >
                   {p.label}
                 </span>
-              </article>
+              </Link>
             ))}
+
           </HScroll>
         </div>
       </section>
