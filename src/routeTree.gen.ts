@@ -17,7 +17,6 @@ import { Route as ArticlesRouteImport } from './routes/articles'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as ArticlesLeRoiEtLeGenieRouteImport } from './routes/articles.le-roi-et-le-genie'
 import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
 import { Route as AdminVideosRouteImport } from './routes/admin.videos'
 import { Route as AdminNotionRouteImport } from './routes/admin.notion'
@@ -67,11 +66,6 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
-} as any)
-const ArticlesLeRoiEtLeGenieRoute = ArticlesLeRoiEtLeGenieRouteImport.update({
-  id: '/le-roi-et-le-genie',
-  path: '/le-roi-et-le-genie',
-  getParentRoute: () => ArticlesRoute,
 } as any)
 const ArticlesSlugRoute = ArticlesSlugRouteImport.update({
   id: '/$slug',
@@ -138,7 +132,6 @@ export interface FileRoutesByFullPath {
   '/admin/notion': typeof AdminNotionRoute
   '/admin/videos': typeof AdminVideosRoute
   '/articles/$slug': typeof ArticlesSlugRoute
-  '/articles/le-roi-et-le-genie': typeof ArticlesLeRoiEtLeGenieRoute
   '/admin/': typeof AdminIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/hooks/notion-sync': typeof ApiPublicHooksNotionSyncRoute
@@ -157,7 +150,6 @@ export interface FileRoutesByTo {
   '/admin/notion': typeof AdminNotionRoute
   '/admin/videos': typeof AdminVideosRoute
   '/articles/$slug': typeof ArticlesSlugRoute
-  '/articles/le-roi-et-le-genie': typeof ArticlesLeRoiEtLeGenieRoute
   '/admin': typeof AdminIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/hooks/notion-sync': typeof ApiPublicHooksNotionSyncRoute
@@ -178,7 +170,6 @@ export interface FileRoutesById {
   '/admin/notion': typeof AdminNotionRoute
   '/admin/videos': typeof AdminVideosRoute
   '/articles/$slug': typeof ArticlesSlugRoute
-  '/articles/le-roi-et-le-genie': typeof ArticlesLeRoiEtLeGenieRoute
   '/admin/': typeof AdminIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/hooks/notion-sync': typeof ApiPublicHooksNotionSyncRoute
@@ -200,7 +191,6 @@ export interface FileRouteTypes {
     | '/admin/notion'
     | '/admin/videos'
     | '/articles/$slug'
-    | '/articles/le-roi-et-le-genie'
     | '/admin/'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/hooks/notion-sync'
@@ -219,7 +209,6 @@ export interface FileRouteTypes {
     | '/admin/notion'
     | '/admin/videos'
     | '/articles/$slug'
-    | '/articles/le-roi-et-le-genie'
     | '/admin'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/hooks/notion-sync'
@@ -239,7 +228,6 @@ export interface FileRouteTypes {
     | '/admin/notion'
     | '/admin/videos'
     | '/articles/$slug'
-    | '/articles/le-roi-et-le-genie'
     | '/admin/'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/hooks/notion-sync'
@@ -316,13 +304,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
-    }
-    '/articles/le-roi-et-le-genie': {
-      id: '/articles/le-roi-et-le-genie'
-      path: '/le-roi-et-le-genie'
-      fullPath: '/articles/le-roi-et-le-genie'
-      preLoaderRoute: typeof ArticlesLeRoiEtLeGenieRouteImport
-      parentRoute: typeof ArticlesRoute
     }
     '/articles/$slug': {
       id: '/articles/$slug'
@@ -410,12 +391,10 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface ArticlesRouteChildren {
   ArticlesSlugRoute: typeof ArticlesSlugRoute
-  ArticlesLeRoiEtLeGenieRoute: typeof ArticlesLeRoiEtLeGenieRoute
 }
 
 const ArticlesRouteChildren: ArticlesRouteChildren = {
   ArticlesSlugRoute: ArticlesSlugRoute,
-  ArticlesLeRoiEtLeGenieRoute: ArticlesLeRoiEtLeGenieRoute,
 }
 
 const ArticlesRouteWithChildren = ArticlesRoute._addFileChildren(
