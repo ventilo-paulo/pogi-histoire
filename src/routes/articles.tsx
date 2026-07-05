@@ -5,6 +5,7 @@ import { Footer } from "@/components/Footer";
 import { HScroll } from "@/components/HScroll";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowRight, Loader2, Search, X } from "lucide-react";
+import { absUrl } from "@/lib/site";
 
 import heroRenaissance from "@/assets/hero-renaissance.jpg";
 import pVersailles from "@/assets/place-versailles.jpg";
@@ -25,7 +26,8 @@ export const Route = createFileRoute("/articles")({
       { name: "description", content: "Le Roi et le Génie : les piliers de la Renaissance. Articles d'histoire approfondis." },
       { property: "og:title", content: "Articles — POGI Histoire" },
       { property: "og:description", content: "Articles d'histoire, récits et accompagnements de visite." },
-      { property: "og:image", content: heroRenaissance },
+      { property: "og:image", content: absUrl(heroRenaissance) },
+      { name: "twitter:image", content: absUrl(heroRenaissance) },
     ],
   }),
   validateSearch: (s: Record<string, unknown>) => ({
@@ -42,6 +44,7 @@ const places = [
   { img: pGiverny, label: "Giverny" },
   { img: pCitadelle, label: "Citadelle" },
 ];
+
 
 function ArticlesPage() {
   const { cat, q } = Route.useSearch();
@@ -112,9 +115,11 @@ function ArticlesPage() {
           </p>
           <HScroll dark={false}>
             {places.map((p) => (
-              <article
+              <Link
+                to="/collections"
                 key={p.label}
-                className="relative shrink-0 w-[160px] h-[240px] rounded-[16px] overflow-hidden card-hover cursor-pointer"
+                aria-label={`Collections liées à ${p.label}`}
+                className="relative shrink-0 w-[160px] h-[240px] rounded-[16px] overflow-hidden card-hover cursor-pointer block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
               >
                 <img src={p.img} alt={p.label} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-transparent" />
@@ -124,8 +129,9 @@ function ArticlesPage() {
                 >
                   {p.label}
                 </span>
-              </article>
+              </Link>
             ))}
+
           </HScroll>
         </div>
       </section>
