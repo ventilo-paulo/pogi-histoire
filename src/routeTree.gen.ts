@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VideosRouteImport } from './routes/videos'
+import { Route as McpRouteImport } from './routes/mcp'
 import { Route as CollectionsRouteImport } from './routes/collections'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ArticlesRouteImport } from './routes/articles'
@@ -22,11 +23,19 @@ import { Route as AdminVideosRouteImport } from './routes/admin.videos'
 import { Route as AdminNotionRouteImport } from './routes/admin.notion'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 import { Route as AdminArticlesRouteImport } from './routes/admin.articles'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
+import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as ApiPublicHooksNotionSyncRouteImport } from './routes/api/public/hooks/notion-sync'
 
 const VideosRoute = VideosRouteImport.update({
   id: '/videos',
   path: '/videos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CollectionsRoute = CollectionsRouteImport.update({
@@ -89,6 +98,24 @@ const AdminArticlesRoute = AdminArticlesRouteImport.update({
   path: '/articles',
   getParentRoute: () => AdminRoute,
 } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotmcpChar93InvokeToolToolRoute =
+  Char91DotmcpChar93InvokeToolToolRouteImport.update({
+    id: '/.mcp/invoke-tool/$tool',
+    path: '/.mcp/invoke-tool/$tool',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksNotionSyncRoute =
   ApiPublicHooksNotionSyncRouteImport.update({
     id: '/api/public/hooks/notion-sync',
@@ -102,7 +129,10 @@ export interface FileRoutesByFullPath {
   '/articles': typeof ArticlesRouteWithChildren
   '/auth': typeof AuthRoute
   '/collections': typeof CollectionsRoute
+  '/mcp': typeof McpRoute
   '/videos': typeof VideosRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/notion': typeof AdminNotionRoute
@@ -110,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles/le-roi-et-le-genie': typeof ArticlesLeRoiEtLeGenieRoute
   '/admin/': typeof AdminIndexRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/hooks/notion-sync': typeof ApiPublicHooksNotionSyncRoute
 }
 export interface FileRoutesByTo {
@@ -117,7 +148,10 @@ export interface FileRoutesByTo {
   '/articles': typeof ArticlesRouteWithChildren
   '/auth': typeof AuthRoute
   '/collections': typeof CollectionsRoute
+  '/mcp': typeof McpRoute
   '/videos': typeof VideosRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/notion': typeof AdminNotionRoute
@@ -125,6 +159,7 @@ export interface FileRoutesByTo {
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles/le-roi-et-le-genie': typeof ArticlesLeRoiEtLeGenieRoute
   '/admin': typeof AdminIndexRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/hooks/notion-sync': typeof ApiPublicHooksNotionSyncRoute
 }
 export interface FileRoutesById {
@@ -134,7 +169,10 @@ export interface FileRoutesById {
   '/articles': typeof ArticlesRouteWithChildren
   '/auth': typeof AuthRoute
   '/collections': typeof CollectionsRoute
+  '/mcp': typeof McpRoute
   '/videos': typeof VideosRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/notion': typeof AdminNotionRoute
@@ -142,6 +180,7 @@ export interface FileRoutesById {
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles/le-roi-et-le-genie': typeof ArticlesLeRoiEtLeGenieRoute
   '/admin/': typeof AdminIndexRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/hooks/notion-sync': typeof ApiPublicHooksNotionSyncRoute
 }
 export interface FileRouteTypes {
@@ -152,7 +191,10 @@ export interface FileRouteTypes {
     | '/articles'
     | '/auth'
     | '/collections'
+    | '/mcp'
     | '/videos'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/admin/articles'
     | '/admin/categories'
     | '/admin/notion'
@@ -160,6 +202,7 @@ export interface FileRouteTypes {
     | '/articles/$slug'
     | '/articles/le-roi-et-le-genie'
     | '/admin/'
+    | '/.mcp/invoke-tool/$tool'
     | '/api/public/hooks/notion-sync'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -167,7 +210,10 @@ export interface FileRouteTypes {
     | '/articles'
     | '/auth'
     | '/collections'
+    | '/mcp'
     | '/videos'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/admin/articles'
     | '/admin/categories'
     | '/admin/notion'
@@ -175,6 +221,7 @@ export interface FileRouteTypes {
     | '/articles/$slug'
     | '/articles/le-roi-et-le-genie'
     | '/admin'
+    | '/.mcp/invoke-tool/$tool'
     | '/api/public/hooks/notion-sync'
   id:
     | '__root__'
@@ -183,7 +230,10 @@ export interface FileRouteTypes {
     | '/articles'
     | '/auth'
     | '/collections'
+    | '/mcp'
     | '/videos'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/admin/articles'
     | '/admin/categories'
     | '/admin/notion'
@@ -191,6 +241,7 @@ export interface FileRouteTypes {
     | '/articles/$slug'
     | '/articles/le-roi-et-le-genie'
     | '/admin/'
+    | '/.mcp/invoke-tool/$tool'
     | '/api/public/hooks/notion-sync'
   fileRoutesById: FileRoutesById
 }
@@ -200,7 +251,11 @@ export interface RootRouteChildren {
   ArticlesRoute: typeof ArticlesRouteWithChildren
   AuthRoute: typeof AuthRoute
   CollectionsRoute: typeof CollectionsRoute
+  McpRoute: typeof McpRoute
   VideosRoute: typeof VideosRoute
+  Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
+  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicHooksNotionSyncRoute: typeof ApiPublicHooksNotionSyncRoute
 }
 
@@ -211,6 +266,13 @@ declare module '@tanstack/react-router' {
       path: '/videos'
       fullPath: '/videos'
       preLoaderRoute: typeof VideosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/collections': {
@@ -297,6 +359,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminArticlesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/list-tools': {
+      id: '/.mcp/list-tools'
+      path: '/.mcp/list-tools'
+      fullPath: '/.mcp/list-tools'
+      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/invoke-tool/$tool': {
+      id: '/.mcp/invoke-tool/$tool'
+      path: '/.mcp/invoke-tool/$tool'
+      fullPath: '/.mcp/invoke-tool/$tool'
+      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/notion-sync': {
       id: '/api/public/hooks/notion-sync'
       path: '/api/public/hooks/notion-sync'
@@ -345,9 +428,24 @@ const rootRouteChildren: RootRouteChildren = {
   ArticlesRoute: ArticlesRouteWithChildren,
   AuthRoute: AuthRoute,
   CollectionsRoute: CollectionsRoute,
+  McpRoute: McpRoute,
   VideosRoute: VideosRoute,
+  Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
+  Char91DotwellKnownChar93OauthProtectedResourceRoute:
+    Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicHooksNotionSyncRoute: ApiPublicHooksNotionSyncRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
