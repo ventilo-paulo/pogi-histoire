@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { HScroll } from "@/components/HScroll";
+import { absUrl } from "@/lib/site";
 
 import heroConcert from "@/assets/hero-concert.jpg";
 import aNapoleon from "@/assets/article-napoleon.jpg";
@@ -23,7 +24,8 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "1991, Monsters of Rock : le jour où l'URSS chuta en musique. Découvrez nos articles et collections." },
       { property: "og:title", content: "POGI Histoire" },
       { property: "og:description", content: "Récits historiques, vidéos et collections." },
-      { property: "og:image", content: heroConcert },
+      { property: "og:image", content: absUrl(heroConcert) },
+      { name: "twitter:image", content: absUrl(heroConcert) },
     ],
   }),
   component: Home,
@@ -39,11 +41,11 @@ const articles = [
 ];
 
 const collections = [
-  { img: cAntiquity, label: "L'Antiquité" },
-  { img: cAmericas, label: "Les Amériques" },
-  { img: cWWII, label: "Seconde Guerre Mondiale" },
-  { img: cIllustres, label: "Les illustres" },
-  { img: cAfrica, label: "L'Afrique" },
+  { img: cAntiquity, label: "L'Antiquité", hash: "antiquite" },
+  { img: cAmericas, label: "Les Amériques", hash: "ameriques" },
+  { img: cWWII, label: "Seconde Guerre Mondiale", hash: "wwii" },
+  { img: cIllustres, label: "Les illustres", hash: "illustres" },
+  { img: cAfrica, label: "L'Afrique", hash: "afrique" },
 ];
 
 function Home() {
@@ -56,7 +58,6 @@ function Home() {
         <img src={heroConcert} alt="Concert" className="absolute inset-0 h-full w-full object-cover" width={1920} height={1280} />
         <div className="absolute inset-0" style={{ background: "rgba(170, 20, 20, 0.55)" }} />
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80" />
-        {/* Cinematic vignette — darkens all 4 edges */}
         <div
           aria-hidden
           className="absolute inset-0 pointer-events-none"
@@ -93,7 +94,7 @@ function Home() {
               </p>
               <p className="mt-3 text-white/90 leading-relaxed">
                 À travers la musique, c'est toute une époque qui se fissure. De la rigidité idéologique de l'URSS aux premiers accords de liberté qui franchissent le Rideau de fer, ce récit retrace la lente décomposition d'un empire vu depuis ses sons, ses interdits et ses résonances…{" "}
-                <a href="#" className="text-pogi-yellow font-bold hover:underline">voir plus</a>
+                <Link to="/videos" className="text-pogi-yellow font-bold hover:underline">voir plus</Link>
               </p>
             </div>
           </div>
@@ -106,10 +107,15 @@ function Home() {
           <h2 className="font-display text-4xl md:text-[36px] uppercase mb-6">Articles à la Une</h2>
           <HScroll>
             {articles.map((a, i) => (
-              <article key={i} className="relative shrink-0 w-[160px] h-[220px] rounded-[16px] overflow-hidden card-hover cursor-pointer">
+              <Link
+                to="/articles"
+                key={i}
+                aria-label={`Voir les articles — ${a.alt}`}
+                className="relative shrink-0 w-[160px] h-[220px] rounded-[16px] overflow-hidden card-hover cursor-pointer block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
+              >
                 <img src={a.img} alt={a.alt} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
                 <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent" />
-              </article>
+              </Link>
             ))}
           </HScroll>
         </div>
@@ -123,8 +129,9 @@ function Home() {
             {collections.map((c) => (
               <Link
                 to="/collections"
+                hash={c.hash}
                 key={c.label}
-                className="relative shrink-0 w-[180px] h-[180px] rounded-[16px] overflow-hidden card-hover"
+                className="relative shrink-0 w-[180px] h-[180px] rounded-[16px] overflow-hidden card-hover block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
               >
                 <img src={c.img} alt={c.label} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/30" />
