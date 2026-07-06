@@ -49,7 +49,11 @@ function Card({
 }
 
 function Heading({ children }: { children: React.ReactNode }) {
-  return <h2 className="font-display text-[32px] text-pogi-dark uppercase mb-5">{children}</h2>;
+  return (
+    <Reveal>
+      <h2 className="font-display text-[32px] text-pogi-dark uppercase mb-5">{children}</h2>
+    </Reveal>
+  );
 }
 
 function Empty({ label }: { label: string }) {
