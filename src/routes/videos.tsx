@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { HScroll } from "@/components/HScroll";
+import { Reveal } from "@/components/Reveal";
+import { Skeleton } from "@/components/Skeleton";
 import { Play, Lock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { absUrl } from "@/lib/site";
