@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { HScroll } from "@/components/HScroll";
+import { Reveal } from "@/components/Reveal";
+import { Skeleton } from "@/components/Skeleton";
 import { Play, Lock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { absUrl } from "@/lib/site";
@@ -53,8 +55,10 @@ function VCard({
 
 function VRow({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="mb-12">
-      <h2 className="font-display text-[36px] text-pogi-dark uppercase mb-5">{title}</h2>
+    <section className="mb-14">
+      <Reveal>
+        <h2 className="font-display text-[36px] text-pogi-dark uppercase mb-5">{title}</h2>
+      </Reveal>
       <HScroll dark={false}>{children}</HScroll>
     </section>
   );
@@ -112,7 +116,7 @@ function VideosPage() {
 }
 
 function PublishedVideosSection() {
-  const [items, setItems] = useState<any[]>([]);
+  const [items, setItems] = useState<any[] | null>(null);
   useEffect(() => {
     let cancelled = false;
     const load = () => supabase.from("videos").select("id,title,subtitle,thumbnail_url,video_url,format,category")
@@ -126,11 +130,26 @@ function PublishedVideosSection() {
       .subscribe();
     return () => { cancelled = true; window.removeEventListener("focus", onFocus); supabase.removeChannel(ch); };
   }, []);
+
+  if (items === null) {
+    return (
+      <section className="mb-14">
+        <h2 className="font-display text-[36px] text-pogi-dark uppercase mb-5">Nouveautés</h2>
+        <div className="flex gap-4 overflow-hidden">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="shrink-0 w-[350px] aspect-video rounded-[12px]" />
+          ))}
+        </div>
+      </section>
+    );
+  }
   if (items.length === 0) return null;
 
   return (
-    <section className="mb-12">
-      <h2 className="font-display text-[36px] text-pogi-dark uppercase mb-5">Nouveautés</h2>
+    <section className="mb-14">
+      <Reveal>
+        <h2 className="font-display text-[36px] text-pogi-dark uppercase mb-5">Nouveautés</h2>
+      </Reveal>
       <HScroll dark={false}>
         {items.map((v) => (
           <a key={v.id} href={v.video_url} target="_blank" rel="noreferrer"
@@ -147,3 +166,4 @@ function PublishedVideosSection() {
     </section>
   );
 }
+

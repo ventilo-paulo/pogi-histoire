@@ -3,18 +3,24 @@ import { useEffect, useMemo, useState } from "react";
 import DOMPurify from "isomorphic-dompurify";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { Skeleton } from "@/components/Skeleton";
 import { supabase } from "@/integrations/supabase/client";
+
 
 
 export const Route = createFileRoute("/articles/$slug")({
   component: ArticleBySlug,
-  errorComponent: ({ error }) => (
+  errorComponent: ({ error, reset }) => (
     <div className="min-h-screen bg-pogi-light text-pogi-dark">
       <Navbar />
-      <div className="max-w-[820px] mx-auto px-6 py-20 text-center">
-        <h1 className="font-display text-3xl uppercase">Erreur</h1>
-        <p className="text-gray-600 mt-2">{error.message}</p>
-        <Link to="/articles" className="inline-block mt-6 underline">Retour aux articles</Link>
+      <div className="max-w-[820px] mx-auto px-6 py-24 text-center">
+        <p className="text-pogi-yellow uppercase tracking-widest text-xs mb-3">Erreur</p>
+        <h1 className="font-display text-4xl uppercase">Cet article n'a pas pu être chargé</h1>
+        <p className="text-gray-600 mt-3 text-sm">{error.message}</p>
+        <div className="mt-8 flex items-center justify-center gap-3 flex-wrap">
+          <button onClick={reset} className="btn btn-primary">Réessayer</button>
+          <Link to="/articles" className="btn btn-ghost">Retour aux articles</Link>
+        </div>
       </div>
       <Footer />
     </div>
@@ -22,14 +28,17 @@ export const Route = createFileRoute("/articles/$slug")({
   notFoundComponent: () => (
     <div className="min-h-screen bg-pogi-light text-pogi-dark">
       <Navbar />
-      <div className="max-w-[820px] mx-auto px-6 py-20 text-center">
-        <h1 className="font-display text-3xl uppercase">Article introuvable</h1>
-        <Link to="/articles" className="inline-block mt-6 underline">Retour aux articles</Link>
+      <div className="max-w-[820px] mx-auto px-6 py-24 text-center">
+        <p className="text-pogi-yellow uppercase tracking-widest text-xs mb-3">404</p>
+        <h1 className="font-display text-4xl uppercase">Article introuvable</h1>
+        <p className="text-gray-600 mt-3">Il a peut-être été déplacé ou dépublié.</p>
+        <Link to="/articles" className="btn btn-primary mt-8">Retour aux articles</Link>
       </div>
       <Footer />
     </div>
   ),
 });
+
 
 type Article = {
   id: string; title: string; slug: string; excerpt: string | null; content: string;
@@ -46,11 +55,35 @@ function ArticleBySlug() {
       .then(({ data }) => setArticle((data as Article) ?? null));
   }, [slug]);
 
+  const safeHtml = useMemo(
+    () =>
+      article
+        ? DOMPurify.sanitize(article.content ?? "", {
+            ADD_TAGS: ["iframe"],
+            ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "src", "target", "rel"],
+          })
+        : "",
+    [article],
+  );
+
   if (article === undefined) {
     return (
       <div className="min-h-screen bg-pogi-light text-pogi-dark">
         <Navbar />
-        <div className="max-w-[820px] mx-auto px-6 py-20 text-center text-gray-500">Chargement…</div>
+        <div className="relative h-[60vh] min-h-[420px] w-full overflow-hidden">
+          <Skeleton className="absolute inset-0 rounded-none" />
+        </div>
+        <div className="mx-auto max-w-[820px] px-6 py-10 space-y-4">
+          <Skeleton className="h-3 w-24" />
+          <Skeleton className="h-8 w-3/4" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-5/6" />
+          <Skeleton className="h-4 w-11/12" />
+          <Skeleton className="h-4 w-2/3" />
+          <div className="pt-6" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-4/5" />
+        </div>
         <Footer />
       </div>
     );
@@ -58,14 +91,7 @@ function ArticleBySlug() {
   if (article === null) throw notFound();
 
   const dt = article.published_at ? new Date(article.published_at) : null;
-  const safeHtml = useMemo(
-    () =>
-      DOMPurify.sanitize(article.content ?? "", {
-        ADD_TAGS: ["iframe"],
-        ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "src", "target", "rel"],
-      }),
-    [article.content],
-  );
+
 
 
   return (

@@ -96,6 +96,173 @@ html, body {
 }
 
 .section-pad {
-  padding-top: 60px;
-  padding-bottom: 60px;
+  padding-top: 72px;
+  padding-bottom: 72px;
+}
+@media (max-width: 768px) {
+  .section-pad {
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+}
+
+/* ---------- Reveal on scroll ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal-in {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal-in { opacity: 1; transform: none; transition: none; }
+}
+
+/* ---------- Page transition (mount fade) ---------- */
+.page-enter {
+  animation: pogi-page-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes pogi-page-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-enter { animation: none; }
+}
+
+/* ---------- Skeleton shimmer ---------- */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.08);
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: pogi-shimmer 1.4s infinite;
+}
+.bg-pogi-dark .skeleton,
+.bg-pogi-darker .skeleton {
+  background: rgba(255, 255, 255, 0.06);
+}
+.bg-pogi-dark .skeleton::after,
+.bg-pogi-darker .skeleton::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
+}
+@keyframes pogi-shimmer {
+  100% { transform: translateX(100%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after { animation: none; }
+}
+
+/* ---------- Buttons: shared, subtle micro-interactions ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.625rem 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  line-height: 1;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    filter 0.2s ease;
+  cursor: pointer;
+  user-select: none;
+}
+.btn:active { transform: translateY(1px) scale(0.98); }
+.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(245, 200, 0, 0.5);
+}
+.btn-primary {
+  background: #F5C800;
+  color: #1A1A1A;
+}
+.btn-primary:hover { filter: brightness(0.96); box-shadow: 0 6px 18px -6px rgba(245,200,0,0.55); }
+.btn-outline {
+  background: transparent;
+  color: #FFFFFF;
+  border: 2px solid #FFFFFF;
+}
+.btn-outline:hover { background: #FFFFFF; color: #1A1A1A; }
+.btn-ghost {
+  background: transparent;
+  color: #1A1A1A;
+  border: 1px solid rgba(0,0,0,0.12);
+}
+.btn-ghost:hover { border-color: #1A1A1A; background: rgba(0,0,0,0.03); }
+
+/* ---------- Card hover polish ---------- */
+.card-hover {
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -20px rgba(0,0,0,0.55);
+}
+
+/* ---------- Link underline micro-interaction ---------- */
+.link-underline {
+  position: relative;
+  display: inline-block;
+}
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -2px;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.link-underline:hover::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+/* ---------- Empty state ---------- */
+.empty-state {
+  border: 1px dashed rgba(0,0,0,0.15);
+  background: rgba(255,255,255,0.6);
+  border-radius: 16px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  color: #6b7280;
+}
+.bg-pogi-dark .empty-state,
+.bg-pogi-darker .empty-state {
+  border-color: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.03);
+  color: rgba(255,255,255,0.6);
 }

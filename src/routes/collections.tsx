@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { Reveal } from "@/components/Reveal";
 import { absUrl } from "@/lib/site";
 
 import vOradour from "@/assets/video-oradour.jpg";
@@ -48,12 +49,16 @@ function Card({
 }
 
 function Heading({ children }: { children: React.ReactNode }) {
-  return <h2 className="font-display text-[32px] text-pogi-dark uppercase mb-5">{children}</h2>;
+  return (
+    <Reveal>
+      <h2 className="font-display text-[32px] text-pogi-dark uppercase mb-5">{children}</h2>
+    </Reveal>
+  );
 }
 
 function Empty({ label }: { label: string }) {
   return (
-    <div className="rounded-[16px] border border-dashed border-black/15 bg-white/60 p-10 text-center text-gray-500 uppercase tracking-wider text-sm">
+    <div className="empty-state uppercase tracking-wider text-sm">
       {label} — bientôt en ligne
     </div>
   );
