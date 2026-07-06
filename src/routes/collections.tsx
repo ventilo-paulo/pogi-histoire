@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { Reveal } from "@/components/Reveal";
 import { absUrl } from "@/lib/site";
 
 import vOradour from "@/assets/video-oradour.jpg";
