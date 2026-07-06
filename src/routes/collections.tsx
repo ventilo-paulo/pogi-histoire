@@ -58,7 +58,7 @@ function Heading({ children }: { children: React.ReactNode }) {
 
 function Empty({ label }: { label: string }) {
   return (
-    <div className="rounded-[16px] border border-dashed border-black/15 bg-white/60 p-10 text-center text-gray-500 uppercase tracking-wider text-sm">
+    <div className="empty-state uppercase tracking-wider text-sm">
       {label} — bientôt en ligne
     </div>
   );
