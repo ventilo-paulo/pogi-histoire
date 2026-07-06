@@ -55,8 +55,10 @@ function VCard({
 
 function VRow({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="mb-12">
-      <h2 className="font-display text-[36px] text-pogi-dark uppercase mb-5">{title}</h2>
+    <section className="mb-14">
+      <Reveal>
+        <h2 className="font-display text-[36px] text-pogi-dark uppercase mb-5">{title}</h2>
+      </Reveal>
       <HScroll dark={false}>{children}</HScroll>
     </section>
   );
