@@ -3,8 +3,10 @@ import { useEffect, useMemo, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { HScroll } from "@/components/HScroll";
+import { Reveal } from "@/components/Reveal";
+import { ArticleCardSkeleton, ArticleCardSkeletonGrid } from "@/components/Skeleton";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowRight, Loader2, Search, X } from "lucide-react";
+import { ArrowRight, Loader2, Search, SearchX, X } from "lucide-react";
 import { absUrl } from "@/lib/site";
 
 import heroRenaissance from "@/assets/hero-renaissance.jpg";
@@ -86,9 +88,9 @@ function ArticlesPage() {
             <Link
               to="/articles/$slug"
               params={{ slug: "le-roi-et-le-genie" }}
-              className="inline-flex items-center gap-2 rounded-full border-2 border-white text-white px-8 py-2.5 font-bold tracking-wider hover:bg-white hover:text-pogi-dark transition"
+              className="btn btn-outline"
             >
-              LIRE <ArrowRight size={18} />
+              Lire <ArrowRight size={18} />
             </Link>
           </div>
         </div>
@@ -270,8 +272,7 @@ function ArticlesFilterBar() {
               </button>
             )}
           </div>
-          <button type="submit"
-            className="rounded-full bg-pogi-yellow text-pogi-dark px-5 py-2 text-sm font-bold uppercase tracking-wider hover:brightness-95">
+          <button type="submit" className="btn btn-primary">
             Rechercher
           </button>
           {active && (
@@ -323,44 +324,65 @@ function FilteredArticles({ cat, q }: { cat: string; q: string }) {
   return (
     <section className="section-pad">
       <div className="mx-auto max-w-[1400px] px-6">
-        <h2 className="font-display text-[32px] text-pogi-dark uppercase mb-5">
-          {cat ? cat : "Résultats"}
-          {q && <span className="text-gray-500 text-lg normal-case font-sans ml-2">— "{q}"</span>}
-        </h2>
+        <Reveal>
+          <h2 className="font-display text-[32px] text-pogi-dark uppercase mb-5">
+            {cat ? cat : "Résultats"}
+            {q && <span className="text-gray-500 text-lg normal-case font-sans ml-2">— "{q}"</span>}
+          </h2>
+        </Reveal>
 
-        {filtered === null && <p className="text-gray-500">Chargement…</p>}
+        {filtered === null && <ArticleCardSkeletonGrid count={8} />}
         {filtered && filtered.length === 0 && (
-          <div className="bg-white rounded-xl border border-black/5 p-10 text-center text-gray-500">
-            Aucun article ne correspond.
+          <div className="empty-state max-w-xl mx-auto">
+            <SearchX className="mx-auto mb-3 text-gray-400" size={28} />
+            <p className="font-display text-2xl text-pogi-dark uppercase">Aucun résultat</p>
+            <p className="mt-1 text-sm text-gray-500">
+              Essayez un autre mot-clé ou une autre catégorie.
+            </p>
           </div>
         )}
         {filtered && filtered.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-            {filtered.map((a) => <div key={a.id} className="w-full"><ArticleCard a={a} /></div>)}
+            {filtered.map((a, i) => (
+              <Reveal key={a.id} delay={Math.min(i * 40, 240)} className="w-full">
+                <ArticleCard a={a} />
+              </Reveal>
+            ))}
           </div>
         )}
       </div>
     </section>
   );
 }
+
 
 /* -------- Default rows -------- */
 
 function PublishedArticlesRow() {
   const items = usePublishedArticles();
-  if (!items || items.length === 0) return null;
-  const top = items.slice(0, 12);
+  const loading = items === null;
+  if (!loading && items!.length === 0) return null;
+  const top = (items ?? []).slice(0, 12);
   return (
     <section className="section-pad bg-pogi-light">
       <div className="mx-auto max-w-[1400px] px-6">
-        <h2 className="font-display text-[32px] text-pogi-dark uppercase mb-5">Derniers publiés</h2>
-        <HScroll dark={false}>
-          {top.map((a) => <ArticleCard key={a.id} a={a} />)}
-        </HScroll>
+        <Reveal>
+          <h2 className="font-display text-[32px] text-pogi-dark uppercase mb-5">Derniers publiés</h2>
+        </Reveal>
+        {loading ? (
+          <div className="flex gap-4 overflow-hidden">
+            {Array.from({ length: 5 }).map((_, i) => <ArticleCardSkeleton key={i} />)}
+          </div>
+        ) : (
+          <HScroll dark={false}>
+            {top.map((a) => <ArticleCard key={a.id} a={a} />)}
+          </HScroll>
+        )}
       </div>
     </section>
   );
 }
+
 
 function ArticlesByCategory() {
   const cats = useCategories();
@@ -386,7 +408,9 @@ function ArticlesByCategory() {
       {orderedNames.map((name) => (
         <section key={name} className="section-pad">
           <div className="mx-auto max-w-[1400px] px-6">
-            <h2 className="font-display text-[32px] text-pogi-dark uppercase mb-5">{name}</h2>
+            <Reveal>
+              <h2 className="font-display text-[32px] text-pogi-dark uppercase mb-5">{name}</h2>
+            </Reveal>
             <HScroll dark={false}>
               {byCat[name].map((a) => <ArticleCard key={a.id} a={a} />)}
             </HScroll>

@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { HScroll } from "@/components/HScroll";
+import { Reveal } from "@/components/Reveal";
 import { absUrl } from "@/lib/site";
 
 import heroConcert from "@/assets/hero-concert.jpg";
@@ -104,45 +105,54 @@ function Home() {
       {/* ARTICLES À LA UNE */}
       <section className="section-pad bg-pogi-dark">
         <div className="mx-auto max-w-[1400px] px-6">
-          <h2 className="font-display text-4xl md:text-[36px] uppercase mb-6">Articles à la Une</h2>
-          <HScroll>
-            {articles.map((a, i) => (
-              <Link
-                to="/articles"
-                key={i}
-                aria-label={`Voir les articles — ${a.alt}`}
-                className="relative shrink-0 w-[160px] h-[220px] rounded-[16px] overflow-hidden card-hover cursor-pointer block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
-              >
-                <img src={a.img} alt={a.alt} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
-                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent" />
-              </Link>
-            ))}
-          </HScroll>
+          <Reveal>
+            <h2 className="font-display text-4xl md:text-[36px] uppercase mb-6">Articles à la Une</h2>
+          </Reveal>
+          <Reveal>
+            <HScroll>
+              {articles.map((a, i) => (
+                <Link
+                  to="/articles"
+                  key={i}
+                  aria-label={`Voir les articles — ${a.alt}`}
+                  className="relative shrink-0 w-[160px] h-[220px] rounded-[16px] overflow-hidden card-hover cursor-pointer block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
+                >
+                  <img src={a.img} alt={a.alt} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+                  <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent" />
+                </Link>
+              ))}
+            </HScroll>
+          </Reveal>
         </div>
       </section>
 
       {/* COLLECTIONS */}
-      <section className="pb-16 bg-pogi-dark">
+      <section className="section-pad pt-0 bg-pogi-dark">
         <div className="mx-auto max-w-[1400px] px-6">
-          <h2 className="font-display text-4xl md:text-[36px] uppercase mb-6">Collections</h2>
-          <HScroll>
-            {collections.map((c) => (
-              <Link
-                to="/collections"
-                hash={c.hash}
-                key={c.label}
-                className="relative shrink-0 w-[180px] h-[180px] rounded-[16px] overflow-hidden card-hover block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
-              >
-                <img src={c.img} alt={c.label} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/30" />
-                <span className="absolute inset-0 grid place-items-center text-center text-white font-bold text-base px-3">
-                  {c.label}
-                </span>
-              </Link>
-            ))}
-          </HScroll>
+          <Reveal>
+            <h2 className="font-display text-4xl md:text-[36px] uppercase mb-6">Collections</h2>
+          </Reveal>
+          <Reveal>
+            <HScroll>
+              {collections.map((c) => (
+                <Link
+                  to="/collections"
+                  hash={c.hash}
+                  key={c.label}
+                  className="relative shrink-0 w-[180px] h-[180px] rounded-[16px] overflow-hidden card-hover block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
+                >
+                  <img src={c.img} alt={c.label} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/30" />
+                  <span className="absolute inset-0 grid place-items-center text-center text-white font-bold text-base px-3">
+                    {c.label}
+                  </span>
+                </Link>
+              ))}
+            </HScroll>
+          </Reveal>
         </div>
       </section>
+
 
 
       <Footer />
