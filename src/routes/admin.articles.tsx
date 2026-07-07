@@ -3,9 +3,11 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import RichTextEditor from "@/components/RichTextEditor";
 import ImageUpload from "@/components/ImageUpload";
-import { Eye, EyeOff, Pencil, Trash2, Plus, X, Info, Search, Image as ImageIcon, FileText, Save } from "lucide-react";
+import { Eye, EyeOff, Pencil, Trash2, Plus, X, Info, Search, Image as ImageIcon, FileText, Save, Tags, BookOpen } from "lucide-react";
 
 export const Route = createFileRoute("/admin/articles")({ component: AdminArticles });
+
+type Source = { label: string; url?: string };
 
 type Article = {
   id: string;
@@ -24,11 +26,14 @@ type Article = {
   meta_description: string | null;
   indexable: boolean;
   related_article_ids: string[] | null;
+  tags: string[] | null;
+  sources: Source[] | null;
 };
 
 const empty: Partial<Article> = {
   title: "", slug: "", excerpt: "", content: "", category: "", image_url: "", author: "",
   published: false, list_text: "", meta_title: "", meta_description: "", indexable: true, related_article_ids: [],
+  tags: [], sources: [],
 };
 
 const TABS = [
@@ -36,6 +41,7 @@ const TABS = [
   { id: "seo", label: "SEO", icon: Search },
   { id: "image", label: "Image", icon: ImageIcon },
   { id: "content", label: "Contenu", icon: FileText },
+  { id: "meta", label: "Tags & Sources", icon: Tags },
 ] as const;
 type TabId = typeof TABS[number]["id"];
 
