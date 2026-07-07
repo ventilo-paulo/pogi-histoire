@@ -3,9 +3,11 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import RichTextEditor from "@/components/RichTextEditor";
 import ImageUpload from "@/components/ImageUpload";
-import { Eye, EyeOff, Pencil, Trash2, Plus, X, Info, Search, Image as ImageIcon, FileText, Save } from "lucide-react";
+import { Eye, EyeOff, Pencil, Trash2, Plus, X, Info, Search, Image as ImageIcon, FileText, Save, Tags, BookOpen } from "lucide-react";
 
 export const Route = createFileRoute("/admin/articles")({ component: AdminArticles });
+
+type Source = { label: string; url?: string };
 
 type Article = {
   id: string;
@@ -24,11 +26,14 @@ type Article = {
   meta_description: string | null;
   indexable: boolean;
   related_article_ids: string[] | null;
+  tags: string[] | null;
+  sources: Source[] | null;
 };
 
 const empty: Partial<Article> = {
   title: "", slug: "", excerpt: "", content: "", category: "", image_url: "", author: "",
   published: false, list_text: "", meta_title: "", meta_description: "", indexable: true, related_article_ids: [],
+  tags: [], sources: [],
 };
 
 const TABS = [
@@ -36,6 +41,7 @@ const TABS = [
   { id: "seo", label: "SEO", icon: Search },
   { id: "image", label: "Image", icon: ImageIcon },
   { id: "content", label: "Contenu", icon: FileText },
+  { id: "meta", label: "Tags & Sources", icon: Tags },
 ] as const;
 type TabId = typeof TABS[number]["id"];
 
@@ -139,6 +145,12 @@ function ArticleEditor({
       const publishedAt = a.published
         ? new Date(`${pubDate}T${pubTime || "10:00"}:00`).toISOString()
         : null;
+      const cleanTags = (a.tags ?? [])
+        .map((t) => t.trim())
+        .filter((t, i, arr) => t.length > 0 && arr.indexOf(t) === i);
+      const cleanSources = (a.sources ?? [])
+        .map((s) => ({ label: (s.label ?? "").trim(), url: (s.url ?? "").trim() || undefined }))
+        .filter((s) => s.label.length > 0);
       const payload: any = {
         title,
         slug,
@@ -152,6 +164,8 @@ function ArticleEditor({
         meta_description: a.meta_description || null,
         indexable: a.indexable ?? true,
         related_article_ids: a.related_article_ids ?? [],
+        tags: cleanTags,
+        sources: cleanSources,
         published: !!a.published,
         published_at: publishedAt,
       };
@@ -181,6 +195,7 @@ function ArticleEditor({
           {tab === "seo" && <SeoTab a={a} setA={setA} />}
           {tab === "image" && <ImageTab a={a} setA={setA} />}
           {tab === "content" && <ContentTab a={a} setA={setA} />}
+          {tab === "meta" && <MetaTab a={a} setA={setA} />}
         </div>
 
         {err && <div className="px-6 py-2 text-sm text-red-300 bg-red-500/10 border-t border-red-500/30">{err}</div>}
@@ -342,6 +357,129 @@ function ContentTab({ a, setA }: { a: Partial<Article>; setA: (v: Partial<Articl
       <h3 className="section-title">Contenu WYSIWYG</h3>
       <RichTextEditor value={a.content ?? ""} onChange={(html) => setA({ ...a, content: html })} />
       <p className="text-xs text-white/40 mt-2">Utilisez la barre d'outils pour mettre en forme le texte : titres, gras, italique, listes, citations, liens, images, vidéos…</p>
+    </div>
+  );
+}
+
+function MetaTab({ a, setA }: { a: Partial<Article>; setA: (v: Partial<Article>) => void }) {
+  const tags = a.tags ?? [];
+  const sources = a.sources ?? [];
+  const [tagInput, setTagInput] = useState("");
+
+  function addTag(raw: string) {
+    const parts = raw
+      .split(",")
+      .map((t) => t.trim())
+      .filter((t) => t.length > 0 && !tags.includes(t));
+    if (parts.length === 0) return;
+    setA({ ...a, tags: [...tags, ...parts] });
+    setTagInput("");
+  }
+  function removeTag(t: string) {
+    setA({ ...a, tags: tags.filter((x) => x !== t) });
+  }
+  function addSource() {
+    setA({ ...a, sources: [...sources, { label: "", url: "" }] });
+  }
+  function updateSource(i: number, patch: Partial<Source>) {
+    const next = sources.map((s, j) => (i === j ? { ...s, ...patch } : s));
+    setA({ ...a, sources: next });
+  }
+  function removeSource(i: number) {
+    setA({ ...a, sources: sources.filter((_, j) => j !== i) });
+  }
+
+  return (
+    <div>
+      <div className="section-card">
+        <h3 className="section-title flex items-center gap-2"><Tags size={18} /> Tags</h3>
+        <p className="text-white/50 text-xs mb-3">
+          Sert à trouver les articles similaires en fin d'article. Séparez par des virgules ou appuyez sur Entrée.
+        </p>
+        <div className="flex gap-2">
+          <input
+            className="inp flex-1"
+            value={tagInput}
+            onChange={(e) => setTagInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === ",") {
+                e.preventDefault();
+                addTag(tagInput);
+              } else if (e.key === "Backspace" && tagInput === "" && tags.length > 0) {
+                removeTag(tags[tags.length - 1]);
+              }
+            }}
+            placeholder="ex: rome antique, jules cesar, gaule"
+          />
+          <button
+            type="button"
+            onClick={() => addTag(tagInput)}
+            className="px-3 rounded-md bg-white/10 text-sm hover:bg-white/20"
+          >
+            Ajouter
+          </button>
+        </div>
+        {tags.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {tags.map((t) => (
+              <span
+                key={t}
+                className="inline-flex items-center gap-1 text-xs uppercase tracking-wider bg-pogi-yellow/20 text-pogi-yellow border border-pogi-yellow/30 px-2 py-1 rounded-full"
+              >
+                {t}
+                <button
+                  type="button"
+                  onClick={() => removeTag(t)}
+                  className="hover:text-white ml-0.5"
+                  aria-label={`Retirer ${t}`}
+                >
+                  <X size={12} />
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="section-card">
+        <h3 className="section-title flex items-center gap-2"><BookOpen size={18} /> Sources</h3>
+        <p className="text-white/50 text-xs mb-3">
+          Affichées en fin d'article dans un bloc « Sources ». Le lien est facultatif.
+        </p>
+        <div className="space-y-2">
+          {sources.map((s, i) => (
+            <div key={i} className="grid grid-cols-[1fr_1fr_auto] gap-2">
+              <input
+                className="inp"
+                placeholder="Titre / référence"
+                value={s.label}
+                onChange={(e) => updateSource(i, { label: e.target.value })}
+              />
+              <input
+                className="inp"
+                placeholder="https://…"
+                value={s.url ?? ""}
+                onChange={(e) => updateSource(i, { url: e.target.value })}
+              />
+              <button
+                type="button"
+                onClick={() => removeSource(i)}
+                className="px-3 rounded-md bg-white/10 hover:bg-red-500/30 text-red-300"
+                aria-label="Supprimer la source"
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addSource}
+            className="flex items-center gap-2 px-3 py-2 rounded-md bg-white/10 hover:bg-white/20 text-sm"
+          >
+            <Plus size={14} /> Ajouter une source
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
