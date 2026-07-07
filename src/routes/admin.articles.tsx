@@ -145,6 +145,12 @@ function ArticleEditor({
       const publishedAt = a.published
         ? new Date(`${pubDate}T${pubTime || "10:00"}:00`).toISOString()
         : null;
+      const cleanTags = (a.tags ?? [])
+        .map((t) => t.trim())
+        .filter((t, i, arr) => t.length > 0 && arr.indexOf(t) === i);
+      const cleanSources = (a.sources ?? [])
+        .map((s) => ({ label: (s.label ?? "").trim(), url: (s.url ?? "").trim() || undefined }))
+        .filter((s) => s.label.length > 0);
       const payload: any = {
         title,
         slug,
@@ -158,6 +164,8 @@ function ArticleEditor({
         meta_description: a.meta_description || null,
         indexable: a.indexable ?? true,
         related_article_ids: a.related_article_ids ?? [],
+        tags: cleanTags,
+        sources: cleanSources,
         published: !!a.published,
         published_at: publishedAt,
       };
@@ -187,6 +195,7 @@ function ArticleEditor({
           {tab === "seo" && <SeoTab a={a} setA={setA} />}
           {tab === "image" && <ImageTab a={a} setA={setA} />}
           {tab === "content" && <ContentTab a={a} setA={setA} />}
+          {tab === "meta" && <MetaTab a={a} setA={setA} />}
         </div>
 
         {err && <div className="px-6 py-2 text-sm text-red-300 bg-red-500/10 border-t border-red-500/30">{err}</div>}
