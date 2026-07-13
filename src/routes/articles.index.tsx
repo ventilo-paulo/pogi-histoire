@@ -66,7 +66,7 @@ function ArticlesPage() {
           <span className="pill">Renaissance</span>
         </div>
         <div className="absolute top-6 right-6">
-          <span className="pogi-logo-outline text-3xl">POGI</span>
+          <img src={pogiLogo.url} alt="POGI" className="h-12 w-auto object-contain drop-shadow-lg" />
         </div>
 
         <div className="relative z-10 mx-auto max-w-[1400px] h-full px-6 grid md:grid-cols-[3fr_2fr] gap-8 items-end pb-12">
