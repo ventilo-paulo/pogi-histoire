@@ -107,9 +107,24 @@ function NotionAdmin() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <Stat icon={<Plug size={18} />} label="Connexion" value={hasKey ? "Connectée" : "Non connectée"} good={hasKey} />
-        <Stat icon={<RefreshCw size={18} />} label="Dernière sync" value={last ? new Date(last).toLocaleString("fr-FR") : "Jamais"} />
+        <Stat
+          icon={<RefreshCw size={18} />}
+          label="Dernière sync"
+          value={last ? new Date(last).toLocaleString("fr-FR") : "Jamais"}
+          warn={enabled && (!last || Date.now() - new Date(last).getTime() > 60 * 60 * 1000)}
+        />
         <Stat icon={enabled ? <Play size={18} /> : <Pause size={18} />} label="Sync automatique" value={enabled ? "Activée (15 min)" : "En pause"} good={enabled} />
       </div>
+
+      {enabled && (!last || Date.now() - new Date(last).getTime() > 60 * 60 * 1000) && (
+        <div className="rounded-lg border border-yellow-500/40 bg-yellow-500/10 p-4 text-sm">
+          <p className="font-semibold text-yellow-300 uppercase text-xs mb-1">Sync automatique en retard</p>
+          <p className="text-white/80">
+            Aucune synchronisation réussie depuis plus d'une heure. Cliquez sur <b>Synchroniser maintenant</b> pour vérifier,
+            puis republiez le site si le problème persiste (la tâche planifiée appelle l'URL publique du site).
+          </p>
+        </div>
+      )}
 
       {/* Base unique */}
       <div className="bg-white/5 border border-white/10 rounded-xl p-6">
@@ -227,11 +242,11 @@ function TestResult({ r }: { r: any }) {
   );
 }
 
-function Stat({ icon, label, value, good }: { icon: React.ReactNode; label: string; value: string; good?: boolean }) {
+function Stat({ icon, label, value, good, warn }: { icon: React.ReactNode; label: string; value: string; good?: boolean; warn?: boolean }) {
   return (
-    <div className="bg-white/5 border border-white/10 rounded-xl p-4">
-      <div className="flex items-center gap-2 text-white/60 text-sm">{icon}<span>{label}</span></div>
-      <p className={`mt-1 font-semibold ${good ? "text-pogi-yellow" : "text-white"}`}>{value}</p>
+    <div className={`bg-white/5 border rounded-xl p-4 min-w-0 ${warn ? "border-yellow-500/50" : "border-white/10"}`}>
+      <div className="flex items-center gap-2 text-white/60 text-sm">{icon}<span className="truncate">{label}</span></div>
+      <p className={`mt-1 font-semibold break-words ${warn ? "text-yellow-300" : good ? "text-pogi-yellow" : "text-white"}`}>{value}</p>
     </div>
   );
 }
