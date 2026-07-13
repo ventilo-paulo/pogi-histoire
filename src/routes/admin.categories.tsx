@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Pencil, Trash2, Save, X, Check, GripVertical } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Check, GripVertical, ImageIcon } from "lucide-react";
+import ImageUpload from "@/components/ImageUpload";
 
 export const Route = createFileRoute("/admin/categories")({ component: AdminCategories });
 
-type Category = { id: string; name: string; slug: string; sort_order: number };
+type Category = { id: string; name: string; slug: string; sort_order: number; image_url: string | null };
+
 
 function slugify(s: string) {
   return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
