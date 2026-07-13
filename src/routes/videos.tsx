@@ -57,19 +57,20 @@ function VRow({ title, children }: { title: string; children: React.ReactNode })
   return (
     <section className="mb-14">
       <Reveal>
-        <h2 className="font-display text-[36px] text-pogi-dark uppercase mb-5">{title}</h2>
+        <h2 className="font-display text-[36px] text-white uppercase mb-5">{title}</h2>
       </Reveal>
-      <HScroll dark={false}>{children}</HScroll>
+      <HScroll>{children}</HScroll>
     </section>
   );
 }
 
 function VideosPage() {
   return (
-    <div className="min-h-screen bg-pogi-light">
+    <div className="min-h-screen bg-pogi-dark text-white">
       <Navbar />
       <div className="mx-auto max-w-[1400px] px-6 pt-10 pb-20">
         <PublishedVideosSection />
+
 
         <VRow title="Vidéos récentes">
           <VCard img={vOradour} title="Oradour, village martyr" subtitle="Mémoire d'un massacre" />
