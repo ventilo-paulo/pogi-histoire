@@ -1,13 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { HScroll } from "@/components/HScroll";
 import { Reveal } from "@/components/Reveal";
 import { ArticleCardSkeleton, ArticleCardSkeletonGrid } from "@/components/Skeleton";
-import { supabase } from "@/integrations/supabase/client";
 import { ArrowRight, Loader2, Search, SearchX, X } from "lucide-react";
 import { absUrl } from "@/lib/site";
+import { categoriesStore, publishedArticlesStore, type ArticleLite } from "@/lib/realtime-stores";
 
 import heroRenaissance from "@/assets/hero-renaissance.jpg";
 import pVersailles from "@/assets/place-versailles.jpg";
@@ -15,11 +15,6 @@ import pLouvre from "@/assets/place-louvre.jpg";
 import pOrsay from "@/assets/place-orsay.jpg";
 import pGiverny from "@/assets/place-giverny.jpg";
 import pCitadelle from "@/assets/place-citadelle.jpg";
-
-type ArticleLite = {
-  id: string; title: string; slug: string; excerpt: string | null;
-  image_url: string | null; category: string | null;
-};
 
 export const Route = createFileRoute("/articles")({
   head: () => ({
@@ -195,18 +190,11 @@ function ArticleCard({ a }: { a: ArticleLite }) {
 /* -------- Filter bar -------- */
 
 function useCategories() {
-  const [cats, setCats] = useState<{ id: string; name: string }[]>([]);
-  useEffect(() => {
-    let cancelled = false;
-    const load = () => supabase.from("categories").select("id,name,sort_order").order("sort_order")
-      .then(({ data }) => { if (!cancelled) setCats((data ?? []) as any); });
-    load();
-    const ch = supabase.channel("cats-live")
-      .on("postgres_changes", { event: "*", schema: "public", table: "categories" }, load)
-      .subscribe();
-    return () => { cancelled = true; supabase.removeChannel(ch); };
-  }, []);
-  return cats;
+  return useSyncExternalStore(
+    categoriesStore.subscribe,
+    categoriesStore.getSnapshot,
+    categoriesStore.getSnapshot,
+  );
 }
 
 function ArticlesFilterBar() {
@@ -290,20 +278,11 @@ function ArticlesFilterBar() {
 /* -------- Filtered grid -------- */
 
 function usePublishedArticles() {
-  const [items, setItems] = useState<ArticleLite[] | null>(null);
-  useEffect(() => {
-    let cancelled = false;
-    const load = () => supabase.from("articles")
-      .select("id,title,slug,excerpt,image_url,category")
-      .eq("published", true).order("published_at", { ascending: false })
-      .then(({ data }) => { if (!cancelled) setItems((data ?? []) as any); });
-    load();
-    const ch = supabase.channel("articles-live")
-      .on("postgres_changes", { event: "*", schema: "public", table: "articles" }, load)
-      .subscribe();
-    return () => { cancelled = true; supabase.removeChannel(ch); };
-  }, []);
-  return items;
+  return useSyncExternalStore(
+    publishedArticlesStore.subscribe,
+    publishedArticlesStore.getSnapshot,
+    publishedArticlesStore.getSnapshot,
+  );
 }
 
 function FilteredArticles({ cat, q }: { cat: string; q: string }) {
