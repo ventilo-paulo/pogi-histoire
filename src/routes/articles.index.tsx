@@ -30,22 +30,10 @@ export const Route = createFileRoute("/articles/")({
   component: ArticlesPage,
 });
 
-const places = [
-  { img: pVersailles, label: "Versailles" },
-  { img: pLouvre, label: "Louvres" },
-  { img: pOrsay, label: "Orsay" },
-  { img: pGiverny, label: "Giverny" },
-  { img: pCitadelle, label: "Citadelle" },
-];
-
-
-const ACCOMPAGNE_CAT = "On vous accompagne";
-
 function ArticlesPage() {
   const { cat, q } = Route.useSearch();
   const filtering = !!(cat || q.trim());
-  const items = usePublishedArticles();
-  const hasAccompagne = (items ?? []).some((a) => a.category === ACCOMPAGNE_CAT);
+
 
   return (
     <div className="min-h-screen bg-pogi-light">
@@ -58,7 +46,7 @@ function ArticlesPage() {
 
         <div className="absolute top-6 left-6 flex flex-wrap gap-2 z-10">
           <Link to="/articles" className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Dernières sorties</Link>
-          <Link to="/articles" search={{ cat: "Les voix du passé", q: "" }} className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Interviews</Link>
+          <Link to="/interviews" className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Interviews</Link>
           <Link to="/videos" className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Vidéos</Link>
         </div>
         <div className="absolute top-6 right-6">
