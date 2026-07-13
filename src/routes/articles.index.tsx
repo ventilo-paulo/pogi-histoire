@@ -10,11 +10,6 @@ import { absUrl } from "@/lib/site";
 import { categoriesStore, publishedArticlesStore, type ArticleLite } from "@/lib/realtime-stores";
 
 import heroRenaissance from "@/assets/hero-renaissance.jpg";
-import pVersailles from "@/assets/place-versailles.jpg";
-import pLouvre from "@/assets/place-louvre.jpg";
-import pOrsay from "@/assets/place-orsay.jpg";
-import pGiverny from "@/assets/place-giverny.jpg";
-import pCitadelle from "@/assets/place-citadelle.jpg";
 import pogiLogo from "@/assets/pogi-logo.png.asset.json";
 
 export const Route = createFileRoute("/articles/")({
@@ -35,22 +30,10 @@ export const Route = createFileRoute("/articles/")({
   component: ArticlesPage,
 });
 
-const places = [
-  { img: pVersailles, label: "Versailles" },
-  { img: pLouvre, label: "Louvres" },
-  { img: pOrsay, label: "Orsay" },
-  { img: pGiverny, label: "Giverny" },
-  { img: pCitadelle, label: "Citadelle" },
-];
-
-
-const ACCOMPAGNE_CAT = "On vous accompagne";
-
 function ArticlesPage() {
   const { cat, q } = Route.useSearch();
   const filtering = !!(cat || q.trim());
-  const items = usePublishedArticles();
-  const hasAccompagne = (items ?? []).some((a) => a.category === ACCOMPAGNE_CAT);
+
 
   return (
     <div className="min-h-screen bg-pogi-light">
@@ -63,7 +46,7 @@ function ArticlesPage() {
 
         <div className="absolute top-6 left-6 flex flex-wrap gap-2 z-10">
           <Link to="/articles" className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Dernières sorties</Link>
-          <Link to="/articles" search={{ cat: "Les voix du passé", q: "" }} className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Interviews</Link>
+          <Link to="/interviews" className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Interviews</Link>
           <Link to="/videos" className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Vidéos</Link>
         </div>
         <div className="absolute top-6 right-6">
@@ -108,36 +91,8 @@ function ArticlesPage() {
         </>
       )}
 
-      {/* ON VOUS ACCOMPAGNE — masqué tant qu'aucun contenu publié dans cette catégorie */}
-      {hasAccompagne && (
-        <section className="section-pad">
-          <div className="mx-auto max-w-[1400px] px-6">
-            <h2 className="font-display text-[32px] text-pogi-dark uppercase">On vous accompagne</h2>
-            <p className="text-gray-600 text-sm mt-1 mb-6">
-              On vous accompagne pendant vos visites de monument, de musée…
-            </p>
-            <HScroll dark={false}>
-              {places.map((p) => (
-                <Link
-                  to="/collections"
-                  key={p.label}
-                  aria-label={`Collections liées à ${p.label}`}
-                  className="relative shrink-0 w-[160px] h-[240px] rounded-[16px] overflow-hidden card-hover cursor-pointer block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
-                >
-                  <img src={p.img} alt={p.label} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-transparent" />
-                  <span
-                    className="absolute left-3 bottom-6 font-display text-white text-2xl uppercase tracking-wider"
-                    style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
-                  >
-                    {p.label}
-                  </span>
-                </Link>
-              ))}
-            </HScroll>
-          </div>
-        </section>
-      )}
+
+
 
 
       <Footer />

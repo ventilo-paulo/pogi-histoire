@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VideosRouteImport } from './routes/videos'
 import { Route as McpRouteImport } from './routes/mcp'
+import { Route as InterviewsRouteImport } from './routes/interviews'
 import { Route as CollectionsRouteImport } from './routes/collections'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -20,6 +21,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
 import { Route as AdminVideosRouteImport } from './routes/admin.videos'
 import { Route as AdminNotionRouteImport } from './routes/admin.notion'
+import { Route as AdminInterviewsRouteImport } from './routes/admin.interviews'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 import { Route as AdminArticlesRouteImport } from './routes/admin.articles'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
@@ -36,6 +38,11 @@ const VideosRoute = VideosRouteImport.update({
 const McpRoute = McpRouteImport.update({
   id: '/mcp',
   path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InterviewsRoute = InterviewsRouteImport.update({
+  id: '/interviews',
+  path: '/interviews',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CollectionsRoute = CollectionsRouteImport.update({
@@ -83,6 +90,11 @@ const AdminNotionRoute = AdminNotionRouteImport.update({
   path: '/notion',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminInterviewsRoute = AdminInterviewsRouteImport.update({
+  id: '/interviews',
+  path: '/interviews',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
   id: '/categories',
   path: '/categories',
@@ -128,12 +140,14 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/collections': typeof CollectionsRoute
+  '/interviews': typeof InterviewsRoute
   '/mcp': typeof McpRoute
   '/videos': typeof VideosRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/interviews': typeof AdminInterviewsRoute
   '/admin/notion': typeof AdminNotionRoute
   '/admin/videos': typeof AdminVideosRoute
   '/articles/$slug': typeof ArticlesSlugRoute
@@ -147,12 +161,14 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/collections': typeof CollectionsRoute
+  '/interviews': typeof InterviewsRoute
   '/mcp': typeof McpRoute
   '/videos': typeof VideosRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/interviews': typeof AdminInterviewsRoute
   '/admin/notion': typeof AdminNotionRoute
   '/admin/videos': typeof AdminVideosRoute
   '/articles/$slug': typeof ArticlesSlugRoute
@@ -168,12 +184,14 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/collections': typeof CollectionsRoute
+  '/interviews': typeof InterviewsRoute
   '/mcp': typeof McpRoute
   '/videos': typeof VideosRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/interviews': typeof AdminInterviewsRoute
   '/admin/notion': typeof AdminNotionRoute
   '/admin/videos': typeof AdminVideosRoute
   '/articles/$slug': typeof ArticlesSlugRoute
@@ -190,12 +208,14 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/collections'
+    | '/interviews'
     | '/mcp'
     | '/videos'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/admin/articles'
     | '/admin/categories'
+    | '/admin/interviews'
     | '/admin/notion'
     | '/admin/videos'
     | '/articles/$slug'
@@ -209,12 +229,14 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/collections'
+    | '/interviews'
     | '/mcp'
     | '/videos'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/admin/articles'
     | '/admin/categories'
+    | '/admin/interviews'
     | '/admin/notion'
     | '/admin/videos'
     | '/articles/$slug'
@@ -229,12 +251,14 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/collections'
+    | '/interviews'
     | '/mcp'
     | '/videos'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/admin/articles'
     | '/admin/categories'
+    | '/admin/interviews'
     | '/admin/notion'
     | '/admin/videos'
     | '/articles/$slug'
@@ -250,6 +274,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
   CollectionsRoute: typeof CollectionsRoute
+  InterviewsRoute: typeof InterviewsRoute
   McpRoute: typeof McpRoute
   VideosRoute: typeof VideosRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
@@ -275,6 +300,13 @@ declare module '@tanstack/react-router' {
       path: '/mcp'
       fullPath: '/mcp'
       preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/interviews': {
+      id: '/interviews'
+      path: '/interviews'
+      fullPath: '/interviews'
+      preLoaderRoute: typeof InterviewsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/collections': {
@@ -340,6 +372,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminNotionRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/interviews': {
+      id: '/admin/interviews'
+      path: '/interviews'
+      fullPath: '/admin/interviews'
+      preLoaderRoute: typeof AdminInterviewsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/categories': {
       id: '/admin/categories'
       path: '/categories'
@@ -395,6 +434,7 @@ declare module '@tanstack/react-router' {
 interface AdminRouteChildren {
   AdminArticlesRoute: typeof AdminArticlesRoute
   AdminCategoriesRoute: typeof AdminCategoriesRoute
+  AdminInterviewsRoute: typeof AdminInterviewsRoute
   AdminNotionRoute: typeof AdminNotionRoute
   AdminVideosRoute: typeof AdminVideosRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -403,6 +443,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminArticlesRoute: AdminArticlesRoute,
   AdminCategoriesRoute: AdminCategoriesRoute,
+  AdminInterviewsRoute: AdminInterviewsRoute,
   AdminNotionRoute: AdminNotionRoute,
   AdminVideosRoute: AdminVideosRoute,
   AdminIndexRoute: AdminIndexRoute,
@@ -415,6 +456,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
   CollectionsRoute: CollectionsRoute,
+  InterviewsRoute: InterviewsRoute,
   McpRoute: McpRoute,
   VideosRoute: VideosRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
