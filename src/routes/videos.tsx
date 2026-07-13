@@ -86,8 +86,8 @@ function VideosPage() {
 
 
         <section>
-          <h2 className="font-display text-[36px] text-pogi-dark uppercase mb-5">Long format / making of</h2>
-          <HScroll dark={false}>
+          <h2 className="font-display text-[36px] text-white uppercase mb-5">Long format / making of</h2>
+          <HScroll>
             {[0, 1, 2].map((i) => (
               <article
                 key={i}
@@ -110,6 +110,7 @@ function VideosPage() {
             ))}
           </HScroll>
         </section>
+
       </div>
       <Footer />
     </div>
