@@ -185,3 +185,23 @@ function AdminCategories() {
     </div>
   );
 }
+
+function CategoryThumb({ url }: { url: string | null }) {
+  const [broken, setBroken] = useState(false);
+  if (!url || broken) {
+    return (
+      <div className="w-12 h-12 rounded-md bg-white/5 border border-white/10 grid place-items-center text-white/30">
+        <ImageIcon size={16} />
+      </div>
+    );
+  }
+  return (
+    <img
+      src={url}
+      alt=""
+      onError={() => setBroken(true)}
+      className="w-12 h-12 rounded-md object-cover border border-white/10"
+    />
+  );
+}
+
