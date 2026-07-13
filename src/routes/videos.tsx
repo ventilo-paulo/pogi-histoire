@@ -57,19 +57,20 @@ function VRow({ title, children }: { title: string; children: React.ReactNode })
   return (
     <section className="mb-14">
       <Reveal>
-        <h2 className="font-display text-[36px] text-pogi-dark uppercase mb-5">{title}</h2>
+        <h2 className="font-display text-[36px] text-white uppercase mb-5">{title}</h2>
       </Reveal>
-      <HScroll dark={false}>{children}</HScroll>
+      <HScroll>{children}</HScroll>
     </section>
   );
 }
 
 function VideosPage() {
   return (
-    <div className="min-h-screen bg-pogi-light">
+    <div className="min-h-screen bg-pogi-dark text-white">
       <Navbar />
       <div className="mx-auto max-w-[1400px] px-6 pt-10 pb-20">
         <PublishedVideosSection />
+
 
         <VRow title="Vidéos récentes">
           <VCard img={vOradour} title="Oradour, village martyr" subtitle="Mémoire d'un massacre" />
@@ -85,8 +86,8 @@ function VideosPage() {
 
 
         <section>
-          <h2 className="font-display text-[36px] text-pogi-dark uppercase mb-5">Long format / making of</h2>
-          <HScroll dark={false}>
+          <h2 className="font-display text-[36px] text-white uppercase mb-5">Long format / making of</h2>
+          <HScroll>
             {[0, 1, 2].map((i) => (
               <article
                 key={i}
@@ -109,6 +110,7 @@ function VideosPage() {
             ))}
           </HScroll>
         </section>
+
       </div>
       <Footer />
     </div>
@@ -134,7 +136,7 @@ function PublishedVideosSection() {
   if (items === null) {
     return (
       <section className="mb-14">
-        <h2 className="font-display text-[36px] text-pogi-dark uppercase mb-5">Nouveautés</h2>
+        <h2 className="font-display text-[36px] text-white uppercase mb-5">Nouveautés</h2>
         <div className="flex gap-4 overflow-hidden">
           {Array.from({ length: 3 }).map((_, i) => (
             <Skeleton key={i} className="shrink-0 w-[350px] aspect-video rounded-[12px]" />
@@ -148,9 +150,9 @@ function PublishedVideosSection() {
   return (
     <section className="mb-14">
       <Reveal>
-        <h2 className="font-display text-[36px] text-pogi-dark uppercase mb-5">Nouveautés</h2>
+        <h2 className="font-display text-[36px] text-white uppercase mb-5">Nouveautés</h2>
       </Reveal>
-      <HScroll dark={false}>
+      <HScroll>
         {items.map((v) => (
           <a key={v.id} href={v.video_url} target="_blank" rel="noreferrer"
             className="relative shrink-0 w-[350px] aspect-video rounded-[12px] overflow-hidden card-hover bg-black block">

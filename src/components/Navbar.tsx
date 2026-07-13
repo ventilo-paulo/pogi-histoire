@@ -51,12 +51,15 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-3 text-white">
-          <button
-            aria-label="Recherche"
+          <Link
+            to="/articles"
+            aria-label="Rechercher un article"
+            title="Rechercher"
             className="hidden sm:inline-flex hover:text-pogi-yellow transition-colors p-2"
           >
             <Search size={20} />
-          </button>
+          </Link>
+
           <button
             aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
             aria-expanded={open}

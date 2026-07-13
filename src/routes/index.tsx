@@ -1,9 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useSyncExternalStore } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { HScroll } from "@/components/HScroll";
 import { Reveal } from "@/components/Reveal";
+import { ArticleCardSkeleton } from "@/components/Skeleton";
 import { absUrl } from "@/lib/site";
+import { publishedArticlesStore, type ArticleLite } from "@/lib/realtime-stores";
 
 import heroConcert from "@/assets/hero-concert.jpg";
 import aNapoleon from "@/assets/article-napoleon.jpg";
@@ -32,13 +35,12 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-const articles = [
+const fallbackArticles = [
   { img: aNapoleon, alt: "Napoléon" },
   { img: aWoman, alt: "Portrait ancien" },
   { img: aNazca, alt: "Lignes de Nazca" },
   { img: aAstro, alt: "Astronaute" },
   { img: aCave, alt: "Peinture rupestre" },
-  { img: aNapoleon, alt: "Napoléon" },
 ];
 
 const collections = [
@@ -48,6 +50,51 @@ const collections = [
   { img: cIllustres, label: "Les illustres", hash: "illustres" },
   { img: cAfrica, label: "L'Afrique", hash: "afrique" },
 ];
+
+function formatDate(iso: string | null) {
+  if (!iso) return "";
+  try {
+    return new Date(iso).toLocaleDateString("fr-FR", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  } catch {
+    return "";
+  }
+}
+
+function usePublishedArticles() {
+  return useSyncExternalStore(
+    publishedArticlesStore.subscribe,
+    publishedArticlesStore.getSnapshot,
+    publishedArticlesStore.getSnapshot,
+  );
+}
+
+function FeaturedArticleCard({ a }: { a: ArticleLite }) {
+  return (
+    <Link
+      to="/articles/$slug"
+      params={{ slug: a.slug }}
+      preload="intent"
+      className="group relative shrink-0 w-[200px] h-[280px] rounded-[16px] overflow-hidden card-hover block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
+    >
+      {a.image_url ? (
+        <img src={a.image_url} alt={a.title} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+      ) : (
+        <div className="absolute inset-0 bg-pogi-darker" />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+      <div className="absolute bottom-3 left-3 right-3 text-white">
+        {a.category && <span className="text-[10px] uppercase tracking-wider text-pogi-yellow font-bold">{a.category}</span>}
+        <h3 className="font-display text-base uppercase leading-tight mt-1 line-clamp-3">{a.title}</h3>
+        {a.published_at && <p className="text-white/70 text-[11px] mt-1">{formatDate(a.published_at)}</p>}
+      </div>
+    </Link>
+  );
+}
+
 
 function Home() {
   return (
@@ -103,28 +150,8 @@ function Home() {
       </section>
 
       {/* ARTICLES À LA UNE */}
-      <section className="section-pad bg-pogi-dark">
-        <div className="mx-auto max-w-[1400px] px-6">
-          <Reveal>
-            <h2 className="font-display text-4xl md:text-[36px] uppercase mb-6">Articles à la Une</h2>
-          </Reveal>
-          <Reveal>
-            <HScroll>
-              {articles.map((a, i) => (
-                <Link
-                  to="/articles"
-                  key={i}
-                  aria-label={`Voir les articles — ${a.alt}`}
-                  className="relative shrink-0 w-[160px] h-[220px] rounded-[16px] overflow-hidden card-hover cursor-pointer block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
-                >
-                  <img src={a.img} alt={a.alt} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
-                  <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent" />
-                </Link>
-              ))}
-            </HScroll>
-          </Reveal>
-        </div>
-      </section>
+      <FeaturedArticlesSection />
+
 
       {/* COLLECTIONS */}
       <section className="section-pad pt-0 bg-pogi-dark">
@@ -154,8 +181,50 @@ function Home() {
       </section>
 
 
-
       <Footer />
     </div>
   );
 }
+
+function FeaturedArticlesSection() {
+  const items = usePublishedArticles();
+  const loading = items === null;
+  const list = items ?? [];
+
+  return (
+    <section className="section-pad bg-pogi-dark">
+      <div className="mx-auto max-w-[1400px] px-6">
+        <Reveal>
+          <h2 className="font-display text-4xl md:text-[36px] uppercase mb-6">Articles à la Une</h2>
+        </Reveal>
+        <Reveal>
+          {loading ? (
+            <div className="flex gap-4 overflow-hidden">
+              {Array.from({ length: 5 }).map((_, i) => <ArticleCardSkeleton key={i} />)}
+            </div>
+          ) : list.length > 0 ? (
+            <HScroll>
+              {list.slice(0, 12).map((a) => <FeaturedArticleCard key={a.id} a={a} />)}
+            </HScroll>
+          ) : (
+            <HScroll>
+              {fallbackArticles.map((a, i) => (
+                <Link
+                  to="/articles"
+                  key={i}
+                  aria-label={`Voir les articles — ${a.alt}`}
+                  className="relative shrink-0 w-[200px] h-[280px] rounded-[16px] overflow-hidden card-hover cursor-pointer block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
+                >
+                  <img src={a.img} alt={a.alt} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+                  <span className="absolute bottom-3 left-3 right-3 text-white font-display uppercase text-sm">{a.alt}</span>
+                </Link>
+              ))}
+            </HScroll>
+          )}
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
