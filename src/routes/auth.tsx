@@ -5,11 +5,22 @@ import pogiLogo from "@/assets/pogi-logo.png.asset.json";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Connexion — POGI Histoire" }, { name: "robots", content: "noindex" }] }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    next: typeof s.next === "string" ? s.next : "",
+  }),
   component: AuthPage,
 });
 
+// Only accept same-origin relative paths as post-auth redirect targets.
+function safeNext(next: string | undefined): string | null {
+  if (!next || !next.startsWith("/") || next.startsWith("//")) return null;
+  return next;
+}
+
 function AuthPage() {
   const navigate = useNavigate();
+  const { next } = Route.useSearch();
+  const safe = safeNext(next);
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,9 +30,12 @@ function AuthPage() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/admin" });
+      if (data.session) {
+        if (safe) window.location.href = safe;
+        else navigate({ to: "/admin" });
+      }
     });
-  }, [navigate]);
+  }, [navigate, safe]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -30,11 +44,13 @@ function AuthPage() {
       if (mode === "signin") {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        navigate({ to: "/admin" });
+        if (safe) window.location.href = safe;
+        else navigate({ to: "/admin" });
       } else {
+        const redirectPath = safe ?? "/admin";
         const { error } = await supabase.auth.signUp({
           email, password,
-          options: { emailRedirectTo: `${window.location.origin}/admin` },
+          options: { emailRedirectTo: `${window.location.origin}${redirectPath}` },
         });
         if (error) throw error;
         setInfo("Compte créé. Vous pouvez maintenant vous connecter.");
@@ -46,6 +62,7 @@ function AuthPage() {
       setLoading(false);
     }
   }
+
 
   return (
     <div className="min-h-screen bg-pogi-darker flex items-center justify-center px-4">
