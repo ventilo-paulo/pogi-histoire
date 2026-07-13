@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Reveal } from "@/components/Reveal";
@@ -31,12 +31,22 @@ export const Route = createFileRoute("/collections")({
   component: CollectionsPage,
 });
 
-function Card({
-  img, title, subtitle, className = "", textSize = "text-xl",
-}: { img?: string; title?: React.ReactNode; subtitle?: string; className?: string; textSize?: string }) {
-  return (
-    <article className={`relative rounded-[16px] overflow-hidden card-hover cursor-pointer bg-black ${className}`}>
-      {img && <img src={img} alt={typeof title === "string" ? title : ""} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />}
+type CardProps = {
+  img?: string;
+  title?: React.ReactNode;
+  subtitle?: string;
+  className?: string;
+  textSize?: string;
+  to?: "/articles" | "/videos";
+  search?: Record<string, string>;
+  href?: string;
+};
+
+function Card({ img, title, subtitle, className = "", textSize = "text-xl", to, search, href }: CardProps) {
+  const alt = typeof title === "string" ? title : "";
+  const inner = (
+    <>
+      {img && <img src={img} alt={alt} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />}
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
       {title && (
         <div className="absolute bottom-4 left-4 right-4">
@@ -44,8 +54,16 @@ function Card({
           {subtitle && <p className="text-white/80 italic text-sm mt-1">{subtitle}</p>}
         </div>
       )}
-    </article>
+    </>
   );
+  const cls = `group relative rounded-[16px] overflow-hidden card-hover cursor-pointer bg-black block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60 ${className}`;
+  if (href) {
+    return <a href={href} target="_blank" rel="noreferrer" aria-label={alt} className={cls}>{inner}</a>;
+  }
+  if (to) {
+    return <Link to={to} search={search as never} aria-label={alt} className={cls}>{inner}</Link>;
+  }
+  return <article className={cls}>{inner}</article>;
 }
 
 function Heading({ children }: { children: React.ReactNode }) {
@@ -63,6 +81,7 @@ function Empty({ label }: { label: string }) {
     </div>
   );
 }
+
 
 function CollectionsPage() {
   return (
