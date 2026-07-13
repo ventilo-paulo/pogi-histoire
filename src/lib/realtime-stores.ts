@@ -100,7 +100,7 @@ async function loadPublishedArticles() {
     try {
       const { data } = await supabase
         .from("articles")
-        .select("id,title,slug,excerpt,image_url,category")
+        .select("id,title,slug,excerpt,image_url,category,published_at")
         .eq("published", true)
         .order("published_at", { ascending: false });
 
@@ -111,6 +111,7 @@ async function loadPublishedArticles() {
         excerpt: article.excerpt,
         image_url: article.image_url,
         category: article.category,
+        published_at: article.published_at,
       }));
       notifyArticles();
     } finally {
