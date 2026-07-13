@@ -98,14 +98,14 @@ function NotionAdmin() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="font-display text-4xl uppercase">Notion — Chaîne POGI</h1>
-        <button onClick={onRun} disabled={running || !hasKey || !contentDb} className="flex items-center gap-2 bg-pogi-yellow text-pogi-dark font-bold uppercase px-4 py-2 rounded-md disabled:opacity-50">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="font-display text-3xl sm:text-4xl uppercase min-w-0 break-words">Notion — Chaîne POGI</h1>
+        <button onClick={onRun} disabled={running || !hasKey || !contentDb} className="shrink-0 flex items-center gap-2 bg-pogi-yellow text-pogi-dark font-bold uppercase px-4 py-2 rounded-md disabled:opacity-50">
           {running ? <Loader2 className="animate-spin" size={16} /> : <RefreshCw size={16} />} Synchroniser maintenant
         </button>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <Stat icon={<Plug size={18} />} label="Connexion" value={hasKey ? "Connectée" : "Non connectée"} good={hasKey} />
         <Stat icon={<RefreshCw size={18} />} label="Dernière sync" value={last ? new Date(last).toLocaleString("fr-FR") : "Jamais"} />
         <Stat icon={enabled ? <Play size={18} /> : <Pause size={18} />} label="Sync automatique" value={enabled ? "Activée (15 min)" : "En pause"} good={enabled} />
@@ -207,21 +207,21 @@ function NotionAdmin() {
 
 function TestResult({ r }: { r: any }) {
   return (
-    <div className="mt-4 border border-white/10 rounded-lg p-3">
-      <div className="flex items-center gap-2 mb-2 font-semibold">
-        {r.ok ? <CheckCircle2 className="text-green-400" size={16} /> : <XCircle className="text-red-400" size={16} />}
+    <div className="mt-4 border border-white/10 rounded-lg p-3 min-w-0">
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-2 font-semibold min-w-0">
+        {r.ok ? <CheckCircle2 className="text-green-400 shrink-0" size={16} /> : <XCircle className="text-red-400 shrink-0" size={16} />}
         <span className="uppercase text-sm">{r.ok ? "Connexion OK" : "Erreur"}</span>
-        {r.bot && <span className="text-white/50 text-sm">— intégration : {r.bot}</span>}
-        {r.title && <span className="text-white/50 text-sm">— base : {r.title}</span>}
+        {r.bot && <span className="text-white/50 text-sm break-words">— intégration : {r.bot}</span>}
+        {r.title && <span className="text-white/50 text-sm break-words">— base : {r.title}</span>}
       </div>
       {r.ok && r.properties ? (
         <ul className="text-xs text-white/60 space-y-0.5 max-h-40 overflow-auto">
-          {r.properties.map((p: any) => <li key={p.name}>· <span className="text-white/80">{p.name}</span> <span className="text-white/40">({p.type})</span></li>)}
+          {r.properties.map((p: any) => <li key={p.name} className="break-words">· <span className="text-white/80">{p.name}</span> <span className="text-white/40">({p.type})</span></li>)}
         </ul>
       ) : r.ok ? (
-        <p className="text-white/60 text-sm">{r.message}</p>
+        <p className="text-white/60 text-sm break-words">{r.message}</p>
       ) : (
-        <p className="text-red-400 text-sm">{r.message}</p>
+        <p className="text-red-400 text-sm break-words">{r.message}</p>
       )}
     </div>
   );
