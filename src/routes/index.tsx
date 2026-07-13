@@ -26,8 +26,8 @@ export const Route = createFileRoute("/")({
     meta: [
       { title: "POGI Histoire — Accueil" },
       { name: "description", content: "1991, Monsters of Rock : le jour où l'URSS chuta en musique. Découvrez nos articles et collections." },
-      { property: "og:title", content: "POGI Histoire" },
-      { property: "og:description", content: "Récits historiques, vidéos et collections." },
+      { property: "og:title", content: "POGI Histoire — Accueil" },
+      { property: "og:description", content: "1991, Monsters of Rock : le jour où l'URSS chuta en musique. Découvrez nos articles et collections." },
       { property: "og:image", content: absUrl(heroConcert) },
       { name: "twitter:image", content: absUrl(heroConcert) },
     ],
