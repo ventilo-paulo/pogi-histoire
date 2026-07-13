@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react";
-import { Upload, X, Loader2 } from "lucide-react";
+import { Upload, X, Loader2, ImageIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 type Props = {
@@ -18,6 +18,7 @@ export default function ImageUpload({ value, onChange, folder = "uploads", maxPr
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [imgBroken, setImgBroken] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = useCallback(async (file: File) => {
@@ -42,6 +43,7 @@ export default function ImageUpload({ value, onChange, folder = "uploads", maxPr
       if (upErr) throw upErr;
       const { data, error: signErr } = await supabase.storage.from("media").createSignedUrl(path, SIGNED_URL_TTL);
       if (signErr) throw signErr;
+      setImgBroken(false);
       onChange(data.signedUrl);
     } catch (e: any) {
       setError(e.message || "Échec de l'upload.");
@@ -57,47 +59,69 @@ export default function ImageUpload({ value, onChange, folder = "uploads", maxPr
     if (file) handleFile(file);
   };
 
+  const pick = () => !uploading && inputRef.current?.click();
+
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
+      {/* Aperçu de l'image actuelle */}
+      {value && (
+        <div className="relative rounded-lg overflow-hidden border border-white/10 bg-black/20">
+          {!imgBroken ? (
+            <img
+              src={value}
+              alt="Aperçu"
+              onError={() => setImgBroken(true)}
+              className="w-full object-cover"
+              style={{ maxHeight: maxPreviewHeight }}
+            />
+          ) : (
+            <div className="flex items-center gap-3 p-4 text-white/60 text-sm">
+              <ImageIcon size={18} />
+              <span className="truncate">Impossible de charger l'aperçu — l'URL enregistrée est peut-être invalide.</span>
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={() => { setImgBroken(false); onChange(null); }}
+            className="absolute top-2 right-2 w-8 h-8 grid place-items-center rounded-full bg-black/70 hover:bg-black text-white"
+            title="Retirer l'image"
+          >
+            <X size={16} />
+          </button>
+        </div>
+      )}
+
+      {/* Zone d'import / remplacement */}
       <div
         onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
         onDragLeave={() => setDragOver(false)}
         onDrop={onDrop}
-        onClick={() => !uploading && inputRef.current?.click()}
-        className={`relative cursor-pointer rounded-lg border-2 border-dashed transition overflow-hidden
-          ${dragOver ? "border-pogi-yellow bg-pogi-yellow/5" : "border-white/15 hover:border-white/30"}
-          ${value ? "" : "p-10 text-center"}`}
+        onClick={pick}
+        className={`relative cursor-pointer rounded-lg border-2 border-dashed p-6 text-center transition
+          ${dragOver ? "border-pogi-yellow bg-pogi-yellow/5" : "border-white/20 hover:border-white/40 bg-white/[0.02]"}`}
       >
-        {value ? (
-          <>
-            <img src={value} alt="" className="w-full object-cover" style={{ maxHeight: maxPreviewHeight }} />
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); onChange(null); }}
-              className="absolute top-2 right-2 w-8 h-8 grid place-items-center rounded-full bg-black/70 hover:bg-black text-white"
-              title="Retirer l'image"
-            >
-              <X size={16} />
-            </button>
-            <div className="absolute bottom-2 right-2 px-3 py-1.5 rounded-md bg-black/70 text-white text-xs flex items-center gap-2">
-              <Upload size={14} /> Remplacer
-            </div>
-          </>
-        ) : (
-          <div className="flex flex-col items-center gap-2 text-white/60">
-            {uploading ? <Loader2 className="animate-spin" /> : <Upload />}
-            <div className="text-sm">
-              {uploading ? "Envoi en cours…" : <>Cliquez pour choisir une image, ou glissez-déposez ici</>}
-            </div>
-            <div className="text-xs text-white/40">PNG, JPG, WEBP, GIF — max 10 Mo</div>
+        <div className="flex flex-col items-center gap-3 text-white/70">
+          {uploading ? <Loader2 className="animate-spin" /> : <Upload />}
+          <div className="text-sm">
+            {uploading
+              ? "Envoi en cours…"
+              : value
+                ? "Glissez une nouvelle image ici pour remplacer"
+                : "Glissez-déposez une image ici"}
           </div>
-        )}
-        {uploading && value && (
-          <div className="absolute inset-0 bg-black/60 grid place-items-center text-white">
-            <Loader2 className="animate-spin" />
-          </div>
-        )}
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); pick(); }}
+            disabled={uploading}
+            className="inline-flex items-center gap-2 bg-pogi-yellow text-pogi-dark font-bold uppercase text-sm px-4 py-2 rounded-md disabled:opacity-50"
+          >
+            <Upload size={14} />
+            {value ? "Remplacer l'image" : "Choisir un fichier"}
+          </button>
+          <div className="text-xs text-white/40">PNG, JPG, WEBP, GIF — max 10 Mo</div>
+        </div>
       </div>
+
       <input
         ref={inputRef}
         type="file"

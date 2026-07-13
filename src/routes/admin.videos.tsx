@@ -65,17 +65,26 @@ function AdminVideos() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="font-display text-4xl uppercase">Vidéos</h1>
-        <button onClick={() => setEditing({ ...empty })} className="flex items-center gap-2 bg-pogi-yellow text-pogi-dark font-bold uppercase px-4 py-2 rounded-md">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+        <h1 className="font-display text-3xl sm:text-4xl uppercase">Vidéos</h1>
+        <button onClick={() => setEditing({ ...empty })} className="shrink-0 flex items-center gap-2 bg-pogi-yellow text-pogi-dark font-bold uppercase px-4 py-2 rounded-md">
           <Plus size={18} /> Nouvelle
         </button>
+      </div>
+
+      <div className="mb-6 rounded-lg border border-pogi-yellow/30 bg-pogi-yellow/5 p-4 text-sm text-white/80">
+        <p className="font-semibold text-pogi-yellow uppercase text-xs mb-1">Gestion via Notion</p>
+        <p>
+          Les vidéos POGI sont désormais gérées depuis la base Notion <span className="text-pogi-yellow">« Chaîne POGI »</span>.
+          Ajoutez ou modifiez une vidéo directement dans Notion : elle sera synchronisée automatiquement toutes les 15 minutes.
+          Ce tableau ne montre que les vidéos déjà synchronisées côté site.
+        </p>
       </div>
 
       {err && <p className="text-red-400 mb-4">{err}</p>}
       {loading ? <p className="text-white/60">Chargement…</p> : (
         <div className="space-y-2">
-          {items.length === 0 && <p className="text-white/60">Aucune vidéo. Cliquez sur "Nouvelle" pour commencer.</p>}
+          {items.length === 0 && <p className="text-white/60">Aucune vidéo synchronisée pour le moment. Lancez une sync depuis <span className="text-pogi-yellow">Admin → Notion</span>.</p>}
           {items.map((v) => (
             <div key={v.id} className="bg-white/5 border border-white/10 rounded-lg p-4 flex items-center gap-4">
               {v.thumbnail_url && <img src={v.thumbnail_url} alt="" className="w-24 h-14 object-cover rounded" />}
