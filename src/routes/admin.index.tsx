@@ -27,20 +27,23 @@ function AdminDashboard() {
   return (
     <div>
       <h1 className="font-display text-4xl uppercase mb-6">Tableau de bord</h1>
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card title="Articles" total={stats.articles} pub={stats.articlesPub} to="/admin/articles" />
-        <Card title="Vidéos" total={stats.videos} pub={stats.videosPub} to="/admin/videos" />
+        <Card title="Vidéos" total={stats.videos} pub={stats.videosPub} to="/admin/videos" hint="synchronisées depuis Notion" />
       </div>
+      <p className="text-white/50 text-sm mt-4">
+        Articles et vidéos sont éditables depuis Notion (base <span className="text-pogi-yellow">« Chaîne POGI »</span>) — sync auto toutes les 15 min.
+      </p>
     </div>
   );
 }
 
-function Card({ title, total, pub, to }: { title: string; total: number; pub: number; to: string }) {
+function Card({ title, total, pub, to, hint }: { title: string; total: number; pub: number; to: string; hint?: string }) {
   return (
     <Link to={to} className="block bg-white/5 border border-white/10 rounded-xl p-6 hover:border-pogi-yellow transition">
       <h2 className="font-display text-2xl uppercase">{title}</h2>
       <p className="text-4xl font-bold text-pogi-yellow mt-2">{pub}<span className="text-white/40 text-xl"> / {total}</span></p>
-      <p className="text-white/60 text-sm mt-1">publiés / total</p>
+      <p className="text-white/60 text-sm mt-1">publiés / total{hint ? ` — ${hint}` : ""}</p>
     </Link>
   );
 }
