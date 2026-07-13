@@ -57,7 +57,7 @@ function AdminCategories() {
     if (!name) return;
     const prev = items.find((i) => i.id === editing.id);
     setErr(null);
-    const { error } = await supabase.from("categories").update({ name, slug }).eq("id", editing.id);
+    const { error } = await supabase.from("categories").update({ name, slug, image_url: editing.image_url }).eq("id", editing.id);
     if (error) { setErr(error.message); return; }
     // Rename category on articles that referenced the old name
     if (prev && prev.name !== name) {
