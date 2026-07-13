@@ -5,6 +5,7 @@ import pogiLogo from "@/assets/pogi-logo.png.asset.json";
 
 const links = [
   { to: "/videos", label: "Vidéos" },
+  { to: "/interviews", label: "Interviews" },
   { to: "/articles", label: "Articles" },
   { to: "/collections", label: "Collections" },
 ] as const;

@@ -114,7 +114,7 @@ function Home() {
 
         <div className="absolute top-6 left-6 flex flex-wrap gap-2 z-10">
           <Link to="/articles" className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Dernières sorties</Link>
-          <Link to="/articles" search={{ cat: "Les voix du passé", q: "" }} className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Interviews</Link>
+          <Link to="/interviews" className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Interviews</Link>
           <Link to="/videos" className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Vidéos</Link>
         </div>
         <div className="absolute top-6 right-6 z-10">
