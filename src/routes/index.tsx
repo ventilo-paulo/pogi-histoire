@@ -181,8 +181,50 @@ function Home() {
       </section>
 
 
-
       <Footer />
     </div>
   );
 }
+
+function FeaturedArticlesSection() {
+  const items = usePublishedArticles();
+  const loading = items === null;
+  const list = items ?? [];
+
+  return (
+    <section className="section-pad bg-pogi-dark">
+      <div className="mx-auto max-w-[1400px] px-6">
+        <Reveal>
+          <h2 className="font-display text-4xl md:text-[36px] uppercase mb-6">Articles à la Une</h2>
+        </Reveal>
+        <Reveal>
+          {loading ? (
+            <div className="flex gap-4 overflow-hidden">
+              {Array.from({ length: 5 }).map((_, i) => <ArticleCardSkeleton key={i} />)}
+            </div>
+          ) : list.length > 0 ? (
+            <HScroll>
+              {list.slice(0, 12).map((a) => <FeaturedArticleCard key={a.id} a={a} />)}
+            </HScroll>
+          ) : (
+            <HScroll>
+              {fallbackArticles.map((a, i) => (
+                <Link
+                  to="/articles"
+                  key={i}
+                  aria-label={`Voir les articles — ${a.alt}`}
+                  className="relative shrink-0 w-[200px] h-[280px] rounded-[16px] overflow-hidden card-hover cursor-pointer block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
+                >
+                  <img src={a.img} alt={a.alt} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+                  <span className="absolute bottom-3 left-3 right-3 text-white font-display uppercase text-sm">{a.alt}</span>
+                </Link>
+              ))}
+            </HScroll>
+          )}
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
