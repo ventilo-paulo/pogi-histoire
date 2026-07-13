@@ -30,20 +30,22 @@ function notifyCategories() {
 async function loadCategories() {
   if (categoriesLoadPromise) return categoriesLoadPromise;
 
-  categoriesLoadPromise = supabase
-    .from("categories")
-    .select("id,name,sort_order")
-    .order("sort_order")
-    .then(({ data }) => {
+  categoriesLoadPromise = (async () => {
+    try {
+      const { data } = await supabase
+        .from("categories")
+        .select("id,name,sort_order")
+        .order("sort_order");
+
       categoriesSnapshot = (data ?? []).map((category) => ({
         id: category.id,
         name: category.name,
       }));
       notifyCategories();
-    })
-    .finally(() => {
+    } finally {
       categoriesLoadPromise = null;
-    });
+    }
+  })();
 
   return categoriesLoadPromise;
 }
@@ -93,12 +95,14 @@ function notifyArticles() {
 async function loadPublishedArticles() {
   if (articlesLoadPromise) return articlesLoadPromise;
 
-  articlesLoadPromise = supabase
-    .from("articles")
-    .select("id,title,slug,excerpt,image_url,category")
-    .eq("published", true)
-    .order("published_at", { ascending: false })
-    .then(({ data }) => {
+  articlesLoadPromise = (async () => {
+    try {
+      const { data } = await supabase
+        .from("articles")
+        .select("id,title,slug,excerpt,image_url,category")
+        .eq("published", true)
+        .order("published_at", { ascending: false });
+
       articlesSnapshot = (data ?? []).map((article) => ({
         id: article.id,
         title: article.title,
@@ -108,10 +112,10 @@ async function loadPublishedArticles() {
         category: article.category,
       }));
       notifyArticles();
-    })
-    .finally(() => {
+    } finally {
       articlesLoadPromise = null;
-    });
+    }
+  })();
 
   return articlesLoadPromise;
 }
