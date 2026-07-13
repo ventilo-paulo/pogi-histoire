@@ -16,7 +16,7 @@ import pOrsay from "@/assets/place-orsay.jpg";
 import pGiverny from "@/assets/place-giverny.jpg";
 import pCitadelle from "@/assets/place-citadelle.jpg";
 
-export const Route = createFileRoute("/articles")({
+export const Route = createFileRoute("/articles/")({
   head: () => ({
     meta: [
       { title: "Articles — POGI Histoire" },
