@@ -43,9 +43,13 @@ const places = [
 ];
 
 
+const ACCOMPAGNE_CAT = "On vous accompagne";
+
 function ArticlesPage() {
   const { cat, q } = Route.useSearch();
   const filtering = !!(cat || q.trim());
+  const items = usePublishedArticles();
+  const hasAccompagne = (items ?? []).some((a) => a.category === ACCOMPAGNE_CAT);
 
   return (
     <div className="min-h-screen bg-pogi-light">
@@ -103,35 +107,37 @@ function ArticlesPage() {
         </>
       )}
 
-      {/* ON VOUS ACCOMPAGNE */}
-      <section className="section-pad">
-        <div className="mx-auto max-w-[1400px] px-6">
-          <h2 className="font-display text-[32px] text-pogi-dark uppercase">On vous accompagne</h2>
-          <p className="text-gray-600 text-sm mt-1 mb-6">
-            On vous accompagne pendant vos visites de monument, de musée…
-          </p>
-          <HScroll dark={false}>
-            {places.map((p) => (
-              <Link
-                to="/collections"
-                key={p.label}
-                aria-label={`Collections liées à ${p.label}`}
-                className="relative shrink-0 w-[160px] h-[240px] rounded-[16px] overflow-hidden card-hover cursor-pointer block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
-              >
-                <img src={p.img} alt={p.label} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-transparent" />
-                <span
-                  className="absolute left-3 bottom-6 font-display text-white text-2xl uppercase tracking-wider"
-                  style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
+      {/* ON VOUS ACCOMPAGNE — masqué tant qu'aucun contenu publié dans cette catégorie */}
+      {hasAccompagne && (
+        <section className="section-pad">
+          <div className="mx-auto max-w-[1400px] px-6">
+            <h2 className="font-display text-[32px] text-pogi-dark uppercase">On vous accompagne</h2>
+            <p className="text-gray-600 text-sm mt-1 mb-6">
+              On vous accompagne pendant vos visites de monument, de musée…
+            </p>
+            <HScroll dark={false}>
+              {places.map((p) => (
+                <Link
+                  to="/collections"
+                  key={p.label}
+                  aria-label={`Collections liées à ${p.label}`}
+                  className="relative shrink-0 w-[160px] h-[240px] rounded-[16px] overflow-hidden card-hover cursor-pointer block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
                 >
-                  {p.label}
-                </span>
-              </Link>
-            ))}
+                  <img src={p.img} alt={p.label} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-transparent" />
+                  <span
+                    className="absolute left-3 bottom-6 font-display text-white text-2xl uppercase tracking-wider"
+                    style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
+                  >
+                    {p.label}
+                  </span>
+                </Link>
+              ))}
+            </HScroll>
+          </div>
+        </section>
+      )}
 
-          </HScroll>
-        </div>
-      </section>
 
       <Footer />
     </div>
