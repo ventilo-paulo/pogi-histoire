@@ -150,28 +150,8 @@ function Home() {
       </section>
 
       {/* ARTICLES À LA UNE */}
-      <section className="section-pad bg-pogi-dark">
-        <div className="mx-auto max-w-[1400px] px-6">
-          <Reveal>
-            <h2 className="font-display text-4xl md:text-[36px] uppercase mb-6">Articles à la Une</h2>
-          </Reveal>
-          <Reveal>
-            <HScroll>
-              {articles.map((a, i) => (
-                <Link
-                  to="/articles"
-                  key={i}
-                  aria-label={`Voir les articles — ${a.alt}`}
-                  className="relative shrink-0 w-[160px] h-[220px] rounded-[16px] overflow-hidden card-hover cursor-pointer block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
-                >
-                  <img src={a.img} alt={a.alt} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
-                  <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent" />
-                </Link>
-              ))}
-            </HScroll>
-          </Reveal>
-        </div>
-      </section>
+      <FeaturedArticlesSection />
+
 
       {/* COLLECTIONS */}
       <section className="section-pad pt-0 bg-pogi-dark">
