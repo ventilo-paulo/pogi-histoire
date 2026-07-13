@@ -113,9 +113,9 @@ function Home() {
         />
 
         <div className="absolute top-6 left-6 flex flex-wrap gap-2 z-10">
-          <span className="pill">Dernière sortie</span>
-          <span className="pill">Vidéo</span>
-          <span className="pill">URSS</span>
+          <Link to="/articles" className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Dernières sorties</Link>
+          <Link to="/articles" search={{ cat: "Les voix du passé", q: "" }} className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Interviews</Link>
+          <Link to="/videos" className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Vidéos</Link>
         </div>
         <div className="absolute top-6 right-6 z-10">
           <img src={pogiLogo.url} alt="POGI" className="h-12 w-auto object-contain drop-shadow-lg" />
