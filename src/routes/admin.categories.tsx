@@ -123,31 +123,43 @@ function AdminCategories() {
             const isEditing = editing?.id === c.id;
             const count = counts[c.name] ?? 0;
             return (
-              <div key={c.id} className="bg-white/5 border border-white/10 rounded-lg p-3 flex items-center gap-3">
-                <div className="flex flex-col text-white/30">
-                  <button onClick={() => move(c, -1)} disabled={i === 0} className="text-xs hover:text-pogi-yellow disabled:opacity-30">▲</button>
-                  <button onClick={() => move(c, 1)} disabled={i === items.length - 1} className="text-xs hover:text-pogi-yellow disabled:opacity-30">▼</button>
-                </div>
-                <GripVertical size={16} className="text-white/20" />
-
+              <div key={c.id} className="bg-white/5 border border-white/10 rounded-lg p-3">
                 {isEditing ? (
-                  <>
-                    <input
-                      className="flex-1 bg-white/5 border border-white/10 rounded-md px-2 py-1.5 text-sm outline-none focus:border-pogi-yellow"
-                      value={editing.name}
-                      onChange={(e) => setEditing({ ...editing, name: e.target.value })}
-                    />
-                    <input
-                      className="w-48 bg-white/5 border border-white/10 rounded-md px-2 py-1.5 text-xs outline-none focus:border-pogi-yellow font-mono"
-                      value={editing.slug}
-                      placeholder="slug"
-                      onChange={(e) => setEditing({ ...editing, slug: e.target.value })}
-                    />
-                    <button onClick={saveEdit} title="Sauvegarder" className="p-2 text-green-400 hover:text-green-300"><Check size={18} /></button>
-                    <button onClick={() => setEditing(null)} title="Annuler" className="p-2 text-white/60 hover:text-white"><X size={18} /></button>
-                  </>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <input
+                        className="flex-1 min-w-[180px] bg-white/5 border border-white/10 rounded-md px-2 py-1.5 text-sm outline-none focus:border-pogi-yellow"
+                        value={editing.name}
+                        onChange={(e) => setEditing({ ...editing, name: e.target.value })}
+                        placeholder="Nom"
+                      />
+                      <input
+                        className="w-48 bg-white/5 border border-white/10 rounded-md px-2 py-1.5 text-xs outline-none focus:border-pogi-yellow font-mono"
+                        value={editing.slug}
+                        placeholder="slug"
+                        onChange={(e) => setEditing({ ...editing, slug: e.target.value })}
+                      />
+                      <button onClick={saveEdit} title="Sauvegarder" className="p-2 text-green-400 hover:text-green-300"><Check size={18} /></button>
+                      <button onClick={() => setEditing(null)} title="Annuler" className="p-2 text-white/60 hover:text-white"><X size={18} /></button>
+                    </div>
+                    <div>
+                      <p className="text-xs uppercase tracking-wider text-white/50 mb-2">Image de la catégorie</p>
+                      <ImageUpload
+                        value={editing.image_url}
+                        onChange={(url) => setEditing({ ...editing, image_url: url })}
+                        folder="categories"
+                        maxPreviewHeight={220}
+                      />
+                    </div>
+                  </div>
                 ) : (
-                  <>
+                  <div className="flex items-center gap-3">
+                    <div className="flex flex-col text-white/30">
+                      <button onClick={() => move(c, -1)} disabled={i === 0} className="text-xs hover:text-pogi-yellow disabled:opacity-30">▲</button>
+                      <button onClick={() => move(c, 1)} disabled={i === items.length - 1} className="text-xs hover:text-pogi-yellow disabled:opacity-30">▼</button>
+                    </div>
+                    <GripVertical size={16} className="text-white/20" />
+                    <CategoryThumb url={c.image_url} />
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold truncate">{c.name}</h3>
                       <p className="text-white/40 text-xs truncate font-mono">/{c.slug}</p>
@@ -155,12 +167,13 @@ function AdminCategories() {
                     <span className="text-xs uppercase font-bold px-2 py-1 rounded bg-white/10 text-white/70">
                       {count} article{count > 1 ? "s" : ""}
                     </span>
-                    <button onClick={() => setEditing({ id: c.id, name: c.name, slug: c.slug })}
-                      className="p-2 hover:text-pogi-yellow" title="Renommer"><Pencil size={18} /></button>
+                    <button onClick={() => setEditing({ id: c.id, name: c.name, slug: c.slug, image_url: c.image_url })}
+                      className="p-2 hover:text-pogi-yellow" title="Modifier"><Pencil size={18} /></button>
                     <button onClick={() => del(c)} className="p-2 hover:text-red-400" title="Supprimer"><Trash2 size={18} /></button>
-                  </>
+                  </div>
                 )}
               </div>
+
             );
           })}
         </div>
