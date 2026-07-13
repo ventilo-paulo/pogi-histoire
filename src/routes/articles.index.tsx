@@ -10,11 +10,6 @@ import { absUrl } from "@/lib/site";
 import { categoriesStore, publishedArticlesStore, type ArticleLite } from "@/lib/realtime-stores";
 
 import heroRenaissance from "@/assets/hero-renaissance.jpg";
-import pVersailles from "@/assets/place-versailles.jpg";
-import pLouvre from "@/assets/place-louvre.jpg";
-import pOrsay from "@/assets/place-orsay.jpg";
-import pGiverny from "@/assets/place-giverny.jpg";
-import pCitadelle from "@/assets/place-citadelle.jpg";
 import pogiLogo from "@/assets/pogi-logo.png.asset.json";
 
 export const Route = createFileRoute("/articles/")({
