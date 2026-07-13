@@ -136,7 +136,7 @@ function PublishedVideosSection() {
   if (items === null) {
     return (
       <section className="mb-14">
-        <h2 className="font-display text-[36px] text-pogi-dark uppercase mb-5">Nouveautés</h2>
+        <h2 className="font-display text-[36px] text-white uppercase mb-5">Nouveautés</h2>
         <div className="flex gap-4 overflow-hidden">
           {Array.from({ length: 3 }).map((_, i) => (
             <Skeleton key={i} className="shrink-0 w-[350px] aspect-video rounded-[12px]" />
@@ -150,9 +150,9 @@ function PublishedVideosSection() {
   return (
     <section className="mb-14">
       <Reveal>
-        <h2 className="font-display text-[36px] text-pogi-dark uppercase mb-5">Nouveautés</h2>
+        <h2 className="font-display text-[36px] text-white uppercase mb-5">Nouveautés</h2>
       </Reveal>
-      <HScroll dark={false}>
+      <HScroll>
         {items.map((v) => (
           <a key={v.id} href={v.video_url} target="_blank" rel="noreferrer"
             className="relative shrink-0 w-[350px] aspect-video rounded-[12px] overflow-hidden card-hover bg-black block">
