@@ -201,9 +201,21 @@ function ArticlesFilterBar() {
   const { cat, q } = Route.useSearch();
   const navigate = useNavigate({ from: "/articles" });
   const cats = useCategories();
+  const items = usePublishedArticles();
   const [text, setText] = useState(q);
 
   useEffect(() => { setText(q); }, [q]);
+
+  const nonEmpty = useMemo(() => {
+    const set = new Set<string>();
+    (items ?? []).forEach((a) => { if (a.category) set.add(a.category); });
+    return set;
+  }, [items]);
+
+  const visibleCats = useMemo(
+    () => cats.filter((c) => nonEmpty.has(c.name) || c.name === cat),
+    [cats, nonEmpty, cat],
+  );
 
   function setCat(next: string) {
     navigate({ search: (prev: { cat: string; q: string }) => ({ ...prev, cat: next }) });
@@ -230,7 +242,7 @@ function ArticlesFilterBar() {
           >
             Toutes
           </button>
-          {cats.map((c) => (
+          {visibleCats.map((c) => (
             <button
               key={c.id}
               onClick={() => setCat(c.name)}
@@ -241,6 +253,7 @@ function ArticlesFilterBar() {
             </button>
           ))}
         </div>
+
 
         <form onSubmit={submit} className="flex items-center gap-2">
           <div className="relative flex-1 max-w-md">
