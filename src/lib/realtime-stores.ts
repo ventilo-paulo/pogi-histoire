@@ -14,6 +14,7 @@ export type ArticleLite = {
   excerpt: string | null;
   image_url: string | null;
   category: string | null;
+  published_at: string | null;
 };
 
 type Listener = () => void;
