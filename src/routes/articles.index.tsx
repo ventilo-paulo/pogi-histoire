@@ -43,9 +43,13 @@ const places = [
 ];
 
 
+const ACCOMPAGNE_CAT = "On vous accompagne";
+
 function ArticlesPage() {
   const { cat, q } = Route.useSearch();
   const filtering = !!(cat || q.trim());
+  const items = usePublishedArticles();
+  const hasAccompagne = (items ?? []).some((a) => a.category === ACCOMPAGNE_CAT);
 
   return (
     <div className="min-h-screen bg-pogi-light">
