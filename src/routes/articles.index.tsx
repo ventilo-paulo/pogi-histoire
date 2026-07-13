@@ -61,10 +61,10 @@ function ArticlesPage() {
         <img src={heroRenaissance} alt="Renaissance" className="absolute inset-0 h-full w-full object-cover" width={1920} height={1280} />
         <div className="absolute inset-0 bg-black/60" />
 
-        <div className="absolute top-6 left-6 flex flex-wrap gap-2">
-          <span className="pill">Dernière sortie</span>
-          <span className="pill">15min</span>
-          <span className="pill">Renaissance</span>
+        <div className="absolute top-6 left-6 flex flex-wrap gap-2 z-10">
+          <Link to="/articles" className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Dernières sorties</Link>
+          <Link to="/articles" search={{ cat: "Les voix du passé", q: "" }} className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Interviews</Link>
+          <Link to="/videos" className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Vidéos</Link>
         </div>
         <div className="absolute top-6 right-6">
           <img src={pogiLogo.url} alt="POGI" className="h-12 w-auto object-contain drop-shadow-lg" />
