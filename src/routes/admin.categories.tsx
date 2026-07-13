@@ -20,7 +20,7 @@ function AdminCategories() {
   const [err, setErr] = useState<string | null>(null);
   const [newName, setNewName] = useState("");
   const [busy, setBusy] = useState(false);
-  const [editing, setEditing] = useState<{ id: string; name: string; slug: string } | null>(null);
+  const [editing, setEditing] = useState<{ id: string; name: string; slug: string; image_url: string | null } | null>(null);
   const [counts, setCounts] = useState<Record<string, number>>({});
 
   async function load() {
