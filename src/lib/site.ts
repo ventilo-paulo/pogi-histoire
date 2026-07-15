@@ -1,4 +1,4 @@
-export const SITE_URL = "https://pogi-histoire.lovable.app";
+export const SITE_URL = "https://pogi-histoire.com";
 
 /** Build an absolute URL for og:image / twitter:image from a Vite asset path or relative URL. */
 export function absUrl(path: string): string {
