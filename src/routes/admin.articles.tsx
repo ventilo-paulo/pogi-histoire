@@ -36,14 +36,8 @@ const empty: Partial<Article> = {
   tags: [], sources: [],
 };
 
-const TABS = [
-  { id: "general", label: "Général", icon: Info },
-  { id: "seo", label: "SEO", icon: Search },
-  { id: "image", label: "Image", icon: ImageIcon },
-  { id: "content", label: "Contenu", icon: FileText },
-  { id: "meta", label: "Tags & Sources", icon: Tags },
-] as const;
-type TabId = typeof TABS[number]["id"];
+// Section headers for the single-page editor (icons kept for the visual anchors)
+const SECTION_ICONS = { general: Info, seo: Search, image: ImageIcon, content: FileText, meta: Tags } as const;
 
 function slugify(s: string) {
   return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
