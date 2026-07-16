@@ -19,6 +19,15 @@ const BLOCKS = [
   { value: "h4", label: "Titre 4" },
   { value: "pre", label: "Code" },
 ];
+const SIZES = [
+  { value: "1", label: "Très petit" },
+  { value: "2", label: "Petit" },
+  { value: "3", label: "Normal" },
+  { value: "4", label: "Moyen" },
+  { value: "5", label: "Grand" },
+  { value: "6", label: "Très grand" },
+  { value: "7", label: "Énorme" },
+];
 const FONTS = [
   { value: "Inter, sans-serif", label: "Inter" },
   { value: "'Bebas Neue', sans-serif", label: "Bebas Neue" },
@@ -27,8 +36,6 @@ const FONTS = [
   { value: "Arial, sans-serif", label: "Arial" },
   { value: "'Courier New', monospace", label: "Courier" },
 ];
-const SIZES = [8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 32, 36, 40, 48, 56, 64, 72, 96];
-
 
 export default function RichTextEditor({ value, onChange, minHeight = 380 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
@@ -72,21 +79,6 @@ export default function RichTextEditor({ value, onChange, minHeight = 380 }: Pro
   function handleCode() { exec("formatBlock", "pre"); setBlock("pre"); }
   function handleHr() { exec("insertHorizontalRule"); }
   function handleQuote() { exec("formatBlock", "blockquote"); }
-  function handleFontSize(px: string) {
-    const size = parseInt(px, 10);
-    if (!ref.current || Number.isNaN(size) || size < 1 || size > 100) return;
-    ref.current.focus();
-    document.execCommand("styleWithCSS", false, "true");
-    document.execCommand("fontSize", false, "7");
-    const fonts = ref.current.querySelectorAll('font[size="7"]');
-    fonts.forEach((font) => {
-      const span = document.createElement("span");
-      span.style.fontSize = `${size}px`;
-      span.innerHTML = font.innerHTML;
-      font.parentNode?.replaceChild(span, font);
-    });
-    onChange(ref.current.innerHTML);
-  }
 
   const Btn = ({ onClick, title, children, active }: { onClick: () => void; title: string; children: React.ReactNode; active?: boolean }) => (
     <button
@@ -158,13 +150,13 @@ export default function RichTextEditor({ value, onChange, minHeight = 380 }: Pro
               {FONTS.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
             </Select>
             <Select
-              title="Taille (px)"
+              title="Taille"
+              onChange={(v) => { if (v) exec("fontSize", v); }}
               value=""
-              onChange={(v) => { if (v) handleFontSize(v); }}
-              minWidth={80}
+              minWidth={90}
             >
               <option value="" disabled>Taille</option>
-              {SIZES.map((s) => <option key={s} value={s}>{s}</option>)}
+              {SIZES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
             </Select>
           </Group>
 
