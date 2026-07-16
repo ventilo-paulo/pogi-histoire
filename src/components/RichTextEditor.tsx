@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   Bold, Italic, Underline, Strikethrough, Link as LinkIcon, Image as ImageIcon,
   Video, Code, BookOpen, AlignLeft, AlignCenter, AlignRight, AlignJustify,
-  List, ListOrdered, Quote, Minus, Undo, Redo,
+  List, ListOrdered, Quote, Minus, Undo, Redo, Type,
 } from "lucide-react";
 
 type Props = {
@@ -41,7 +41,6 @@ export default function RichTextEditor({ value, onChange, minHeight = 380 }: Pro
   const ref = useRef<HTMLDivElement>(null);
   const [block, setBlock] = useState("p");
 
-  // Sync external value -> editor (only when different to avoid caret jumps)
   useEffect(() => {
     if (ref.current && ref.current.innerHTML !== (value || "")) {
       ref.current.innerHTML = value || "";
@@ -74,70 +73,139 @@ export default function RichTextEditor({ value, onChange, minHeight = 380 }: Pro
     const html = `<div class="my-3"><iframe src="${safe}" class="w-full aspect-video rounded" frameborder="0" allowfullscreen></iframe></div>`;
     exec("insertHTML", html);
   }
-
   function handleReadMore() {
     exec("insertHTML", '<hr data-readmore="true" class="my-4 border-pogi-yellow" /><p><em>Lire la suite…</em></p>');
   }
-  function handleCode() {
-    exec("formatBlock", "pre");
-    setBlock("pre");
-  }
+  function handleCode() { exec("formatBlock", "pre"); setBlock("pre"); }
   function handleHr() { exec("insertHorizontalRule"); }
   function handleQuote() { exec("formatBlock", "blockquote"); }
 
   const Btn = ({ onClick, title, children, active }: { onClick: () => void; title: string; children: React.ReactNode; active?: boolean }) => (
-    <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={onClick} title={title}
-      className={`w-8 h-8 grid place-items-center rounded hover:bg-white/10 text-white/80 hover:text-white ${active ? "bg-white/10 text-pogi-yellow" : ""}`}>
+    <button
+      type="button"
+      onMouseDown={(e) => e.preventDefault()}
+      onClick={onClick}
+      title={title}
+      aria-label={title}
+      className={`w-9 h-9 grid place-items-center rounded-md transition-colors text-white/85 hover:bg-white/10 hover:text-white active:bg-white/15 ${active ? "bg-white/15 text-pogi-yellow" : ""}`}
+    >
       {children}
     </button>
   );
-  const Sep = () => <span className="w-px h-5 bg-white/10 mx-1" />;
+
+  const Group = ({ children, label }: { children: React.ReactNode; label?: string }) => (
+    <div
+      role="group"
+      aria-label={label}
+      className="flex items-center gap-0.5 px-1.5 rounded-md bg-white/[0.03] border border-white/5"
+    >
+      {children}
+    </div>
+  );
+
+  const Select = ({
+    value: v, onChange: oc, title, children, minWidth,
+  }: { value?: string; onChange: (v: string) => void; title: string; children: React.ReactNode; minWidth?: number }) => (
+    <select
+      title={title}
+      aria-label={title}
+      value={v}
+      onChange={(e) => oc(e.target.value)}
+      onMouseDown={(e) => e.stopPropagation()}
+      className="bg-white/5 border border-white/10 text-white text-xs rounded-md px-2 h-9 focus:outline-none focus:border-pogi-yellow hover:bg-white/10 transition-colors"
+      style={{ minWidth }}
+    >
+      {children}
+    </select>
+  );
 
   return (
     <div className="border border-white/10 rounded-lg overflow-hidden bg-white/[0.03]">
-      <div className="flex flex-wrap items-center gap-0.5 px-2 py-2 border-b border-white/10 bg-pogi-dark/60 sticky top-0 z-10">
-        <Btn onClick={() => exec("bold")} title="Gras (Ctrl+B)"><Bold size={16} /></Btn>
-        <Btn onClick={() => exec("italic")} title="Italique (Ctrl+I)"><Italic size={16} /></Btn>
-        <Btn onClick={() => exec("underline")} title="Souligné"><Underline size={16} /></Btn>
-        <Btn onClick={() => exec("strikeThrough")} title="Barré"><Strikethrough size={16} /></Btn>
-        <Sep />
-        <Btn onClick={handleLink} title="Lien"><LinkIcon size={16} /></Btn>
-        <Btn onClick={handleImage} title="Image"><ImageIcon size={16} /></Btn>
-        <Btn onClick={handleVideo} title="Vidéo"><Video size={16} /></Btn>
-        <Btn onClick={handleCode} title="Code"><Code size={16} /></Btn>
-        <Btn onClick={handleReadMore} title="Lire la suite"><BookOpen size={16} /></Btn>
-        <Sep />
-        <select value={block} onChange={(e) => { setBlock(e.target.value); exec("formatBlock", e.target.value); }}
-          className="bg-white/5 border border-white/10 text-white text-xs rounded px-2 py-1 h-8 focus:outline-none focus:border-pogi-yellow">
-          {BLOCKS.map((b) => <option key={b.value} value={b.value}>{b.label}</option>)}
-        </select>
-        <select onChange={(e) => { if (e.target.value) { exec("fontName", e.target.value); e.target.value = ""; } }} defaultValue=""
-          className="bg-white/5 border border-white/10 text-white text-xs rounded px-2 py-1 h-8 focus:outline-none focus:border-pogi-yellow">
-          <option value="" disabled>Police</option>
-          {FONTS.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
-        </select>
-        <select onChange={(e) => { if (e.target.value) { exec("fontSize", e.target.value); e.target.value = ""; } }} defaultValue=""
-          className="bg-white/5 border border-white/10 text-white text-xs rounded px-2 py-1 h-8 focus:outline-none focus:border-pogi-yellow">
-          <option value="" disabled>Taille</option>
-          {SIZES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
-        </select>
-        <label className="w-8 h-8 grid place-items-center rounded hover:bg-white/10 cursor-pointer" title="Couleur du texte">
-          <span className="block w-4 h-4 rounded border border-white/30" style={{ background: "linear-gradient(135deg,#F5C800,#1A1AC8)" }} />
-          <input type="color" className="hidden" onChange={(e) => exec("foreColor", e.target.value)} />
-        </label>
-        <Sep />
-        <Btn onClick={() => exec("justifyLeft")} title="Aligner à gauche"><AlignLeft size={16} /></Btn>
-        <Btn onClick={() => exec("justifyCenter")} title="Centrer"><AlignCenter size={16} /></Btn>
-        <Btn onClick={() => exec("justifyRight")} title="Aligner à droite"><AlignRight size={16} /></Btn>
-        <Btn onClick={() => exec("justifyFull")} title="Justifier"><AlignJustify size={16} /></Btn>
-        <Sep />
-        <Btn onClick={() => exec("insertUnorderedList")} title="Liste à puces"><List size={16} /></Btn>
-        <Btn onClick={() => exec("insertOrderedList")} title="Liste numérotée"><ListOrdered size={16} /></Btn>
-        <Btn onClick={handleQuote} title="Citation"><Quote size={16} /></Btn>
-        <Btn onClick={handleHr} title="Séparateur"><Minus size={16} /></Btn>
-        <Sep />
-        <Btn onClick={() => exec("undo")} title="Annuler"><Undo size={16} /></Btn>
-        <Btn onClick={() => exec("redo")} title="Refaire"><Redo size={16} /></Btn>
+      {/* Word / Google Docs style ribbon: grouped by function, sticky while scrolling long articles */}
+      <div className="sticky top-0 z-20 bg-pogi-dark/95 backdrop-blur border-b border-white/10 shadow-[0_2px_10px_rgba(0,0,0,0.35)]">
+        <div className="flex flex-wrap items-center gap-2 px-3 py-2">
+          {/* Historique */}
+          <Group label="Historique">
+            <Btn onClick={() => exec("undo")} title="Annuler (Ctrl+Z)"><Undo size={18} /></Btn>
+            <Btn onClick={() => exec("redo")} title="Refaire (Ctrl+Y)"><Redo size={18} /></Btn>
+          </Group>
+
+          {/* Style de paragraphe */}
+          <Group label="Style">
+            <Select
+              title="Style de paragraphe"
+              value={block}
+              onChange={(v) => { setBlock(v); exec("formatBlock", v); }}
+              minWidth={110}
+            >
+              {BLOCKS.map((b) => <option key={b.value} value={b.value}>{b.label}</option>)}
+            </Select>
+            <Select
+              title="Police"
+              onChange={(v) => { if (v) exec("fontName", v); }}
+              value=""
+              minWidth={110}
+            >
+              <option value="" disabled>Police</option>
+              {FONTS.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
+            </Select>
+            <Select
+              title="Taille"
+              onChange={(v) => { if (v) exec("fontSize", v); }}
+              value=""
+              minWidth={90}
+            >
+              <option value="" disabled>Taille</option>
+              {SIZES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+            </Select>
+          </Group>
+
+          {/* Mise en forme du texte */}
+          <Group label="Mise en forme du texte">
+            <Btn onClick={() => exec("bold")} title="Gras (Ctrl+B)"><Bold size={18} /></Btn>
+            <Btn onClick={() => exec("italic")} title="Italique (Ctrl+I)"><Italic size={18} /></Btn>
+            <Btn onClick={() => exec("underline")} title="Souligné (Ctrl+U)"><Underline size={18} /></Btn>
+            <Btn onClick={() => exec("strikeThrough")} title="Barré"><Strikethrough size={18} /></Btn>
+            <label
+              className="w-9 h-9 grid place-items-center rounded-md hover:bg-white/10 cursor-pointer text-white/85 hover:text-white relative"
+              title="Couleur du texte"
+              aria-label="Couleur du texte"
+            >
+              <Type size={18} />
+              <span
+                className="absolute bottom-1 left-1.5 right-1.5 h-1 rounded-sm"
+                style={{ background: "linear-gradient(90deg,#F5C800,#1A1AC8)" }}
+              />
+              <input
+                type="color"
+                className="absolute inset-0 opacity-0 cursor-pointer"
+                onChange={(e) => exec("foreColor", e.target.value)}
+              />
+            </label>
+          </Group>
+
+          {/* Paragraphe */}
+          <Group label="Paragraphe">
+            <Btn onClick={() => exec("justifyLeft")} title="Aligner à gauche"><AlignLeft size={18} /></Btn>
+            <Btn onClick={() => exec("justifyCenter")} title="Centrer"><AlignCenter size={18} /></Btn>
+            <Btn onClick={() => exec("justifyRight")} title="Aligner à droite"><AlignRight size={18} /></Btn>
+            <Btn onClick={() => exec("justifyFull")} title="Justifier"><AlignJustify size={18} /></Btn>
+            <span className="w-px h-6 bg-white/10 mx-0.5" />
+            <Btn onClick={() => exec("insertUnorderedList")} title="Liste à puces"><List size={18} /></Btn>
+            <Btn onClick={() => exec("insertOrderedList")} title="Liste numérotée"><ListOrdered size={18} /></Btn>
+            <Btn onClick={handleQuote} title="Citation"><Quote size={18} /></Btn>
+            <Btn onClick={handleHr} title="Séparateur"><Minus size={18} /></Btn>
+          </Group>
+
+          {/* Insertion */}
+          <Group label="Insertion">
+            <Btn onClick={handleLink} title="Lien"><LinkIcon size={18} /></Btn>
+            <Btn onClick={handleImage} title="Image"><ImageIcon size={18} /></Btn>
+            <Btn onClick={handleVideo} title="Vidéo"><Video size={18} /></Btn>
+            <Btn onClick={handleCode} title="Bloc de code"><Code size={18} /></Btn>
+            <Btn onClick={handleReadMore} title="Lire la suite"><BookOpen size={18} /></Btn>
+          </Group>
+        </div>
       </div>
 
       <div
