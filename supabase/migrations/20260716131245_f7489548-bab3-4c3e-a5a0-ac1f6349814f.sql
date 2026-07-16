@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Public reads media credits" ON public.media_credits;
