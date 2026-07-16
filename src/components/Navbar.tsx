@@ -1,14 +1,16 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, Search, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import pogiLogo from "@/assets/pogi-logo.png.asset.json";
+import { publishedArticlesStore, INTERVIEWS_CATEGORY } from "@/lib/realtime-stores";
 
-const links = [
+const ALL_LINKS = [
   { to: "/videos", label: "Vidéos" },
-  { to: "/interviews", label: "Interviews" },
+  { to: "/interviews", label: "Interviews", requiresInterviews: true },
   { to: "/articles", label: "Articles" },
   { to: "/collections", label: "Collections" },
 ] as const;
+
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
