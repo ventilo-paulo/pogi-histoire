@@ -20,13 +20,13 @@ const BLOCKS = [
   { value: "pre", label: "Code" },
 ];
 const SIZES = [
-  { value: "1", label: "Très petit" },
-  { value: "2", label: "Petit" },
-  { value: "3", label: "Normal" },
-  { value: "4", label: "Moyen" },
-  { value: "5", label: "Grand" },
-  { value: "6", label: "Très grand" },
-  { value: "7", label: "Énorme" },
+  { value: "1", label: "10" },
+  { value: "2", label: "13" },
+  { value: "3", label: "16" },
+  { value: "4", label: "18" },
+  { value: "5", label: "24" },
+  { value: "6", label: "32" },
+  { value: "7", label: "48" },
 ];
 const FONTS = [
   { value: "Inter, sans-serif", label: "Inter" },
