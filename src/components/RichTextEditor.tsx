@@ -19,15 +19,6 @@ const BLOCKS = [
   { value: "h4", label: "Titre 4" },
   { value: "pre", label: "Code" },
 ];
-const SIZES = [
-  { value: "1", label: "10" },
-  { value: "2", label: "13" },
-  { value: "3", label: "16" },
-  { value: "4", label: "18" },
-  { value: "5", label: "24" },
-  { value: "6", label: "32" },
-  { value: "7", label: "48" },
-];
 const FONTS = [
   { value: "Inter, sans-serif", label: "Inter" },
   { value: "'Bebas Neue', sans-serif", label: "Bebas Neue" },
@@ -79,6 +70,21 @@ export default function RichTextEditor({ value, onChange, minHeight = 380 }: Pro
   function handleCode() { exec("formatBlock", "pre"); setBlock("pre"); }
   function handleHr() { exec("insertHorizontalRule"); }
   function handleQuote() { exec("formatBlock", "blockquote"); }
+  function handleFontSize(px: string) {
+    const size = parseInt(px, 10);
+    if (!ref.current || Number.isNaN(size) || size < 1 || size > 100) return;
+    ref.current.focus();
+    document.execCommand("styleWithCSS", false, "true");
+    document.execCommand("fontSize", false, "7");
+    const fonts = ref.current.querySelectorAll('font[size="7"]');
+    fonts.forEach((font) => {
+      const span = document.createElement("span");
+      span.style.fontSize = `${size}px`;
+      span.innerHTML = font.innerHTML;
+      font.parentNode?.replaceChild(span, font);
+    });
+    onChange(ref.current.innerHTML);
+  }
 
   const Btn = ({ onClick, title, children, active }: { onClick: () => void; title: string; children: React.ReactNode; active?: boolean }) => (
     <button
@@ -149,15 +155,16 @@ export default function RichTextEditor({ value, onChange, minHeight = 380 }: Pro
               <option value="" disabled>Police</option>
               {FONTS.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
             </Select>
-            <Select
-              title="Taille"
-              onChange={(v) => { if (v) exec("fontSize", v); }}
-              value=""
-              minWidth={90}
-            >
-              <option value="" disabled>Taille</option>
-              {SIZES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
-            </Select>
+            <input
+              type="number"
+              min={1}
+              max={100}
+              defaultValue={16}
+              onChange={(e) => handleFontSize(e.target.value)}
+              className="bg-white/5 border border-white/10 text-white text-xs rounded-md px-2 h-9 w-16 focus:outline-none focus:border-pogi-yellow hover:bg-white/10 transition-colors"
+              title="Taille de police (px)"
+              aria-label="Taille de police (px)"
+            />
           </Group>
 
           {/* Mise en forme du texte */}
