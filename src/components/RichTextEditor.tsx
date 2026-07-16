@@ -70,6 +70,21 @@ export default function RichTextEditor({ value, onChange, minHeight = 380 }: Pro
   function handleCode() { exec("formatBlock", "pre"); setBlock("pre"); }
   function handleHr() { exec("insertHorizontalRule"); }
   function handleQuote() { exec("formatBlock", "blockquote"); }
+  function handleFontSize(px: string) {
+    const size = parseInt(px, 10);
+    if (!ref.current || Number.isNaN(size) || size < 1 || size > 100) return;
+    ref.current.focus();
+    document.execCommand("styleWithCSS", false, "true");
+    document.execCommand("fontSize", false, "7");
+    const fonts = ref.current.querySelectorAll('font[size="7"]');
+    fonts.forEach((font) => {
+      const span = document.createElement("span");
+      span.style.fontSize = `${size}px`;
+      span.innerHTML = font.innerHTML;
+      font.parentNode?.replaceChild(span, font);
+    });
+    onChange(ref.current.innerHTML);
+  }
 
   const Btn = ({ onClick, title, children, active }: { onClick: () => void; title: string; children: React.ReactNode; active?: boolean }) => (
     <button
