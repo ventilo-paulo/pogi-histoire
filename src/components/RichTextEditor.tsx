@@ -19,14 +19,8 @@ const BLOCKS = [
   { value: "h4", label: "Titre 4" },
   { value: "pre", label: "Code" },
 ];
-const FONTS = [
-  { value: "Inter, sans-serif", label: "Inter" },
-  { value: "'Bebas Neue', sans-serif", label: "Bebas Neue" },
-  { value: "Georgia, serif", label: "Georgia" },
-  { value: "'Times New Roman', serif", label: "Times" },
-  { value: "Arial, sans-serif", label: "Arial" },
-  { value: "'Courier New', monospace", label: "Courier" },
-];
+const SIZES = [8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 32, 36, 40, 48, 56, 64, 72, 96];
+
 
 export default function RichTextEditor({ value, onChange, minHeight = 380 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
