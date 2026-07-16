@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import RichTextEditor from "@/components/RichTextEditor";
 import ImageUpload from "@/components/ImageUpload";
-import { Eye, EyeOff, Pencil, Trash2, Plus, X, Info, Search, Image as ImageIcon, FileText, Save, Tags, BookOpen } from "lucide-react";
+import { Eye, EyeOff, Pencil, Trash2, Plus, X, Save, Tags, BookOpen } from "lucide-react";
 
 export const Route = createFileRoute("/admin/articles")({ component: AdminArticles });
 
