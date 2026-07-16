@@ -157,16 +157,15 @@ export default function RichTextEditor({ value, onChange, minHeight = 380 }: Pro
               <option value="" disabled>Police</option>
               {FONTS.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
             </Select>
-            <input
-              type="number"
-              min={1}
-              max={100}
-              defaultValue={16}
-              onChange={(e) => handleFontSize(e.target.value)}
-              className="bg-white/5 border border-white/10 text-white text-xs rounded-md px-2 h-9 w-16 focus:outline-none focus:border-pogi-yellow hover:bg-white/10 transition-colors"
-              title="Taille de police (px)"
-              aria-label="Taille de police (px)"
-            />
+            <Select
+              title="Taille (px)"
+              value=""
+              onChange={(v) => { if (v) handleFontSize(v); }}
+              minWidth={80}
+            >
+              <option value="" disabled>Taille</option>
+              {SIZES.map((s) => <option key={s} value={s}>{s}</option>)}
+            </Select>
           </Group>
 
           {/* Mise en forme du texte */}
