@@ -71,7 +71,7 @@ function AdminLayout() {
       </header>
 
       <div className="mx-auto max-w-[1400px] grid md:grid-cols-[220px_1fr] gap-8 px-6 py-8">
-        <aside className="space-y-1">
+        <aside className="space-y-1 md:sticky md:top-[76px] md:self-start md:max-h-[calc(100vh-80px)] md:overflow-auto -mx-6 px-6 md:mx-0 md:px-0 pb-2 md:pb-0 flex md:block gap-1 overflow-x-auto md:overflow-y-auto">
           <NavItem to="/admin" icon={<LayoutDashboard size={18} />} label="Tableau de bord" exact />
           <NavItem to="/admin/articles" icon={<FileText size={18} />} label="Articles" />
           <NavItem to="/admin/categories" icon={<Tag size={18} />} label="Catégories" />
@@ -81,7 +81,7 @@ function AdminLayout() {
           <NavItem to="/admin/notion" icon={<Database size={18} />} label="Notion" />
 
         </aside>
-        <main><Outlet /></main>
+        <main className="min-w-0"><Outlet /></main>
       </div>
     </div>
   );
