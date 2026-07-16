@@ -1,18 +1,33 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, Search, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import pogiLogo from "@/assets/pogi-logo.png.asset.json";
+import { publishedArticlesStore, INTERVIEWS_CATEGORY } from "@/lib/realtime-stores";
 
-const links = [
+const ALL_LINKS = [
   { to: "/videos", label: "Vidéos" },
-  { to: "/interviews", label: "Interviews" },
+  { to: "/interviews", label: "Interviews", requiresInterviews: true },
   { to: "/articles", label: "Articles" },
   { to: "/collections", label: "Collections" },
 ] as const;
 
+
 export function Navbar() {
   const [open, setOpen] = useState(false);
   const { location } = useRouterState();
+  const articles = useSyncExternalStore(
+    publishedArticlesStore.subscribe,
+    publishedArticlesStore.getSnapshot,
+    publishedArticlesStore.getSnapshot,
+  );
+  const hasInterviews = useMemo(
+    () => (articles ?? []).some((a) => a.category === INTERVIEWS_CATEGORY),
+    [articles],
+  );
+  const links = useMemo(
+    () => ALL_LINKS.filter((l) => !("requiresInterviews" in l && l.requiresInterviews) || hasInterviews),
+    [hasInterviews],
+  );
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -27,6 +42,7 @@ export function Navbar() {
       document.body.style.overflow = "";
     };
   }, [open]);
+
 
   const linkBase =
     "text-base font-medium transition-colors hover:text-pogi-yellow";

@@ -116,9 +116,10 @@ async function syncEntity(
         item.notion_last_edited_at = page.last_edited_time;
         // Normalize
         if ("status" in item) { item.published = /publi/i.test(item.status); delete item.status; }
-        if (entity === "article" && !item.slug && item.title) {
+        if ((entity === "article" || entity === "video") && !item.slug && item.title) {
           item.slug = String(item.title).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
         }
+
         if (item.image) { item.image_url = item.image; delete item.image; }
         if (item.thumbnail) { item.thumbnail_url = item.thumbnail; delete item.thumbnail; }
         if (item.published_at) { try { item.published_at = new Date(item.published_at).toISOString(); } catch { delete item.published_at; } }

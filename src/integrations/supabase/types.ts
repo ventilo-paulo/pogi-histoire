@@ -113,6 +113,30 @@ export type Database = {
         }
         Relationships: []
       }
+      media_credits: {
+        Row: {
+          created_at: string
+          credit: string | null
+          filename: string | null
+          path: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          credit?: string | null
+          filename?: string | null
+          path: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          credit?: string | null
+          filename?: string | null
+          path?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notion_settings: {
         Row: {
           articles_db_id: string | null
@@ -210,12 +234,14 @@ export type Database = {
         Row: {
           category: string | null
           created_at: string
+          description: string | null
           format: string
           id: string
           notion_last_edited_at: string | null
           notion_page_id: string | null
           published: boolean
           published_at: string | null
+          slug: string | null
           subtitle: string | null
           thumbnail_url: string | null
           title: string
@@ -225,12 +251,14 @@ export type Database = {
         Insert: {
           category?: string | null
           created_at?: string
+          description?: string | null
           format?: string
           id?: string
           notion_last_edited_at?: string | null
           notion_page_id?: string | null
           published?: boolean
           published_at?: string | null
+          slug?: string | null
           subtitle?: string | null
           thumbnail_url?: string | null
           title: string
@@ -240,12 +268,14 @@ export type Database = {
         Update: {
           category?: string | null
           created_at?: string
+          description?: string | null
           format?: string
           id?: string
           notion_last_edited_at?: string | null
           notion_page_id?: string | null
           published?: boolean
           published_at?: string | null
+          slug?: string | null
           subtitle?: string | null
           thumbnail_url?: string | null
           title?: string

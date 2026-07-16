@@ -9,10 +9,17 @@ export const Route = createFileRoute("/admin/videos")({ component: AdminVideos }
 type Video = {
   id: string; title: string; subtitle: string | null; video_url: string;
   thumbnail_url: string | null; format: "court" | "long"; category: string | null;
+  slug: string | null; description: string | null;
   published: boolean; published_at: string | null; created_at: string;
 };
 
-const empty: Partial<Video> = { title: "", subtitle: "", video_url: "", thumbnail_url: "", format: "court", category: "", published: false };
+const empty: Partial<Video> = { title: "", subtitle: "", video_url: "", thumbnail_url: "", format: "court", category: "", slug: "", description: "", published: false };
+
+function slugify(s: string): string {
+  return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
+}
+
 
 function AdminVideos() {
   const [items, setItems] = useState<Video[]>([]);
@@ -31,13 +38,17 @@ function AdminVideos() {
   async function save() {
     if (!editing) return;
     setErr(null);
+    const title = editing.title?.trim() ?? "";
+    const slug = (editing.slug?.trim() || slugify(title)) || null;
     const payload: any = {
-      title: editing.title?.trim() ?? "",
+      title,
       subtitle: editing.subtitle || null,
       video_url: editing.video_url?.trim() ?? "",
       thumbnail_url: editing.thumbnail_url || null,
       format: editing.format ?? "court",
       category: editing.category || null,
+      slug,
+      description: editing.description || null,
       published: !!editing.published,
       published_at: editing.published ? (editing.published_at ?? new Date().toISOString()) : null,
     };
@@ -48,6 +59,7 @@ function AdminVideos() {
     if (res.error) { setErr(res.error.message); return; }
     setEditing(null); load();
   }
+
 
   async function togglePub(v: Video) {
     const next = !v.published;
@@ -110,8 +122,14 @@ function AdminVideos() {
           <div className="space-y-3">
             <Field label="Titre *"><input className="inp" value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} /></Field>
             <Field label="Sous-titre"><input className="inp" value={editing.subtitle ?? ""} onChange={(e) => setEditing({ ...editing, subtitle: e.target.value })} /></Field>
+            <Field label="Slug (URL, ex: mon-episode)">
+              <input className="inp" placeholder={editing.title ? slugify(editing.title) : "auto depuis le titre"} value={editing.slug ?? ""} onChange={(e) => setEditing({ ...editing, slug: e.target.value })} />
+            </Field>
             <Field label="URL vidéo * (YouTube, Vimeo, mp4…)"><input className="inp" placeholder="https://youtube.com/…" value={editing.video_url ?? ""} onChange={(e) => setEditing({ ...editing, video_url: e.target.value })} /></Field>
             <Field label="Miniature"><ImageUpload value={editing.thumbnail_url} onChange={(url) => setEditing({ ...editing, thumbnail_url: url })} folder="videos" maxPreviewHeight={240} /></Field>
+            <Field label="Description (page dédiée)">
+              <textarea className="inp min-h-[120px]" value={editing.description ?? ""} onChange={(e) => setEditing({ ...editing, description: e.target.value })} />
+            </Field>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Format">
                 <select className="inp" value={editing.format ?? "court"} onChange={(e) => setEditing({ ...editing, format: e.target.value as any })}>
@@ -121,6 +139,7 @@ function AdminVideos() {
               </Field>
               <Field label="Catégorie"><input className="inp" value={editing.category ?? ""} onChange={(e) => setEditing({ ...editing, category: e.target.value })} /></Field>
             </div>
+
             <label className="flex items-center gap-2 text-white/80">
               <input type="checkbox" checked={!!editing.published} onChange={(e) => setEditing({ ...editing, published: e.target.checked })} />
               Publier immédiatement
