@@ -101,53 +101,48 @@ function Home() {
     <div className="min-h-screen bg-pogi-dark text-white">
       <Navbar />
 
-      {/* HERO */}
-      <section className="relative h-[calc(100vh-60px)] min-h-[640px] w-full overflow-hidden">
-        <img src={heroConcert} alt="Concert" className="absolute inset-0 h-full w-full object-cover" width={1920} height={1280} />
-        <div className="absolute inset-0" style={{ background: "rgba(170, 20, 20, 0.55)" }} />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80" />
-        <div
-          aria-hidden
-          className="absolute inset-0 pointer-events-none"
-          style={{ background: "radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.55) 100%)" }}
-        />
+      {/* HERO — Article à la une */}
+      <section className="relative w-full overflow-hidden">
+        <Link
+          to="/articles/$slug"
+          params={{ slug: "versailles-ou-la-mise-en-scene-du-pouvoir-absolu" }}
+          preload="intent"
+          aria-label="Lire l'article : Versailles ou la mise en scène du pouvoir absolu"
+          className="group relative block h-[calc(100vh-60px)] min-h-[640px] w-full outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
+        >
+          <img
+            src="https://wjexjgjyfglvrpktbpvz.supabase.co/storage/v1/object/sign/media/articles/f872825c-8b53-4376-bd2b-71af751cfbf3.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9lOWU2ZGQxYS00ODJjLTQ3NTQtOTdkNi1iMGU5YTQ3MWJlMGQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJtZWRpYS9hcnRpY2xlcy9mODcyODI1Yy04YjUzLTQzNzYtYmQyYi03MWFmNzUxY2ZiZjMuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc4MjgzMzM3MCwiZXhwIjoyMDk4MTkzMzcwfQ.NTJt1qXL4b4RPPsMOojSSocQpxy9auuSXHq0n0GGGqM"
+            alt="Versailles ou la mise en scène du pouvoir absolu"
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30" />
 
-        <div className="absolute top-6 left-6 flex flex-wrap gap-2 z-10">
-          <Link to="/articles" className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Dernières sorties</Link>
-          <Link to="/interviews" className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Interviews</Link>
-          <Link to="/videos" className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Vidéos</Link>
-        </div>
-        <div className="absolute top-6 right-6 z-10">
-          <img src={pogiLogo.url} alt="POGI" className="h-12 w-auto object-contain drop-shadow-lg" />
-        </div>
+          <div className="absolute top-6 right-6 z-10">
+            <img src={pogiLogo.url} alt="POGI" className="h-12 w-auto object-contain drop-shadow-lg" />
+          </div>
 
-        <div className="relative z-10 mx-auto max-w-[1400px] h-full px-6 flex flex-col justify-center">
-          <div className="max-w-4xl">
-            <h1
-              className="hero-title-yellow font-display text-[120px] sm:text-[160px] lg:text-[180px] leading-none"
-              style={{ textShadow: "0 4px 18px rgba(0,0,0,0.55), 0 2px 4px rgba(0,0,0,0.4)" }}
-            >
-              1991
-            </h1>
-            <p className="mt-2 font-display text-[40px] sm:text-[52px] text-pogi-red leading-none">
-              Monsters of Rock
-            </p>
-            <p className="mt-4 italic text-xl sm:text-2xl lg:text-[28px] text-white max-w-2xl">
-              Le jour où l'URSS chuta… En musique
-            </p>
-
-            <div className="mt-10 max-w-2xl">
-              <p className="text-[18px] font-bold">
-                Dernière sortie : <span className="italic font-normal">Monsters of Rock</span>
+          <div className="relative z-10 mx-auto max-w-[1400px] h-full px-6 flex flex-col justify-end pb-20">
+            <div className="max-w-3xl">
+              <span className="inline-block pill bg-pogi-yellow text-pogi-dark font-bold">
+                XVIIe siècle
+              </span>
+              <h1
+                className="mt-4 font-display uppercase text-white text-[44px] sm:text-[64px] lg:text-[80px] leading-[0.95]"
+                style={{ textShadow: "0 4px 18px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.5)" }}
+              >
+                Versailles ou la mise en scène du pouvoir absolu
+              </h1>
+              <p className="mt-6 text-white/90 text-lg sm:text-xl leading-relaxed max-w-2xl">
+                Versailles ou la mise en scène du pouvoir absolue
               </p>
-              <p className="mt-3 text-white/90 leading-relaxed">
-                À travers la musique, c'est toute une époque qui se fissure. De la rigidité idéologique de l'URSS aux premiers accords de liberté qui franchissent le Rideau de fer, ce récit retrace la lente décomposition d'un empire vu depuis ses sons, ses interdits et ses résonances…{" "}
-                <Link to="/videos" className="text-pogi-yellow font-bold hover:underline">voir plus</Link>
-              </p>
+              <span className="mt-6 inline-block text-pogi-yellow font-bold group-hover:underline">
+                Lire l'article →
+              </span>
             </div>
           </div>
-        </div>
+        </Link>
       </section>
+
 
       {/* ARTICLES À LA UNE */}
       <FeaturedArticlesSection />
