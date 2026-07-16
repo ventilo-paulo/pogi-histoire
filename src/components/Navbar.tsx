@@ -15,6 +15,19 @@ const ALL_LINKS = [
 export function Navbar() {
   const [open, setOpen] = useState(false);
   const { location } = useRouterState();
+  const articles = useSyncExternalStore(
+    publishedArticlesStore.subscribe,
+    publishedArticlesStore.getSnapshot,
+    publishedArticlesStore.getSnapshot,
+  );
+  const hasInterviews = useMemo(
+    () => (articles ?? []).some((a) => a.category === INTERVIEWS_CATEGORY),
+    [articles],
+  );
+  const links = useMemo(
+    () => ALL_LINKS.filter((l) => !("requiresInterviews" in l && l.requiresInterviews) || hasInterviews),
+    [hasInterviews],
+  );
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -29,6 +42,7 @@ export function Navbar() {
       document.body.style.overflow = "";
     };
   }, [open]);
+
 
   const linkBase =
     "text-base font-medium transition-colors hover:text-pogi-yellow";
