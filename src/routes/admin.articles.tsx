@@ -36,8 +36,6 @@ const empty: Partial<Article> = {
   tags: [], sources: [],
 };
 
-// Section headers for the single-page editor (icons kept for the visual anchors)
-const SECTION_ICONS = { general: Info, seo: Search, image: ImageIcon, content: FileText, meta: Tags } as const;
 
 function slugify(s: string) {
   return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
