@@ -96,6 +96,13 @@ function AuthPage() {
           className="block mx-auto mt-4 text-white/60 text-sm hover:text-pogi-yellow">
           {mode === "signin" ? "Première connexion ? Créer le compte" : "Déjà un compte ? Se connecter"}
         </button>
+        {mode === "signup" && (
+          <p className="mt-4 text-xs text-white/50 text-center leading-relaxed">
+            La création d'un compte ne donne aucun droit d'administration.
+            L'accès au back office doit être validé manuellement par un administrateur.
+          </p>
+        )}
+
       </div>
     </div>
   );
