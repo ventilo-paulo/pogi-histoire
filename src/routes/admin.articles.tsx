@@ -352,11 +352,70 @@ function ImageTab({ a, setA }: { a: Partial<Article>; setA: (v: Partial<Article>
 }
 
 function ContentTab({ a, setA }: { a: Partial<Article>; setA: (v: Partial<Article>) => void }) {
+  type Heading = { tag: "H1" | "H2" | "H3"; text: string; index: number };
+  const headings = useMemo<Heading[]>(() => {
+    if (typeof window === "undefined") return [];
+    const doc = new DOMParser().parseFromString(a.content ?? "", "text/html");
+    const counts: Record<string, number> = { H1: 0, H2: 0, H3: 0 };
+    const items: Heading[] = [];
+    doc.querySelectorAll("h1,h2,h3").forEach((el) => {
+      const tag = el.tagName as Heading["tag"];
+      const text = (el.textContent || "").trim();
+      if (!text) return;
+      items.push({ tag, text, index: counts[tag]++ });
+    });
+    return items;
+  }, [a.content]);
+
+  function scrollToHeading(h: Heading) {
+    const root = document.getElementById("article-editor-root");
+    if (!root) return;
+    const els = root.querySelectorAll(h.tag.toLowerCase());
+    const el = els[h.index] as HTMLElement | undefined;
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    const prev = el.style.background;
+    el.style.transition = "background 0.6s";
+    el.style.background = "rgba(245,200,0,0.28)";
+    window.setTimeout(() => { el.style.background = prev; }, 1000);
+  }
+
   return (
     <div className="section-card">
       <h3 className="section-title">Contenu WYSIWYG</h3>
-      <RichTextEditor value={a.content ?? ""} onChange={(html) => setA({ ...a, content: html })} />
-      <p className="text-xs text-white/40 mt-2">Utilisez la barre d'outils pour mettre en forme le texte : titres, gras, italique, listes, citations, liens, images, vidéos…</p>
+      <div className="grid gap-4 lg:grid-cols-[1fr_240px]">
+        <div id="article-editor-root" className="min-w-0">
+          <RichTextEditor value={a.content ?? ""} onChange={(html) => setA({ ...a, content: html })} />
+          <p className="text-xs text-white/40 mt-2">Utilisez la barre d'outils pour mettre en forme le texte : titres, gras, italique, listes, citations, liens, images, vidéos…</p>
+        </div>
+        <aside className="border border-white/10 rounded-lg bg-white/[0.03] p-3 lg:sticky lg:top-2 lg:self-start lg:max-h-[70vh] overflow-auto">
+          <div className="flex items-center gap-2 text-white/70 text-xs font-semibold uppercase tracking-wider mb-2">
+            <BookOpen size={14} /> Sommaire
+          </div>
+          {headings.length === 0 ? (
+            <p className="text-white/40 text-xs">Aucun titre pour le moment. Utilisez H1, H2 ou H3 dans l'éditeur pour construire le plan de l'article.</p>
+          ) : (
+            <ul className="space-y-0.5">
+              {headings.map((h, i) => (
+                <li key={i}>
+                  <button
+                    type="button"
+                    onClick={() => scrollToHeading(h)}
+                    title={h.text}
+                    className={`block w-full text-left text-sm rounded px-2 py-1 hover:bg-white/10 hover:text-pogi-yellow truncate ${
+                      h.tag === "H1" ? "text-white font-semibold"
+                      : h.tag === "H2" ? "text-white/85 pl-3"
+                      : "text-white/60 pl-6 text-xs"
+                    }`}
+                  >
+                    {h.text}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </aside>
+      </div>
     </div>
   );
 }
