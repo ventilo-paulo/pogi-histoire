@@ -120,7 +120,6 @@ function AdminArticles() {
 function ArticleEditor({
   initial, allArticles, onClose, onSaved,
 }: { initial: Partial<Article>; allArticles: Article[]; onClose: () => void; onSaved: () => void }) {
-  const [tab, setTab] = useState<TabId>("general");
   const [a, setA] = useState<Partial<Article>>(initial);
   const [err, setErr] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -134,7 +133,7 @@ function ArticleEditor({
     setErr(null); setSaving(true);
     try {
       const title = (a.title ?? "").trim();
-      if (!title) { setErr("Le titre H1 est requis"); setTab("seo"); return; }
+      if (!title) { setErr("Le titre H1 est requis"); return; }
       const slug = (a.slug?.trim() || slugify(title)) || crypto.randomUUID().slice(0, 8);
       const publishedAt = a.published
         ? new Date(`${pubDate}T${pubTime || "10:00"}:00`).toISOString()
@@ -183,37 +182,27 @@ function ArticleEditor({
           <button onClick={onClose} className="text-white/60 hover:text-white p-2"><X size={22} /></button>
         </div>
 
-        {/* Body */}
-        <div className="flex-1 overflow-auto px-6 py-6">
-          {tab === "general" && <GeneralTab a={a} setA={setA} allArticles={allArticles} pubDate={pubDate} pubTime={pubTime} setPubDate={setPubDate} setPubTime={setPubTime} />}
-          {tab === "seo" && <SeoTab a={a} setA={setA} />}
-          {tab === "image" && <ImageTab a={a} setA={setA} />}
-          {tab === "content" && <ContentTab a={a} setA={setA} />}
-          {tab === "meta" && <MetaTab a={a} setA={setA} />}
+        {/* Body — single scrollable page with all sections stacked */}
+        <div className="flex-1 overflow-auto px-4 md:px-6 py-6 space-y-6">
+          <GeneralTab a={a} setA={setA} allArticles={allArticles} pubDate={pubDate} pubTime={pubTime} setPubDate={setPubDate} setPubTime={setPubTime} />
+          <SeoTab a={a} setA={setA} />
+          <ImageTab a={a} setA={setA} />
+          <ContentTab a={a} setA={setA} />
+          <MetaTab a={a} setA={setA} />
         </div>
 
         {err && <div className="px-6 py-2 text-sm text-red-300 bg-red-500/10 border-t border-red-500/30">{err}</div>}
 
-        {/* Footer tab bar */}
-        <div className="flex items-center justify-between gap-3 px-3 md:px-6 py-3 border-t border-white/10 bg-pogi-dark/60">
-          <div className="flex items-center gap-1 overflow-x-auto">
-            {TABS.map((t) => {
-              const Icon = t.icon;
-              const active = tab === t.id;
-              return (
-                <button key={t.id} onClick={() => setTab(t.id)}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm whitespace-nowrap ${active ? "bg-pogi-yellow text-pogi-dark font-semibold" : "text-white/70 hover:bg-white/10"}`}>
-                  <Icon size={16} /> {t.label}
-                </button>
-              );
-            })}
-          </div>
+        {/* Footer — single Save button */}
+        <div className="flex items-center justify-end gap-3 px-4 md:px-6 py-3 border-t border-white/10 bg-pogi-dark/60">
+          <button onClick={onClose} className="px-4 py-2 rounded-md text-sm text-white/70 hover:bg-white/10">Annuler</button>
           <button onClick={save} disabled={saving}
             className="flex items-center gap-2 bg-pogi-yellow text-pogi-dark font-bold uppercase px-5 py-2 rounded-md disabled:opacity-60">
             <Save size={16} /> {saving ? "Sauvegarde…" : "Sauvegarder"}
           </button>
         </div>
       </div>
+
       <style>{`.inp{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;padding:.55rem .75rem;border-radius:.5rem;outline:none;font-size:.9rem}.inp:focus{border-color:#F5C800}.section-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:.75rem;padding:1.25rem;margin-bottom:1rem}.section-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.04em;margin-bottom:1rem;color:#fff}`}</style>
     </div>
   );
