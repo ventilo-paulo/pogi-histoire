@@ -19,15 +19,6 @@ const BLOCKS = [
   { value: "h4", label: "Titre 4" },
   { value: "pre", label: "Code" },
 ];
-const SIZES = [
-  { value: "1", label: "10" },
-  { value: "2", label: "13" },
-  { value: "3", label: "16" },
-  { value: "4", label: "18" },
-  { value: "5", label: "24" },
-  { value: "6", label: "32" },
-  { value: "7", label: "48" },
-];
 const FONTS = [
   { value: "Inter, sans-serif", label: "Inter" },
   { value: "'Bebas Neue', sans-serif", label: "Bebas Neue" },
