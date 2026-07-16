@@ -140,15 +140,16 @@ export default function RichTextEditor({ value, onChange, minHeight = 380 }: Pro
               <option value="" disabled>Police</option>
               {FONTS.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
             </Select>
-            <Select
-              title="Taille"
-              onChange={(v) => { if (v) exec("fontSize", v); }}
-              value=""
-              minWidth={90}
-            >
-              <option value="" disabled>Taille</option>
-              {SIZES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
-            </Select>
+            <input
+              type="number"
+              min={1}
+              max={100}
+              defaultValue={16}
+              onChange={(e) => handleFontSize(e.target.value)}
+              className="bg-white/5 border border-white/10 text-white text-xs rounded-md px-2 h-9 w-16 focus:outline-none focus:border-pogi-yellow hover:bg-white/10 transition-colors"
+              title="Taille de police (px)"
+              aria-label="Taille de police (px)"
+            />
           </Group>
 
           {/* Mise en forme du texte */}
