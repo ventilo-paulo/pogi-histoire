@@ -17,6 +17,9 @@ export type ArticleLite = {
   published_at: string | null;
 };
 
+export const INTERVIEWS_CATEGORY = "Les voix du passé";
+
+
 type Listener = () => void;
 
 const categoryListeners = new Set<Listener>();
