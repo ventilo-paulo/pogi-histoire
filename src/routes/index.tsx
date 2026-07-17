@@ -96,52 +96,68 @@ function FeaturedArticleCard({ a }: { a: ArticleLite }) {
 }
 
 
+const HERO_SLUG = "versailles-ou-la-mise-en-scene-du-pouvoir-absolu";
+const HERO_FALLBACK_SUBTITLE =
+  "Comment Louis XIV a transformé un pavillon de chasse en théâtre du pouvoir absolu — architecture, étiquette et propagande au service du Roi-Soleil.";
+
+function Hero() {
+  const items = usePublishedArticles();
+  const heroArticle = items?.find((a) => a.slug === HERO_SLUG);
+  const subtitle = heroArticle?.excerpt?.trim() || HERO_FALLBACK_SUBTITLE;
+
+  return (
+    <section className="relative w-full overflow-hidden">
+      <Link
+        to="/articles/$slug"
+        params={{ slug: HERO_SLUG }}
+        preload="intent"
+        aria-label="Lire l'article : Versailles ou la mise en scène du pouvoir absolu"
+        className="group relative block h-[calc(100vh-60px)] min-h-[640px] w-full outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
+      >
+        <img
+          src="https://wjexjgjyfglvrpktbpvz.supabase.co/storage/v1/object/sign/media/articles/f872825c-8b53-4376-bd2b-71af751cfbf3.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9lOWU2ZGQxYS00ODJjLTQ3NTQtOTdkNi1iMGU5YTQ3MWJlMGQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJtZWRpYS9hcnRpY2xlcy9mODcyODI1Yy04YjUzLTQzNzYtYmQyYi03MWFmNzUxY2ZiZjMuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc4MjgzMzM3MCwiZXhwIjoyMDk4MTkzMzcwfQ.NTJt1qXL4b4RPPsMOojSSocQpxy9auuSXHq0n0GGGqM"
+          alt="Versailles ou la mise en scène du pouvoir absolu"
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30" />
+
+        <div className="absolute top-6 right-6 z-10">
+          <img src={pogiLogo.url} alt="POGI" className="h-12 w-auto object-contain drop-shadow-lg" />
+        </div>
+
+        <div className="relative z-10 mx-auto max-w-[1400px] h-full px-6 flex flex-col justify-end pb-20">
+          <div className="max-w-3xl">
+            <span className="inline-block pill bg-pogi-yellow text-pogi-dark font-bold">
+              XVIIe siècle
+            </span>
+            <h1
+              className="mt-4 font-display uppercase text-white text-[44px] sm:text-[64px] lg:text-[80px] leading-[0.95]"
+              style={{ textShadow: "0 4px 18px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.5)" }}
+            >
+              Versailles ou la mise en scène du pouvoir absolu
+            </h1>
+            <p className="mt-6 text-white/90 text-lg sm:text-xl leading-relaxed max-w-2xl">
+              {subtitle}
+            </p>
+            <span className="mt-6 inline-block text-pogi-yellow font-bold group-hover:underline">
+              Lire l'article →
+            </span>
+          </div>
+        </div>
+      </Link>
+    </section>
+  );
+}
+
 function Home() {
   return (
     <div className="min-h-screen bg-pogi-dark text-white">
       <Navbar />
 
       {/* HERO — Article à la une */}
-      <section className="relative w-full overflow-hidden">
-        <Link
-          to="/articles/$slug"
-          params={{ slug: "versailles-ou-la-mise-en-scene-du-pouvoir-absolu" }}
-          preload="intent"
-          aria-label="Lire l'article : Versailles ou la mise en scène du pouvoir absolu"
-          className="group relative block h-[calc(100vh-60px)] min-h-[640px] w-full outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
-        >
-          <img
-            src="https://wjexjgjyfglvrpktbpvz.supabase.co/storage/v1/object/sign/media/articles/f872825c-8b53-4376-bd2b-71af751cfbf3.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9lOWU2ZGQxYS00ODJjLTQ3NTQtOTdkNi1iMGU5YTQ3MWJlMGQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJtZWRpYS9hcnRpY2xlcy9mODcyODI1Yy04YjUzLTQzNzYtYmQyYi03MWFmNzUxY2ZiZjMuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc4MjgzMzM3MCwiZXhwIjoyMDk4MTkzMzcwfQ.NTJt1qXL4b4RPPsMOojSSocQpxy9auuSXHq0n0GGGqM"
-            alt="Versailles ou la mise en scène du pouvoir absolu"
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30" />
+      <Hero />
 
-          <div className="absolute top-6 right-6 z-10">
-            <img src={pogiLogo.url} alt="POGI" className="h-12 w-auto object-contain drop-shadow-lg" />
-          </div>
 
-          <div className="relative z-10 mx-auto max-w-[1400px] h-full px-6 flex flex-col justify-end pb-20">
-            <div className="max-w-3xl">
-              <span className="inline-block pill bg-pogi-yellow text-pogi-dark font-bold">
-                XVIIe siècle
-              </span>
-              <h1
-                className="mt-4 font-display uppercase text-white text-[44px] sm:text-[64px] lg:text-[80px] leading-[0.95]"
-                style={{ textShadow: "0 4px 18px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.5)" }}
-              >
-                Versailles ou la mise en scène du pouvoir absolu
-              </h1>
-              <p className="mt-6 text-white/90 text-lg sm:text-xl leading-relaxed max-w-2xl">
-                Comment Louis XIV a transformé un pavillon de chasse en théâtre du pouvoir absolu — architecture, étiquette et propagande au service du Roi-Soleil.
-              </p>
-              <span className="mt-6 inline-block text-pogi-yellow font-bold group-hover:underline">
-                Lire l'article →
-              </span>
-            </div>
-          </div>
-        </Link>
-      </section>
 
 
       {/* ARTICLES À LA UNE */}
