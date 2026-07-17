@@ -133,7 +133,7 @@ function Home() {
                 Versailles ou la mise en scène du pouvoir absolu
               </h1>
               <p className="mt-6 text-white/90 text-lg sm:text-xl leading-relaxed max-w-2xl">
-                Versailles ou la mise en scène du pouvoir absolue
+                Comment Louis XIV a transformé un pavillon de chasse en théâtre du pouvoir absolu — architecture, étiquette et propagande au service du Roi-Soleil.
               </p>
               <span className="mt-6 inline-block text-pogi-yellow font-bold group-hover:underline">
                 Lire l'article →
