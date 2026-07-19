@@ -39,45 +39,10 @@ function ArticlesPage() {
     <div className="min-h-screen bg-pogi-light">
       <Navbar />
 
-      {/* HERO */}
-      <section className="relative h-[70vh] min-h-[520px] w-full overflow-hidden">
-        <img src={heroRenaissance} alt="Renaissance" className="absolute inset-0 h-full w-full object-cover" width={1920} height={1280} />
-        <div className="absolute inset-0 bg-black/60" />
+      {/* HERO — dernier article publié */}
+      <LatestArticleHero />
 
-        <div className="absolute top-6 left-6 flex flex-wrap gap-2 z-10">
-          <Link to="/articles" className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Dernières sorties</Link>
-          <Link to="/interviews" className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Interviews</Link>
-          <Link to="/videos" className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Vidéos</Link>
-        </div>
-        <div className="absolute top-6 right-6">
-          <img src={pogiLogo.url} alt="POGI" className="h-12 w-auto object-contain drop-shadow-lg" />
-        </div>
 
-        <div className="relative z-10 mx-auto max-w-[1400px] h-full px-6 grid md:grid-cols-[3fr_2fr] gap-8 items-end pb-12">
-          <div>
-            <h1 className="font-display text-white text-[44px] md:text-[52px] uppercase leading-none">
-              Le Roi et le Génie
-            </h1>
-            <p className="mt-2 italic text-white/90 text-2xl md:text-[32px]">
-              Les piliers de la Renaissance
-            </p>
-          </div>
-          <div className="md:pb-2">
-            <p className="text-white text-base leading-relaxed mb-6">
-              Quand François I<sup>er</sup> accueille Léonard de Vinci à Amboise, ce n'est pas qu'un mécène
-              qui reçoit un peintre. C'est une époque qui se rencontre — entre pouvoir et génie, foi et
-              raison, France et Italie. Le récit d'une amitié qui scelle la Renaissance française.
-            </p>
-            <Link
-              to="/articles/$slug"
-              params={{ slug: "le-roi-et-le-genie" }}
-              className="btn btn-outline"
-            >
-              Lire <ArrowRight size={18} />
-            </Link>
-          </div>
-        </div>
-      </section>
 
       {/* FILTRE + RECHERCHE */}
       <ArticlesFilterBar />
