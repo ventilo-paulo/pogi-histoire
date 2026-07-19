@@ -5,6 +5,8 @@ import { Reveal } from "@/components/Reveal";
 import { absUrl } from "@/lib/site";
 
 import cWWII from "@/assets/coll-wwii.jpg";
+import cIllustresAsset from "@/assets/coll-illustres.jpg.asset.json";
+const cIllustres = cIllustresAsset.url;
 
 
 export const Route = createFileRoute("/collections")({
