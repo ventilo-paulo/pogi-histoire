@@ -139,7 +139,7 @@ function LatestArticleHero() {
 
 /* -------- Card -------- */
 
-function ArticleCard({ a }: { a: ArticleLite }) {
+function ArticleCard({ a, fluid = false }: { a: ArticleLite; fluid?: boolean }) {
   const [loading, setLoading] = useState(false);
   return (
     <Link
@@ -148,10 +148,10 @@ function ArticleCard({ a }: { a: ArticleLite }) {
       preload="intent"
       onClick={() => setLoading(true)}
       aria-busy={loading}
-      className="group relative shrink-0 w-[280px] h-[360px] rounded-[16px] overflow-hidden bg-pogi-dark block outline-none
+      className={`group relative ${fluid ? "w-full" : "shrink-0 w-[260px] sm:w-[280px]"} h-[340px] sm:h-[360px] rounded-[16px] overflow-hidden bg-pogi-dark block outline-none
         transition-all duration-300 ease-out
         hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/40
-        focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
+        focus-visible:ring-4 focus-visible:ring-pogi-yellow/60`}
     >
       {a.image_url && (
         <img
