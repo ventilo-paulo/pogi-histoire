@@ -5,6 +5,8 @@ import { Reveal } from "@/components/Reveal";
 import { absUrl } from "@/lib/site";
 
 import cWWII from "@/assets/coll-wwii.jpg";
+import cIllustresAsset from "@/assets/coll-illustres.jpg.asset.json";
+const cIllustres = cIllustresAsset.url;
 
 
 export const Route = createFileRoute("/collections")({
@@ -115,6 +117,19 @@ function CollectionsPage() {
         {/* Les illustres */}
         <section id="illustres" className="mb-14 scroll-mt-24">
           <Heading>Les illustres</Heading>
+          <div className="relative w-full h-[320px] md:h-[420px] rounded-[16px] overflow-hidden mb-4">
+            <img
+              src={cIllustres}
+              alt="Simone Veil, 1984 — portrait par Rob Croes / Anefo (Nationaal Archief, CC0)"
+              loading="lazy"
+              className="absolute inset-0 h-full w-full object-cover object-top"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+            <div className="absolute bottom-4 left-4 right-4 text-white">
+              <h3 className="font-display text-2xl md:text-3xl uppercase leading-tight">Simone Veil</h3>
+              <p className="text-white/80 text-sm italic mt-1">1984 — Rob Croes / Anefo, Nationaal Archief (CC0)</p>
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[220px]">
             <Empty label="Portraits" />
           </div>
