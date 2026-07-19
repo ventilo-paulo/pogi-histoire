@@ -286,13 +286,25 @@ html, body {
   .article-prose { font-size: 19px; }
 }
 
-/* Neutralize per-word font/size chosen in the WYSIWYG */
+/* Neutralize per-word font/size/color chosen in the WYSIWYG or pasted from external sources.
+   Applies to ALL descendants; heading rules below re-override with higher specificity. */
+.article-prose *,
 .article-prose [style*="font-family"],
 .article-prose [style*="font-size"],
+.article-prose [style*="line-height"],
+.article-prose [style*="color"],
 .article-prose font {
   font-family: inherit !important;
   font-size: inherit !important;
+  line-height: inherit !important;
+  color: inherit !important;
+  background-color: transparent !important;
 }
+/* Preserve semantic emphasis */
+.article-prose b, .article-prose strong { font-weight: 700 !important; }
+.article-prose i, .article-prose em { font-style: italic !important; }
+.article-prose a { color: #1A1AC8 !important; }
+.article-prose a:hover { color: #CC0000 !important; }
 
 .article-prose > * + * { margin-top: 24px; }
 .article-prose p { margin: 0; }
