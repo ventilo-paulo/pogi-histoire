@@ -40,7 +40,10 @@ html, body {
   scrollbar-width: none;
   -ms-overflow-style: none;
   padding-bottom: 8px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
 }
+.h-scroll > * { scroll-snap-align: start; }
 .h-scroll::-webkit-scrollbar { display: none; }
 
 .card-hover {
