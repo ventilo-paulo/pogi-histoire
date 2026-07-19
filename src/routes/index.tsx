@@ -17,7 +17,8 @@ import aCave from "@/assets/article-cave.jpg";
 import cAntiquity from "@/assets/coll-antiquity.jpg";
 import cAmericas from "@/assets/coll-americas.jpg";
 import cWWII from "@/assets/coll-wwii.jpg";
-import cIllustres from "@/assets/coll-illustres.jpg";
+import cIllustresAsset from "@/assets/coll-illustres.jpg.asset.json";
+const cIllustres = cIllustresAsset.url;
 import cAfrica from "@/assets/coll-africa.jpg";
 import pogiLogo from "@/assets/pogi-logo.png.asset.json";
 
