@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import {
   Bold, Italic, Underline, Strikethrough, Link as LinkIcon, Image as ImageIcon,
   Video, Code, BookOpen, AlignLeft, AlignCenter, AlignRight, AlignJustify,
-  List, ListOrdered, Quote, Minus, Undo, Redo, Type,
+  List, ListOrdered, Quote, Minus, Undo, Redo, Type, Loader2,
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 type Props = {
   value: string;
