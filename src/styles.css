@@ -297,27 +297,30 @@ html, body {
 .article-prose > * + * { margin-top: 24px; }
 .article-prose p { margin: 0; }
 
-.article-prose h1,
-.article-prose h2,
-.article-prose h3,
-.article-prose h4 {
-  font-family: "Bebas Neue", "Impact", Haettenschweiler, "Arial Narrow", sans-serif;
+.article-prose :is(h1, h2, h3, h4),
+.article-prose :is(h1, h2, h3, h4) * {
+  font-family: "Bebas Neue", "Impact", Haettenschweiler, "Arial Narrow", sans-serif !important;
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  color: #1A1A1A;
-  scroll-margin-top: 88px;
-  line-height: 1.1;
-  font-weight: 400;
+  color: #1A1A1A !important;
+  line-height: 1.1 !important;
+  font-weight: 400 !important;
+  font-style: normal !important;
 }
-.article-prose h1 { font-size: 40px; margin-top: 0; margin-bottom: 16px; }
-.article-prose h2 { font-size: 28px; margin-top: 48px; margin-bottom: 16px; }
-.article-prose h3 { font-size: 22px; margin-top: 40px; margin-bottom: 12px; }
-.article-prose h4 { font-size: 19px; margin-top: 32px; margin-bottom: 10px; }
+.article-prose :is(h1, h2, h3, h4) { scroll-margin-top: 88px; }
+.article-prose h1, .article-prose h1 * { font-size: 40px !important; }
+.article-prose h2, .article-prose h2 * { font-size: 28px !important; }
+.article-prose h3, .article-prose h3 * { font-size: 22px !important; }
+.article-prose h4, .article-prose h4 * { font-size: 19px !important; }
+.article-prose h1 { margin-top: 0; margin-bottom: 16px; }
+.article-prose h2 { margin-top: 48px; margin-bottom: 16px; }
+.article-prose h3 { margin-top: 40px; margin-bottom: 12px; }
+.article-prose h4 { margin-top: 32px; margin-bottom: 10px; }
 @media (min-width: 768px) {
-  .article-prose h1 { font-size: 56px; }
-  .article-prose h2 { font-size: 34px; }
-  .article-prose h3 { font-size: 26px; }
-  .article-prose h4 { font-size: 21px; }
+  .article-prose h1, .article-prose h1 * { font-size: 56px !important; }
+  .article-prose h2, .article-prose h2 * { font-size: 34px !important; }
+  .article-prose h3, .article-prose h3 * { font-size: 26px !important; }
+  .article-prose h4, .article-prose h4 * { font-size: 21px !important; }
 }
 
 .article-prose a {
