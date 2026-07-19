@@ -180,7 +180,7 @@ function Home() {
                   key={c.label}
                   className="relative shrink-0 w-[180px] h-[180px] rounded-[16px] overflow-hidden card-hover block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
                 >
-                  <img src={c.img} alt={c.label} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+                  <img src={c.img} alt={c.label} loading="lazy" style={{ objectPosition: c.objectPosition }} className="absolute inset-0 h-full w-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/30" />
                   <span className="absolute inset-0 grid place-items-center text-center text-white font-bold text-base px-3">
                     {c.label}
