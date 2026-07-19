@@ -93,11 +93,14 @@ export function Navbar() {
       {typeof document !== "undefined" &&
         createPortal(
           <div
-            className={`md:hidden fixed inset-0 z-[100] bg-pogi-darker transition-opacity duration-300 overflow-y-auto ${
-              open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-            }`}
+            className="md:hidden fixed inset-0 z-[100] bg-pogi-darker overflow-y-auto"
             aria-hidden={!open}
-            style={{ paddingTop: 60 }}
+            style={{
+              paddingTop: 60,
+              opacity: open ? 1 : 0,
+              pointerEvents: open ? "auto" : "none",
+              transition: "opacity 300ms ease",
+            }}
           >
             <nav className="flex flex-col px-6 py-8 gap-2">
               {links.map((l, i) => (
