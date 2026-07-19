@@ -90,20 +90,20 @@ export function Navbar() {
 
       {/* Mobile menu */}
       <div
-        className={`md:hidden fixed inset-x-0 top-[60px] bottom-0 bg-pogi-darker/98 backdrop-blur-xl transition-all duration-300 ${
+        className={`md:hidden fixed inset-x-0 top-[60px] bottom-0 bg-pogi-darker transition-all duration-300 overflow-y-auto ${
           open
             ? "opacity-100 pointer-events-auto translate-y-0"
             : "opacity-0 pointer-events-none -translate-y-2"
         }`}
         aria-hidden={!open}
       >
-        <nav className="flex flex-col px-6 py-8 gap-2">
+        <nav className="flex flex-col px-6 py-8 gap-2 min-h-full bg-pogi-darker">
           {links.map((l, i) => (
             <Link
               key={l.to}
               to={l.to}
               onClick={() => setOpen(false)}
-              className="text-white text-2xl font-display uppercase tracking-wider py-3 border-b border-white/5 hover:text-pogi-yellow transition-colors"
+              className="text-white text-2xl font-display uppercase tracking-wider py-4 border-b border-white/10 hover:text-pogi-yellow transition-colors active:bg-white/5 -mx-6 px-6"
               activeProps={{ className: "text-pogi-yellow" }}
               style={{
                 animation: open

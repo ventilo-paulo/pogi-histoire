@@ -39,45 +39,10 @@ function ArticlesPage() {
     <div className="min-h-screen bg-pogi-light">
       <Navbar />
 
-      {/* HERO */}
-      <section className="relative h-[70vh] min-h-[520px] w-full overflow-hidden">
-        <img src={heroRenaissance} alt="Renaissance" className="absolute inset-0 h-full w-full object-cover" width={1920} height={1280} />
-        <div className="absolute inset-0 bg-black/60" />
+      {/* HERO — dernier article publié */}
+      <LatestArticleHero />
 
-        <div className="absolute top-6 left-6 flex flex-wrap gap-2 z-10">
-          <Link to="/articles" className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Dernières sorties</Link>
-          <Link to="/interviews" className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Interviews</Link>
-          <Link to="/videos" className="pill hover:bg-pogi-yellow hover:text-pogi-dark transition-colors">Vidéos</Link>
-        </div>
-        <div className="absolute top-6 right-6">
-          <img src={pogiLogo.url} alt="POGI" className="h-12 w-auto object-contain drop-shadow-lg" />
-        </div>
 
-        <div className="relative z-10 mx-auto max-w-[1400px] h-full px-6 grid md:grid-cols-[3fr_2fr] gap-8 items-end pb-12">
-          <div>
-            <h1 className="font-display text-white text-[44px] md:text-[52px] uppercase leading-none">
-              Le Roi et le Génie
-            </h1>
-            <p className="mt-2 italic text-white/90 text-2xl md:text-[32px]">
-              Les piliers de la Renaissance
-            </p>
-          </div>
-          <div className="md:pb-2">
-            <p className="text-white text-base leading-relaxed mb-6">
-              Quand François I<sup>er</sup> accueille Léonard de Vinci à Amboise, ce n'est pas qu'un mécène
-              qui reçoit un peintre. C'est une époque qui se rencontre — entre pouvoir et génie, foi et
-              raison, France et Italie. Le récit d'une amitié qui scelle la Renaissance française.
-            </p>
-            <Link
-              to="/articles/$slug"
-              params={{ slug: "le-roi-et-le-genie" }}
-              className="btn btn-outline"
-            >
-              Lire <ArrowRight size={18} />
-            </Link>
-          </div>
-        </div>
-      </section>
 
       {/* FILTRE + RECHERCHE */}
       <ArticlesFilterBar />
@@ -100,9 +65,81 @@ function ArticlesPage() {
   );
 }
 
+/* -------- Hero (latest published) -------- */
+
+function LatestArticleHero() {
+  const items = usePublishedArticles();
+  const latest = items?.[0];
+
+  if (!latest) {
+    return (
+      <section className="relative h-[50vh] min-h-[360px] md:h-[70vh] md:min-h-[520px] w-full overflow-hidden bg-pogi-dark">
+        <img src={heroRenaissance} alt="" className="absolute inset-0 h-full w-full object-cover opacity-60" />
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="hidden md:block absolute top-6 right-6 z-10">
+          <img src={pogiLogo.url} alt="POGI" className="h-12 w-auto object-contain drop-shadow-lg" />
+        </div>
+        <div className="relative z-10 mx-auto max-w-[1400px] h-full px-6 flex flex-col justify-end pb-10 md:pb-16">
+          <h1 className="font-display text-white text-[40px] md:text-[64px] uppercase leading-none">Articles</h1>
+          <p className="mt-3 text-white/90 text-base md:text-lg max-w-2xl">Récits, enquêtes et grands portraits d'histoire.</p>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="relative w-full overflow-hidden bg-pogi-dark">
+      <Link
+        to="/articles/$slug"
+        params={{ slug: latest.slug }}
+        preload="intent"
+        aria-label={`Lire l'article : ${latest.title}`}
+        className="group relative block h-[60vh] min-h-[440px] md:h-[70vh] md:min-h-[560px] w-full outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
+      >
+        {latest.image_url ? (
+          <img
+            src={latest.image_url}
+            alt={latest.title}
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        ) : (
+          <img src={heroRenaissance} alt="" className="absolute inset-0 h-full w-full object-cover opacity-60" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30" />
+
+        <div className="hidden md:block absolute top-6 right-6 z-10">
+          <img src={pogiLogo.url} alt="POGI" className="h-12 w-auto object-contain drop-shadow-lg" />
+        </div>
+
+        <div className="relative z-10 mx-auto max-w-[1400px] h-full px-6 flex flex-col justify-end pb-10 md:pb-16">
+          <div className="max-w-3xl">
+            {latest.category && (
+              <span className="inline-block pill bg-pogi-yellow text-pogi-dark font-bold">{latest.category}</span>
+            )}
+            <h1
+              className="mt-3 md:mt-4 font-display uppercase text-white text-[36px] sm:text-[52px] lg:text-[72px] leading-[0.95]"
+              style={{ textShadow: "0 4px 18px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.5)" }}
+            >
+              {latest.title}
+            </h1>
+            {latest.excerpt && (
+              <p className="mt-4 md:mt-6 text-white/90 text-base sm:text-lg leading-relaxed max-w-2xl line-clamp-3">
+                {latest.excerpt}
+              </p>
+            )}
+            <span className="mt-4 md:mt-6 inline-flex items-center gap-2 text-pogi-yellow font-bold group-hover:underline">
+              Lire l'article <ArrowRight size={18} />
+            </span>
+          </div>
+        </div>
+      </Link>
+    </section>
+  );
+}
+
 /* -------- Card -------- */
 
-function ArticleCard({ a }: { a: ArticleLite }) {
+function ArticleCard({ a, fluid = false }: { a: ArticleLite; fluid?: boolean }) {
   const [loading, setLoading] = useState(false);
   return (
     <Link
@@ -111,10 +148,10 @@ function ArticleCard({ a }: { a: ArticleLite }) {
       preload="intent"
       onClick={() => setLoading(true)}
       aria-busy={loading}
-      className="group relative shrink-0 w-[280px] h-[360px] rounded-[16px] overflow-hidden bg-pogi-dark block outline-none
+      className={`group relative ${fluid ? "w-full" : "shrink-0 w-[260px] sm:w-[280px]"} h-[340px] sm:h-[360px] rounded-[16px] overflow-hidden bg-pogi-dark block outline-none
         transition-all duration-300 ease-out
         hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/40
-        focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
+        focus-visible:ring-4 focus-visible:ring-pogi-yellow/60`}
     >
       {a.image_url && (
         <img
@@ -299,7 +336,7 @@ function FilteredArticles({ cat, q }: { cat: string; q: string }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
             {filtered.map((a, i) => (
               <Reveal key={a.id} delay={Math.min(i * 40, 240)} className="w-full">
-                <ArticleCard a={a} />
+                <ArticleCard a={a} fluid />
               </Reveal>
             ))}
           </div>
