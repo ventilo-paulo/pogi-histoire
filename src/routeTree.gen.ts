@@ -26,6 +26,7 @@ import { Route as AdminVideosRouteImport } from './routes/admin.videos'
 import { Route as AdminNotionRouteImport } from './routes/admin.notion'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as AdminInterviewsRouteImport } from './routes/admin.interviews'
+import { Route as AdminCharteRouteImport } from './routes/admin.charte'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 import { Route as AdminArticlesRouteImport } from './routes/admin.articles'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
@@ -119,6 +120,11 @@ const AdminInterviewsRoute = AdminInterviewsRouteImport.update({
   path: '/interviews',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCharteRoute = AdminCharteRouteImport.update({
+  id: '/charte',
+  path: '/charte',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
   id: '/categories',
   path: '/categories',
@@ -173,6 +179,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/charte': typeof AdminCharteRoute
   '/admin/interviews': typeof AdminInterviewsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/notion': typeof AdminNotionRoute
@@ -198,6 +205,7 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/charte': typeof AdminCharteRoute
   '/admin/interviews': typeof AdminInterviewsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/notion': typeof AdminNotionRoute
@@ -225,6 +233,7 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/charte': typeof AdminCharteRoute
   '/admin/interviews': typeof AdminInterviewsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/notion': typeof AdminNotionRoute
@@ -253,6 +262,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin/articles'
     | '/admin/categories'
+    | '/admin/charte'
     | '/admin/interviews'
     | '/admin/media'
     | '/admin/notion'
@@ -278,6 +288,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin/articles'
     | '/admin/categories'
+    | '/admin/charte'
     | '/admin/interviews'
     | '/admin/media'
     | '/admin/notion'
@@ -304,6 +315,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin/articles'
     | '/admin/categories'
+    | '/admin/charte'
     | '/admin/interviews'
     | '/admin/media'
     | '/admin/notion'
@@ -457,6 +469,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminInterviewsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/charte': {
+      id: '/admin/charte'
+      path: '/charte'
+      fullPath: '/admin/charte'
+      preLoaderRoute: typeof AdminCharteRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/categories': {
       id: '/admin/categories'
       path: '/categories'
@@ -512,6 +531,7 @@ declare module '@tanstack/react-router' {
 interface AdminRouteChildren {
   AdminArticlesRoute: typeof AdminArticlesRoute
   AdminCategoriesRoute: typeof AdminCategoriesRoute
+  AdminCharteRoute: typeof AdminCharteRoute
   AdminInterviewsRoute: typeof AdminInterviewsRoute
   AdminMediaRoute: typeof AdminMediaRoute
   AdminNotionRoute: typeof AdminNotionRoute
@@ -522,6 +542,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminArticlesRoute: AdminArticlesRoute,
   AdminCategoriesRoute: AdminCategoriesRoute,
+  AdminCharteRoute: AdminCharteRoute,
   AdminInterviewsRoute: AdminInterviewsRoute,
   AdminMediaRoute: AdminMediaRoute,
   AdminNotionRoute: AdminNotionRoute,
