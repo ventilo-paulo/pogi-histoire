@@ -283,22 +283,10 @@ export default function RichTextEditor({ value, onChange, minHeight = 380 }: Pro
         suppressContentEditableWarning
         onInput={() => onChange(ref.current?.innerHTML ?? "")}
         onBlur={() => onChange(ref.current?.innerHTML ?? "")}
-        className="prose prose-invert max-w-none p-5 focus:outline-none text-white/90 leading-relaxed"
+        className="article-prose focus:outline-none bg-white px-6 py-8"
         style={{ minHeight }}
       />
-      <style>{`
-        [contenteditable] h1{font-size:2rem;font-weight:700;margin:.6em 0}
-        [contenteditable] h2{font-size:1.5rem;font-weight:700;margin:.6em 0}
-        [contenteditable] h3{font-size:1.25rem;font-weight:600;margin:.5em 0}
-        [contenteditable] h4{font-size:1.1rem;font-weight:600;margin:.5em 0}
-        [contenteditable] p{margin:.5em 0}
-        [contenteditable] ul{list-style:disc;padding-left:1.5rem;margin:.5em 0}
-        [contenteditable] ol{list-style:decimal;padding-left:1.5rem;margin:.5em 0}
-        [contenteditable] blockquote{border-left:3px solid #F5C800;padding-left:1rem;color:#ffffffcc;font-style:italic;margin:.7em 0}
-        [contenteditable] pre{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.1);padding:.75rem;border-radius:.375rem;font-family:ui-monospace,Menlo,monospace;font-size:.9em;overflow:auto}
-        [contenteditable] a{color:#F5C800;text-decoration:underline}
-        [contenteditable] img{max-width:100%;height:auto;border-radius:.375rem;margin:.5em 0}
-      `}</style>
     </div>
   );
 }
+
