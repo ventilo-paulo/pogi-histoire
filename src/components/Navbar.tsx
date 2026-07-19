@@ -103,7 +103,7 @@ export function Navbar() {
               key={l.to}
               to={l.to}
               onClick={() => setOpen(false)}
-              className="text-white text-2xl font-display uppercase tracking-wider py-3 border-b border-white/5 hover:text-pogi-yellow transition-colors"
+              className="text-white text-2xl font-display uppercase tracking-wider py-4 border-b border-white/10 hover:text-pogi-yellow transition-colors active:bg-white/5 -mx-6 px-6"
               activeProps={{ className: "text-pogi-yellow" }}
               style={{
                 animation: open
