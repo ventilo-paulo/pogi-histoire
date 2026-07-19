@@ -97,9 +97,7 @@ export function Navbar() {
             aria-hidden={!open}
             style={{
               paddingTop: 60,
-              opacity: open ? 1 : 0,
-              pointerEvents: open ? "auto" : "none",
-              transition: "opacity 300ms ease",
+              display: open ? "block" : "none",
             }}
           >
             <nav className="flex flex-col px-6 py-8 gap-2">
