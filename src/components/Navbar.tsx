@@ -89,34 +89,37 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu */}
-      <div
-        className={`md:hidden fixed inset-x-0 top-[60px] bottom-0 bg-pogi-darker transition-all duration-300 overflow-y-auto ${
-          open
-            ? "opacity-100 pointer-events-auto translate-y-0"
-            : "opacity-0 pointer-events-none -translate-y-2"
-        }`}
-        aria-hidden={!open}
-      >
-        <nav className="flex flex-col px-6 py-8 gap-2 min-h-full bg-pogi-darker">
-          {links.map((l, i) => (
-            <Link
-              key={l.to}
-              to={l.to}
-              onClick={() => setOpen(false)}
-              className="text-white text-2xl font-display uppercase tracking-wider py-4 border-b border-white/10 hover:text-pogi-yellow transition-colors active:bg-white/5 -mx-6 px-6"
-              activeProps={{ className: "text-pogi-yellow" }}
-              style={{
-                animation: open
-                  ? `pogi-page-in 0.35s ${0.05 * i + 0.05}s cubic-bezier(0.22, 1, 0.36, 1) both`
-                  : undefined,
-              }}
-            >
-              {l.label}
-            </Link>
-          ))}
-        </nav>
-      </div>
+      {/* Mobile menu — portaled to body to escape header's backdrop-filter containing block */}
+      {typeof document !== "undefined" &&
+        createPortal(
+          <div
+            className={`md:hidden fixed inset-0 z-[100] bg-pogi-darker transition-opacity duration-300 overflow-y-auto ${
+              open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+            }`}
+            aria-hidden={!open}
+            style={{ paddingTop: 60 }}
+          >
+            <nav className="flex flex-col px-6 py-8 gap-2">
+              {links.map((l, i) => (
+                <Link
+                  key={l.to}
+                  to={l.to}
+                  onClick={() => setOpen(false)}
+                  className="text-white text-2xl font-display uppercase tracking-wider py-4 border-b border-white/10 hover:text-pogi-yellow transition-colors active:bg-white/5 -mx-6 px-6"
+                  activeProps={{ className: "text-pogi-yellow" }}
+                  style={{
+                    animation: open
+                      ? `pogi-page-in 0.35s ${0.05 * i + 0.05}s cubic-bezier(0.22, 1, 0.36, 1) both`
+                      : undefined,
+                  }}
+                >
+                  {l.label}
+                </Link>
+              ))}
+            </nav>
+          </div>,
+          document.body,
+        )}
     </header>
   );
 }
