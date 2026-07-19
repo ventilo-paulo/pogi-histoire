@@ -336,7 +336,7 @@ function FilteredArticles({ cat, q }: { cat: string; q: string }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
             {filtered.map((a, i) => (
               <Reveal key={a.id} delay={Math.min(i * 40, 240)} className="w-full">
-                <ArticleCard a={a} />
+                <ArticleCard a={a} fluid />
               </Reveal>
             ))}
           </div>
