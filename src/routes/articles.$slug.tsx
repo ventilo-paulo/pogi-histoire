@@ -119,8 +119,8 @@ function ArticleBySlug() {
     () =>
       patchedHtml
         ? DOMPurify.sanitize(patchedHtml, {
-            ADD_TAGS: ["iframe"],
-            ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "src", "target", "rel", "id"],
+            ADD_TAGS: ["iframe", "figure", "figcaption"],
+            ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "src", "target", "rel", "id", "loading", "alt"],
           })
         : "",
     [patchedHtml],
