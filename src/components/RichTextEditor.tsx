@@ -260,7 +260,16 @@ export default function RichTextEditor({ value, onChange, minHeight = 380 }: Pro
           {/* Insertion */}
           <Group label="Insertion">
             <Btn onClick={handleLink} title="Lien"><LinkIcon size={18} /></Btn>
-            <Btn onClick={handleImage} title="Image"><ImageIcon size={18} /></Btn>
+            <Btn onClick={handleImageClick} title={imgUploading ? "Envoi…" : "Image"}>
+              {imgUploading ? <Loader2 className="animate-spin" size={18} /> : <ImageIcon size={18} />}
+            </Btn>
+            <input
+              ref={imgInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImageFile(f); e.target.value = ""; }}
+            />
             <Btn onClick={handleVideo} title="Vidéo"><Video size={18} /></Btn>
             <Btn onClick={handleCode} title="Bloc de code"><Code size={18} /></Btn>
             <Btn onClick={handleReadMore} title="Lire la suite"><BookOpen size={18} /></Btn>
