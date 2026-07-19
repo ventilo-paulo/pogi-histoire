@@ -41,6 +41,9 @@ const FONTS = [
 export default function RichTextEditor({ value, onChange, minHeight = 380 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [block, setBlock] = useState("p");
+  const [imgUploading, setImgUploading] = useState(false);
+  const imgInputRef = useRef<HTMLInputElement>(null);
+  const savedRangeRef = useRef<Range | null>(null);
 
   useEffect(() => {
     if (ref.current && ref.current.innerHTML !== (value || "")) {
@@ -48,19 +51,75 @@ export default function RichTextEditor({ value, onChange, minHeight = 380 }: Pro
     }
   }, [value]);
 
+  function saveSelection() {
+    const sel = window.getSelection();
+    if (sel && sel.rangeCount > 0 && ref.current?.contains(sel.anchorNode)) {
+      savedRangeRef.current = sel.getRangeAt(0).cloneRange();
+    }
+  }
+  function restoreSelection() {
+    ref.current?.focus();
+    const r = savedRangeRef.current;
+    if (r) {
+      const sel = window.getSelection();
+      sel?.removeAllRanges();
+      sel?.addRange(r);
+    }
+  }
+
   function exec(cmd: string, arg?: string) {
     ref.current?.focus();
     document.execCommand(cmd, false, arg);
     onChange(ref.current?.innerHTML ?? "");
   }
 
+  function insertHtmlAtCaret(html: string) {
+    restoreSelection();
+    document.execCommand("insertHTML", false, html);
+    onChange(ref.current?.innerHTML ?? "");
+  }
+
+  function escapeHtml(s: string) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+
   function handleLink() {
     const url = prompt("URL du lien :", "https://");
     if (url) exec("createLink", url);
   }
-  function handleImage() {
-    const url = prompt("URL de l'image :", "https://");
-    if (url) exec("insertImage", url);
+
+  function handleImageClick() {
+    saveSelection();
+    imgInputRef.current?.click();
+  }
+
+  async function handleImageFile(file: File) {
+    if (!file.type.startsWith("image/")) { alert("Le fichier doit être une image."); return; }
+    if (file.size > 10 * 1024 * 1024) { alert("Image trop volumineuse (max 10 Mo)."); return; }
+    setImgUploading(true);
+    try {
+      const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+      const path = `articles/inline/${crypto.randomUUID()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from("media").upload(path, file, {
+        cacheControl: "31536000", upsert: false, contentType: file.type,
+      });
+      if (upErr) throw upErr;
+      const ttl = 60 * 60 * 24 * 365 * 10;
+      const { data, error: signErr } = await supabase.storage.from("media").createSignedUrl(path, ttl);
+      if (signErr) throw signErr;
+      const url = data.signedUrl;
+      const caption = prompt("Légende de l'image (optionnel) :", "") || "";
+      const alt = caption || file.name.replace(/\.[^.]+$/, "");
+      const figCaption = caption.trim()
+        ? `<figcaption>${escapeHtml(caption.trim())}</figcaption>`
+        : "";
+      const html = `<figure><img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}" loading="lazy" />${figCaption}</figure><p><br/></p>`;
+      insertHtmlAtCaret(html);
+    } catch (e: any) {
+      alert(e.message || "Échec de l'upload.");
+    } finally {
+      setImgUploading(false);
+    }
   }
   function handleVideo() {
     const url = prompt("URL d'intégration vidéo (YouTube embed, mp4…) :", "https://");
