@@ -123,7 +123,7 @@ function CollectionsPage() {
               alt="Simone Veil, 1984 — portrait par Rob Croes / Anefo (Nationaal Archief, CC0)"
               loading="lazy"
               className="absolute inset-0 h-full w-full object-cover"
-              style={{ objectPosition: "center 70%" }}
+              style={{ objectPosition: "center 50%" }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
             <div className="absolute bottom-4 left-4 right-4 text-white">
