@@ -45,11 +45,11 @@ const fallbackArticles = [
 ];
 
 const collections = [
-  { img: cAntiquity, label: "L'Antiquité", hash: "antiquite" },
-  { img: cAmericas, label: "Les Amériques", hash: "ameriques" },
-  { img: cWWII, label: "Seconde Guerre Mondiale", hash: "wwii" },
-  { img: cIllustres, label: "Les illustres", hash: "illustres" },
-  { img: cAfrica, label: "L'Afrique", hash: "afrique" },
+  { img: cAntiquity, label: "L'Antiquité", hash: "antiquite", objectPosition: "center" },
+  { img: cAmericas, label: "Les Amériques", hash: "ameriques", objectPosition: "center" },
+  { img: cWWII, label: "Seconde Guerre Mondiale", hash: "wwii", objectPosition: "center" },
+  { img: cIllustres, label: "Les illustres", hash: "illustres", objectPosition: "center top" },
+  { img: cAfrica, label: "L'Afrique", hash: "afrique", objectPosition: "center" },
 ];
 
 function formatDate(iso: string | null) {
