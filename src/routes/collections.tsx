@@ -118,7 +118,6 @@ function CollectionsPage() {
         <section id="ameriques" className="mb-14 scroll-mt-24">
           <Heading>Les Amériques</Heading>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[220px]">
-            <Card to="/articles" search={{ cat: "Les Amériques", q: "" }} img={cAmericas} title="Les Amériques" subtitle="Récits d'un continent" className="md:col-span-2 min-h-[220px]" textSize="text-2xl" />
             <Empty label="Amériques" />
           </div>
         </section>
@@ -127,7 +126,6 @@ function CollectionsPage() {
         <section id="illustres" className="mb-14 scroll-mt-24">
           <Heading>Les illustres</Heading>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[220px]">
-            <Card to="/articles" search={{ cat: "Les illustres", q: "" }} img={cIllustres} title="Les illustres" subtitle="Ces figures qui ont fait l'histoire" className="md:col-span-2 min-h-[220px]" textSize="text-2xl" />
             <Empty label="Portraits" />
           </div>
         </section>
@@ -136,10 +134,10 @@ function CollectionsPage() {
         <section id="afrique" className="scroll-mt-24">
           <Heading>L'Afrique</Heading>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[220px]">
-            <Card to="/articles" search={{ cat: "L'Afrique", q: "" }} img={cAfrica} title="L'Afrique" subtitle="Un continent, mille histoires" className="md:col-span-2 min-h-[220px]" textSize="text-2xl" />
             <Empty label="Afrique" />
           </div>
         </section>
+
 
       </div>
       <Footer />
