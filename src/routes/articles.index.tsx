@@ -65,6 +65,78 @@ function ArticlesPage() {
   );
 }
 
+/* -------- Hero (latest published) -------- */
+
+function LatestArticleHero() {
+  const items = usePublishedArticles();
+  const latest = items?.[0];
+
+  if (!latest) {
+    return (
+      <section className="relative h-[50vh] min-h-[360px] md:h-[70vh] md:min-h-[520px] w-full overflow-hidden bg-pogi-dark">
+        <img src={heroRenaissance} alt="" className="absolute inset-0 h-full w-full object-cover opacity-60" />
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="hidden md:block absolute top-6 right-6 z-10">
+          <img src={pogiLogo.url} alt="POGI" className="h-12 w-auto object-contain drop-shadow-lg" />
+        </div>
+        <div className="relative z-10 mx-auto max-w-[1400px] h-full px-6 flex flex-col justify-end pb-10 md:pb-16">
+          <h1 className="font-display text-white text-[40px] md:text-[64px] uppercase leading-none">Articles</h1>
+          <p className="mt-3 text-white/90 text-base md:text-lg max-w-2xl">Récits, enquêtes et grands portraits d'histoire.</p>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="relative w-full overflow-hidden bg-pogi-dark">
+      <Link
+        to="/articles/$slug"
+        params={{ slug: latest.slug }}
+        preload="intent"
+        aria-label={`Lire l'article : ${latest.title}`}
+        className="group relative block h-[60vh] min-h-[440px] md:h-[70vh] md:min-h-[560px] w-full outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
+      >
+        {latest.image_url ? (
+          <img
+            src={latest.image_url}
+            alt={latest.title}
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        ) : (
+          <img src={heroRenaissance} alt="" className="absolute inset-0 h-full w-full object-cover opacity-60" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30" />
+
+        <div className="hidden md:block absolute top-6 right-6 z-10">
+          <img src={pogiLogo.url} alt="POGI" className="h-12 w-auto object-contain drop-shadow-lg" />
+        </div>
+
+        <div className="relative z-10 mx-auto max-w-[1400px] h-full px-6 flex flex-col justify-end pb-10 md:pb-16">
+          <div className="max-w-3xl">
+            {latest.category && (
+              <span className="inline-block pill bg-pogi-yellow text-pogi-dark font-bold">{latest.category}</span>
+            )}
+            <h1
+              className="mt-3 md:mt-4 font-display uppercase text-white text-[36px] sm:text-[52px] lg:text-[72px] leading-[0.95]"
+              style={{ textShadow: "0 4px 18px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.5)" }}
+            >
+              {latest.title}
+            </h1>
+            {latest.excerpt && (
+              <p className="mt-4 md:mt-6 text-white/90 text-base sm:text-lg leading-relaxed max-w-2xl line-clamp-3">
+                {latest.excerpt}
+              </p>
+            )}
+            <span className="mt-4 md:mt-6 inline-flex items-center gap-2 text-pogi-yellow font-bold group-hover:underline">
+              Lire l'article <ArrowRight size={18} />
+            </span>
+          </div>
+        </div>
+      </Link>
+    </section>
+  );
+}
+
 /* -------- Card -------- */
 
 function ArticleCard({ a }: { a: ArticleLite }) {
