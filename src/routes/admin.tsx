@@ -78,6 +78,8 @@ function AdminLayout() {
           <NavItem to="/admin/videos" icon={<Video size={18} />} label="Vidéos" />
           <NavItem to="/admin/interviews" icon={<Mic size={18} />} label="Interviews" />
           <NavItem to="/admin/media" icon={<ImageIcon size={18} />} label="Médiathèque" />
+          <NavItem to="/admin/charte" icon={<Type size={18} />} label="Charte" />
+
           <NavItem to="/admin/notion" icon={<Database size={18} />} label="Notion" />
 
         </aside>
