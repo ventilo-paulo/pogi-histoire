@@ -200,7 +200,7 @@ function ArticleBySlug() {
             {article.category && (
               <span className="text-pogi-yellow uppercase tracking-wider text-sm mb-2">{article.category}</span>
             )}
-            <h1 className="font-display text-white text-[44px] md:text-[52px] uppercase leading-none">
+            <h1 className="font-display text-white uppercase leading-[1.1] text-[40px] md:text-[56px]">
               {article.title}
             </h1>
             {article.excerpt && (
