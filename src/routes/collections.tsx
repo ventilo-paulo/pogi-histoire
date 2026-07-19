@@ -4,18 +4,8 @@ import { Footer } from "@/components/Footer";
 import { Reveal } from "@/components/Reveal";
 import { absUrl } from "@/lib/site";
 
-import vOradour from "@/assets/video-oradour.jpg";
-import cManhattan from "@/assets/coll-manhattan.jpg";
 import cWWII from "@/assets/coll-wwii.jpg";
-import cAntiquity from "@/assets/coll-antiquity.jpg";
-import cJustinian from "@/assets/coll-justinian.jpg";
-import v536 from "@/assets/video-536.jpg";
-import cBayeux from "@/assets/coll-bayeux.jpg";
-import cMedieval from "@/assets/coll-medieval.jpg";
-import cKaamelott from "@/assets/coll-kaamelott.jpg";
-import cAmericas from "@/assets/coll-americas.jpg";
-import cIllustres from "@/assets/coll-illustres.jpg";
-import cAfrica from "@/assets/coll-africa.jpg";
+
 
 export const Route = createFileRoute("/collections")({
   head: () => ({
