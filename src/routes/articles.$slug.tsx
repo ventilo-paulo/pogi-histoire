@@ -257,19 +257,8 @@ function ArticleBySlug() {
                   {readMin} min de lecture
                 </span>
               </div>
-              {article.tags && article.tags.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-1.5">
-                  {article.tags.map((t) => (
-                    <span
-                      key={t}
-                      className="text-[11px] uppercase tracking-wider bg-black/5 text-pogi-dark px-2 py-1 rounded-full"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              )}
             </div>
+
             <ShareButtons title={article.title} />
           </div>
         </div>
