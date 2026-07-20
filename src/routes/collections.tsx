@@ -5,15 +5,21 @@ import { Reveal } from "@/components/Reveal";
 import { absUrl } from "@/lib/site";
 
 import cWWII from "@/assets/coll-wwii.jpg";
+import cAntiquity from "@/assets/coll-antiquity.jpg";
+import cAmericas from "@/assets/coll-americas.jpg";
+import cAfrica from "@/assets/coll-africa.jpg";
 import cIllustresAsset from "@/assets/coll-illustres.jpg.asset.json";
 const cIllustres = cIllustresAsset.url;
-
 
 export const Route = createFileRoute("/collections")({
   head: () => ({
     meta: [
       { title: "Collections — POGI Histoire" },
-      { name: "description", content: "Explorez les collections POGI : Seconde Guerre Mondiale, Antiquité, Moyen-Âge, Les Amériques, Les illustres et L'Afrique." },
+      {
+        name: "description",
+        content:
+          "Explorez les collections POGI : Seconde Guerre Mondiale, Antiquité, Moyen-Âge, Les Amériques, Les illustres et L'Afrique.",
+      },
       { property: "og:title", content: "Collections — POGI Histoire" },
       { property: "og:description", content: "Toutes les collections d'histoire de POGI." },
       { property: "og:image", content: absUrl(cWWII) },
@@ -23,128 +29,122 @@ export const Route = createFileRoute("/collections")({
   component: CollectionsPage,
 });
 
-type CardProps = {
+type Collection = {
+  id: string;
+  title: string;
+  subtitle: string;
   img?: string;
-  title?: React.ReactNode;
-  subtitle?: string;
-  className?: string;
-  textSize?: string;
-  to?: "/articles" | "/videos";
-  search?: Record<string, string>;
-  href?: string;
+  objectPosition?: string;
+  available?: boolean;
 };
 
-function Card({ img, title, subtitle, className = "", textSize = "text-xl", to, search, href }: CardProps) {
-  const alt = typeof title === "string" ? title : "";
-  const inner = (
-    <>
-      {img && <img src={img} alt={alt} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-      {title && (
-        <div className="absolute bottom-4 left-4 right-4">
-          <h3 className={`font-bold text-white leading-tight ${textSize}`}>{title}</h3>
-          {subtitle && <p className="text-white/80 italic text-sm mt-1">{subtitle}</p>}
-        </div>
+const collections: Collection[] = [
+  {
+    id: "wwii",
+    title: "Seconde Guerre Mondiale",
+    subtitle: "Fronts, résistances, mémoire",
+    img: cWWII,
+  },
+  {
+    id: "antiquite",
+    title: "Antiquité",
+    subtitle: "Rome, Grèce, Égypte",
+    img: cAntiquity,
+  },
+  {
+    id: "moyen-age",
+    title: "Moyen-Âge",
+    subtitle: "Chevalerie, féodalité, croisades",
+  },
+  {
+    id: "ameriques",
+    title: "Les Amériques",
+    subtitle: "Découvertes, révolutions, cultures",
+    img: cAmericas,
+  },
+  {
+    id: "illustres",
+    title: "Les illustres",
+    subtitle: "Portraits marquants",
+    img: cIllustres,
+    objectPosition: "center 22%",
+    available: true,
+  },
+  {
+    id: "afrique",
+    title: "L'Afrique",
+    subtitle: "Empires, décolonisation, héritages",
+    img: cAfrica,
+  },
+];
+
+function CollectionTile({ c }: { c: Collection }) {
+  return (
+    <article
+      id={c.id}
+      className="group relative aspect-square rounded-[16px] overflow-hidden bg-pogi-darker scroll-mt-24 outline-none focus-within:ring-4 focus-within:ring-pogi-yellow/60"
+    >
+      {c.img ? (
+        <img
+          src={c.img}
+          alt={c.title}
+          loading="lazy"
+          style={{ objectPosition: c.objectPosition ?? "center" }}
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+      ) : (
+        <div className="absolute inset-0 bg-gradient-to-br from-pogi-darker via-pogi-dark to-black" />
       )}
-    </>
-  );
-  const cls = `group relative rounded-[16px] overflow-hidden card-hover cursor-pointer bg-black block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60 ${className}`;
-  if (href) {
-    return <a href={href} target="_blank" rel="noreferrer" aria-label={alt} className={cls}>{inner}</a>;
-  }
-  if (to) {
-    return <Link to={to} search={search as never} aria-label={alt} className={cls}>{inner}</Link>;
-  }
-  return <article className={cls}>{inner}</article>;
-}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
 
-function Heading({ children }: { children: React.ReactNode }) {
-  return (
-    <Reveal>
-      <h2 className="font-display text-[32px] text-pogi-dark uppercase mb-5">{children}</h2>
-    </Reveal>
+      {!c.available && (
+        <span className="absolute top-3 right-3 z-10 pill bg-pogi-yellow/95 text-pogi-dark text-[11px] font-bold uppercase tracking-wider">
+          Bientôt
+        </span>
+      )}
+
+      <div className="absolute inset-x-0 bottom-0 p-4 text-white">
+        <h3 className="font-display uppercase text-lg md:text-xl leading-tight">{c.title}</h3>
+        <p className="text-white/75 text-sm mt-1 italic line-clamp-2">{c.subtitle}</p>
+      </div>
+    </article>
   );
 }
-
-function Empty({ label }: { label: string }) {
-  return (
-    <div className="empty-state uppercase tracking-wider text-sm">
-      {label} — bientôt en ligne
-    </div>
-  );
-}
-
 
 function CollectionsPage() {
   return (
     <div className="min-h-screen bg-pogi-light">
       <Navbar />
       <div className="mx-auto max-w-[1400px] px-6 pt-10 pb-20">
+        <Reveal>
+          <h1 className="font-display text-[32px] md:text-[40px] text-pogi-dark uppercase mb-3">
+            Collections
+          </h1>
+          <p className="text-pogi-dark/70 max-w-2xl mb-8">
+            Nos univers historiques. Certaines collections sont en préparation — repassez bientôt.
+          </p>
+        </Reveal>
 
-        {/* WWII */}
-        <section id="wwii" className="mb-14 scroll-mt-24">
-          <Heading>Seconde Guerre Mondiale</Heading>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[220px]">
-            <Empty label="Seconde Guerre Mondiale" />
+        <Reveal>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 md:gap-5">
+            {collections.map((c) =>
+              c.available ? (
+                <Link
+                  key={c.id}
+                  to="/collections"
+                  hash={c.id}
+                  className="block card-hover outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60 rounded-[16px]"
+                >
+                  <CollectionTile c={c} />
+                </Link>
+              ) : (
+                <div key={c.id} className="card-hover">
+                  <CollectionTile c={c} />
+                </div>
+              ),
+            )}
           </div>
-        </section>
-
-        {/* Antiquity */}
-        <section id="antiquite" className="mb-14 scroll-mt-24">
-          <Heading>Antiquité</Heading>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[220px]">
-            <Empty label="Antiquité" />
-          </div>
-        </section>
-
-        {/* Middle Ages */}
-        <section id="moyen-age" className="mb-14 scroll-mt-24">
-          <Heading>Moyen-Âge</Heading>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[220px]">
-            <Empty label="Moyen-Âge" />
-          </div>
-        </section>
-
-
-        {/* Les Amériques */}
-        <section id="ameriques" className="mb-14 scroll-mt-24">
-          <Heading>Les Amériques</Heading>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[220px]">
-            <Empty label="Amériques" />
-          </div>
-        </section>
-
-        {/* Les illustres */}
-        <section id="illustres" className="mb-14 scroll-mt-24">
-          <Heading>Les illustres</Heading>
-          <div className="relative w-full h-[320px] md:h-[420px] rounded-[16px] overflow-hidden mb-4">
-            <img
-              src={cIllustres}
-              alt="Simone Veil, 1984 — portrait par Rob Croes / Anefo (Nationaal Archief, CC0)"
-              loading="lazy"
-              className="absolute inset-0 h-full w-full object-cover"
-              style={{ objectPosition: "center 40%" }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
-            <div className="absolute bottom-4 left-4 right-4 text-white">
-              <h3 className="font-display text-2xl md:text-3xl uppercase leading-tight">Simone Veil</h3>
-              <p className="text-white/80 text-sm italic mt-1">1984 — Rob Croes / Anefo, Nationaal Archief (CC0)</p>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[220px]">
-            <Empty label="Portraits" />
-          </div>
-        </section>
-
-        {/* L'Afrique */}
-        <section id="afrique" className="scroll-mt-24">
-          <Heading>L'Afrique</Heading>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[220px]">
-            <Empty label="Afrique" />
-          </div>
-        </section>
-
-
+        </Reveal>
       </div>
       <Footer />
     </div>
