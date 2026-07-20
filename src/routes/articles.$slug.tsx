@@ -316,8 +316,28 @@ function ArticleBySlug() {
               </p>
               <ShareButtons title={article.title} />
             </div>
+
+            {/* Tags (clickable → recherche) */}
+            {article.tags && article.tags.length > 0 && (
+              <div className="mt-8 pt-6 border-t border-black/10">
+                <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold mb-3">Tags</p>
+                <div className="flex flex-wrap gap-2">
+                  {article.tags.map((t) => (
+                    <Link
+                      key={t}
+                      to="/articles"
+                      search={{ q: t, cat: "" }}
+                      className="inline-flex items-center text-[12px] uppercase tracking-wider bg-black/5 hover:bg-pogi-yellow text-pogi-dark px-3 py-1.5 rounded-full transition-colors"
+                    >
+                      #{t}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
+
 
         {/* Prev / Next */}
         {(prev || next) && (
@@ -359,9 +379,10 @@ function ArticleBySlug() {
 
         {/* Related */}
         {related.length > 0 && (
-          <section className="mx-auto max-w-[1100px] px-6 py-10">
-            <h2 className="font-display uppercase text-3xl mb-6">Articles similaires</h2>
+          <section className="mx-auto max-w-[1100px] px-6 py-10 border-t border-black/10">
+            <h2 className="font-display uppercase text-3xl mb-6">À lire ensuite</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+
               {related.map((r) => (
                 <Link
                   key={r.id}
