@@ -65,6 +65,7 @@ type Article = {
   updated_at: string | null;
   tags: string[] | null;
   sources: Source[] | null;
+  related_article_ids: string[] | null;
 };
 
 type SiblingArticle = {
@@ -78,6 +79,7 @@ type SiblingArticle = {
   tags: string[] | null;
 };
 
+
 function ArticleBySlug() {
   const { slug } = Route.useParams();
   const [article, setArticle] = useState<Article | null | undefined>(undefined);
@@ -87,7 +89,7 @@ function ArticleBySlug() {
     let cancelled = false;
     supabase
       .from("articles")
-      .select("id,title,slug,excerpt,content,category,image_url,author,published_at,updated_at,tags,sources")
+      .select("id,title,slug,excerpt,content,category,image_url,author,published_at,updated_at,tags,sources,related_article_ids")
       .eq("slug", slug)
       .eq("published", true)
       .maybeSingle()
@@ -138,20 +140,33 @@ function ArticleBySlug() {
     const idx = sorted.findIndex((s) => s.id === article.id);
     const p = idx > 0 ? sorted[idx - 1] : null; // newer
     const n = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : null; // older
-    const tags = new Set((article.tags ?? []).map((t) => t.toLowerCase()));
-    const rel = sorted
-      .filter((s) => s.id !== article.id)
-      .map((s) => {
-        const shared = (s.tags ?? []).filter((t) => tags.has(t.toLowerCase())).length;
-        const sameCat = s.category && article.category && s.category === article.category ? 1 : 0;
-        return { s, score: shared * 2 + sameCat };
-      })
-      .filter((x) => x.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 3)
-      .map((x) => x.s);
-    return { prev: p, next: n, related: rel };
+
+    // "À lire ensuite" — priority: admin-picked related_article_ids,
+    // fallback: same category, fallback: most recent.
+    const others = sorted.filter((s) => s.id !== article.id);
+    const picked = new Map<string, SiblingArticle>();
+    for (const id of article.related_article_ids ?? []) {
+      const hit = others.find((s) => s.id === id);
+      if (hit) picked.set(hit.id, hit);
+      if (picked.size >= 3) break;
+    }
+    if (picked.size < 3 && article.category) {
+      for (const s of others) {
+        if (picked.has(s.id)) continue;
+        if (s.category === article.category) picked.set(s.id, s);
+        if (picked.size >= 3) break;
+      }
+    }
+    if (picked.size < 3) {
+      for (const s of others) {
+        if (picked.has(s.id)) continue;
+        picked.set(s.id, s);
+        if (picked.size >= 3) break;
+      }
+    }
+    return { prev: p, next: n, related: Array.from(picked.values()) };
   }, [article, siblings]);
+
 
   if (article === undefined) {
     return (
@@ -242,19 +257,8 @@ function ArticleBySlug() {
                   {readMin} min de lecture
                 </span>
               </div>
-              {article.tags && article.tags.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-1.5">
-                  {article.tags.map((t) => (
-                    <span
-                      key={t}
-                      className="text-[11px] uppercase tracking-wider bg-black/5 text-pogi-dark px-2 py-1 rounded-full"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              )}
             </div>
+
             <ShareButtons title={article.title} />
           </div>
         </div>
@@ -312,8 +316,28 @@ function ArticleBySlug() {
               </p>
               <ShareButtons title={article.title} />
             </div>
+
+            {/* Tags (clickable → recherche) */}
+            {article.tags && article.tags.length > 0 && (
+              <div className="mt-8 pt-6 border-t border-black/10">
+                <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold mb-3">Tags</p>
+                <div className="flex flex-wrap gap-2">
+                  {article.tags.map((t) => (
+                    <Link
+                      key={t}
+                      to="/articles"
+                      search={{ q: t, cat: "" }}
+                      className="inline-flex items-center text-[12px] uppercase tracking-wider bg-black/5 hover:bg-pogi-yellow text-pogi-dark px-3 py-1.5 rounded-full transition-colors"
+                    >
+                      #{t}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
+
 
         {/* Prev / Next */}
         {(prev || next) && (
@@ -355,9 +379,10 @@ function ArticleBySlug() {
 
         {/* Related */}
         {related.length > 0 && (
-          <section className="mx-auto max-w-[1100px] px-6 py-10">
-            <h2 className="font-display uppercase text-3xl mb-6">Articles similaires</h2>
+          <section className="mx-auto max-w-[1100px] px-6 py-10 border-t border-black/10">
+            <h2 className="font-display uppercase text-3xl mb-6">À lire ensuite</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+
               {related.map((r) => (
                 <Link
                   key={r.id}

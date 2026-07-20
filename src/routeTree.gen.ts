@@ -16,6 +16,7 @@ import { Route as InterviewsRouteImport } from './routes/interviews'
 import { Route as CollectionsRouteImport } from './routes/collections'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AProposRouteImport } from './routes/a-propos'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ArticlesIndexRouteImport } from './routes/articles.index'
@@ -68,6 +69,11 @@ const AuthRoute = AuthRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AProposRoute = AProposRouteImport.update({
+  id: '/a-propos',
+  path: '/a-propos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SplatRoute = SplatRouteImport.update({
@@ -168,6 +174,7 @@ const ApiPublicHooksNotionSyncRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
+  '/a-propos': typeof AProposRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/collections': typeof CollectionsRoute
@@ -195,6 +202,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
+  '/a-propos': typeof AProposRoute
   '/auth': typeof AuthRoute
   '/collections': typeof CollectionsRoute
   '/interviews': typeof InterviewsRoute
@@ -222,6 +230,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
+  '/a-propos': typeof AProposRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/collections': typeof CollectionsRoute
@@ -251,6 +260,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/$'
+    | '/a-propos'
     | '/admin'
     | '/auth'
     | '/collections'
@@ -278,6 +288,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/$'
+    | '/a-propos'
     | '/auth'
     | '/collections'
     | '/interviews'
@@ -304,6 +315,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/$'
+    | '/a-propos'
     | '/admin'
     | '/auth'
     | '/collections'
@@ -332,6 +344,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
+  AProposRoute: typeof AProposRoute
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
   CollectionsRoute: typeof CollectionsRoute
@@ -397,6 +410,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/a-propos': {
+      id: '/a-propos'
+      path: '/a-propos'
+      fullPath: '/a-propos'
+      preLoaderRoute: typeof AProposRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/$': {
@@ -566,6 +586,7 @@ const VideosRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
+  AProposRoute: AProposRoute,
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
   CollectionsRoute: CollectionsRoute,
