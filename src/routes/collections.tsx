@@ -88,7 +88,9 @@ function CollectionTile({ c }: { c: Collection }) {
         <img
           src={c.img}
           alt={c.title}
-          loading="lazy"
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
           style={{ objectPosition: c.objectPosition ?? "center" }}
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
