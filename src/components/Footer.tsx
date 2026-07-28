@@ -24,7 +24,7 @@ export function Footer() {
           {/* Brand */}
           <div className="flex flex-col gap-3">
             <Link to="/" aria-label="POGI — Accueil" className="inline-flex">
-              <img src={pogiLogo.url} alt="POGI" className="h-10 w-auto object-contain" />
+              <img src={pogiLogo.url} alt="POGI" className="h-16 w-auto object-contain" />
             </Link>
             <p className="text-sm text-white/60 leading-relaxed">
               Média indépendant d'histoire — récits documentés, sourcés, vérifiés.

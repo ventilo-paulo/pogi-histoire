@@ -111,7 +111,7 @@ function Hero() {
         params={{ slug: HERO_SLUG }}
         preload="intent"
         aria-label="Lire l'article : Versailles ou la mise en scène du pouvoir absolu"
-        className="group relative block h-[70vh] min-h-[520px] md:h-[calc(100vh-60px)] md:min-h-[640px] w-full outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
+        className="group relative block h-[70vh] min-h-[520px] md:h-[calc(100vh-76px)] md:min-h-[640px] w-full outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
       >
         <img
           src="https://wjexjgjyfglvrpktbpvz.supabase.co/storage/v1/object/sign/media/articles/f872825c-8b53-4376-bd2b-71af751cfbf3.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9lOWU2ZGQxYS00ODJjLTQ3NTQtOTdkNi1iMGU5YTQ3MWJlMGQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJtZWRpYS9hcnRpY2xlcy9mODcyODI1Yy04YjUzLTQzNzYtYmQyYi03MWFmNzUxY2ZiZjMuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc4MjgzMzM3MCwiZXhwIjoyMDk4MTkzMzcwfQ.NTJt1qXL4b4RPPsMOojSSocQpxy9auuSXHq0n0GGGqM"

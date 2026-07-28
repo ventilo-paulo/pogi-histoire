@@ -429,7 +429,7 @@ html, body {
 /* Reading progress bar */
 .reading-progress {
   position: fixed;
-  top: 60px;
+  top: 76px;
   left: 0;
   right: 0;
   height: 3px;
@@ -465,3 +465,8 @@ html, body {
 }
 .toc-link.lvl-3 { padding-left: 22px; font-size: 0.82rem; }
 
+
+/* ---------- Sticky header offset for anchored titles ---------- */
+h1, h2, h3, [id] {
+  scroll-margin-top: 96px;
+}
