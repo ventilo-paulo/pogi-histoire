@@ -17,10 +17,8 @@ import aCave from "@/assets/article-cave.jpg";
 import cAntiquity from "@/assets/coll-antiquity.jpg";
 import cAmericas from "@/assets/coll-americas.jpg";
 import cWWII from "@/assets/coll-wwii.jpg";
-import cIllustresAsset from "@/assets/coll-illustres.jpg.asset.json";
-const cIllustres = cIllustresAsset.url;
+import cIllustres from "@/assets/coll-illustres.jpg";
 import cAfrica from "@/assets/coll-africa.jpg";
-import pogiLogo from "@/assets/pogi-logo.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -113,7 +111,7 @@ function Hero() {
         params={{ slug: HERO_SLUG }}
         preload="intent"
         aria-label="Lire l'article : Versailles ou la mise en scène du pouvoir absolu"
-        className="group relative block h-[70vh] min-h-[520px] md:h-[calc(100vh-60px)] md:min-h-[640px] w-full outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
+        className="group relative block h-[70vh] min-h-[520px] md:h-[calc(100vh-76px)] md:min-h-[640px] w-full outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
       >
         <img
           src="https://wjexjgjyfglvrpktbpvz.supabase.co/storage/v1/object/sign/media/articles/f872825c-8b53-4376-bd2b-71af751cfbf3.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9lOWU2ZGQxYS00ODJjLTQ3NTQtOTdkNi1iMGU5YTQ3MWJlMGQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJtZWRpYS9hcnRpY2xlcy9mODcyODI1Yy04YjUzLTQzNzYtYmQyYi03MWFmNzUxY2ZiZjMuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc4MjgzMzM3MCwiZXhwIjoyMDk4MTkzMzcwfQ.NTJt1qXL4b4RPPsMOojSSocQpxy9auuSXHq0n0GGGqM"
@@ -121,10 +119,6 @@ function Hero() {
           className="absolute inset-0 h-full w-full object-cover object-[65%_center] md:object-center transition-transform duration-700 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30" />
-
-        <div className="hidden md:block absolute top-6 right-6 z-10">
-          <img src={pogiLogo.url} alt="POGI" className="h-12 w-auto object-contain drop-shadow-lg" />
-        </div>
 
         <div className="relative z-10 mx-auto max-w-[1400px] h-full px-6 flex flex-col justify-end pb-20">
           <div className="max-w-3xl">
@@ -166,7 +160,7 @@ function Home() {
 
 
       {/* COLLECTIONS */}
-      <section className="section-pad pt-0 bg-pogi-dark">
+      <section className="section-pad pt-0 pb-12 md:pb-16 bg-pogi-dark">
         <div className="mx-auto max-w-[1400px] px-6">
           <Reveal>
             <h2 className="font-display text-4xl md:text-[36px] uppercase mb-6">Collections</h2>
@@ -204,7 +198,7 @@ function FeaturedArticlesSection() {
   const list = items ?? [];
 
   return (
-    <section className="section-pad bg-pogi-dark">
+    <section className="section-pad pt-10 md:pt-12 pb-10 md:pb-12 bg-pogi-dark">
       <div className="mx-auto max-w-[1400px] px-6">
         <Reveal>
           <h2 className="font-display text-4xl md:text-[36px] uppercase mb-6">Articles à la Une</h2>
