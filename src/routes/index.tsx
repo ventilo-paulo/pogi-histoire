@@ -160,7 +160,7 @@ function Home() {
 
 
       {/* COLLECTIONS */}
-      <section className="section-pad pt-0 bg-pogi-dark">
+      <section className="section-pad pt-0 pb-12 md:pb-16 bg-pogi-dark">
         <div className="mx-auto max-w-[1400px] px-6">
           <Reveal>
             <h2 className="font-display text-4xl md:text-[36px] uppercase mb-6">Collections</h2>
@@ -198,7 +198,7 @@ function FeaturedArticlesSection() {
   const list = items ?? [];
 
   return (
-    <section className="section-pad bg-pogi-dark">
+    <section className="section-pad pt-10 md:pt-12 pb-10 md:pb-12 bg-pogi-dark">
       <div className="mx-auto max-w-[1400px] px-6">
         <Reveal>
           <h2 className="font-display text-4xl md:text-[36px] uppercase mb-6">Articles à la Une</h2>
