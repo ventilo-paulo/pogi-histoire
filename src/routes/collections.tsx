@@ -8,7 +8,6 @@ import cWWII from "@/assets/coll-wwii.jpg";
 import cAntiquity from "@/assets/coll-antiquity.jpg";
 import cAmericas from "@/assets/coll-americas.jpg";
 import cAfrica from "@/assets/coll-africa.jpg";
-import cIllustres from "@/assets/coll-illustres.jpg";
 
 export const Route = createFileRoute("/collections")({
   head: () => ({
@@ -65,7 +64,7 @@ const collections: Collection[] = [
     id: "illustres",
     title: "Les illustres",
     subtitle: "Portraits marquants",
-    img: cIllustres,
+    img: "/assets/coll-illustres.jpg",
     objectPosition: "center 22%",
     available: true,
   },

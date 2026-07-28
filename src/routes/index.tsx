@@ -17,7 +17,6 @@ import aCave from "@/assets/article-cave.jpg";
 import cAntiquity from "@/assets/coll-antiquity.jpg";
 import cAmericas from "@/assets/coll-americas.jpg";
 import cWWII from "@/assets/coll-wwii.jpg";
-import cIllustres from "@/assets/coll-illustres.jpg";
 import cAfrica from "@/assets/coll-africa.jpg";
 
 export const Route = createFileRoute("/")({
@@ -46,7 +45,7 @@ const collections = [
   { img: cAntiquity, label: "L'Antiquité", hash: "antiquite", objectPosition: "center" },
   { img: cAmericas, label: "Les Amériques", hash: "ameriques", objectPosition: "center" },
   { img: cWWII, label: "Seconde Guerre Mondiale", hash: "wwii", objectPosition: "center" },
-  { img: cIllustres, label: "Les illustres", hash: "illustres", objectPosition: "center 22%" },
+  { img: "/assets/coll-illustres.jpg", label: "Les illustres", hash: "illustres", objectPosition: "center 22%" },
   { img: cAfrica, label: "L'Afrique", hash: "afrique", objectPosition: "center" },
 ];
 
