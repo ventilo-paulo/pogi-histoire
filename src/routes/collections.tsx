@@ -8,8 +8,7 @@ import cWWII from "@/assets/coll-wwii.jpg";
 import cAntiquity from "@/assets/coll-antiquity.jpg";
 import cAmericas from "@/assets/coll-americas.jpg";
 import cAfrica from "@/assets/coll-africa.jpg";
-import cIllustresAsset from "@/assets/coll-illustres.jpg.asset.json";
-const cIllustres = cIllustresAsset.url;
+import cIllustres from "@/assets/coll-illustres.jpg";
 
 export const Route = createFileRoute("/collections")({
   head: () => ({

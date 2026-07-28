@@ -10,7 +10,6 @@ import { absUrl } from "@/lib/site";
 import { categoriesStore, publishedArticlesStore, type ArticleLite } from "@/lib/realtime-stores";
 
 import heroRenaissance from "@/assets/hero-renaissance.jpg";
-import pogiLogo from "@/assets/pogi-logo.png.asset.json";
 
 export const Route = createFileRoute("/articles/")({
   head: () => ({
@@ -76,9 +75,6 @@ function LatestArticleHero() {
       <section className="relative h-[50vh] min-h-[360px] md:h-[70vh] md:min-h-[520px] w-full overflow-hidden bg-pogi-dark">
         <img src={heroRenaissance} alt="" className="absolute inset-0 h-full w-full object-cover opacity-60" />
         <div className="absolute inset-0 bg-black/50" />
-        <div className="hidden md:block absolute top-6 right-6 z-10">
-          <img src={pogiLogo.url} alt="POGI" className="h-12 w-auto object-contain drop-shadow-lg" />
-        </div>
         <div className="relative z-10 mx-auto max-w-[1400px] h-full px-6 flex flex-col justify-end pb-10 md:pb-16">
           <h1 className="font-display text-white text-[40px] md:text-[64px] uppercase leading-none">Articles</h1>
           <p className="mt-3 text-white/90 text-base md:text-lg max-w-2xl">Récits, enquêtes et grands portraits d'histoire.</p>
@@ -106,10 +102,6 @@ function LatestArticleHero() {
           <img src={heroRenaissance} alt="" className="absolute inset-0 h-full w-full object-cover opacity-60" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30" />
-
-        <div className="hidden md:block absolute top-6 right-6 z-10">
-          <img src={pogiLogo.url} alt="POGI" className="h-12 w-auto object-contain drop-shadow-lg" />
-        </div>
 
         <div className="relative z-10 mx-auto max-w-[1400px] h-full px-6 flex flex-col justify-end pb-10 md:pb-16">
           <div className="max-w-3xl">

@@ -17,10 +17,8 @@ import aCave from "@/assets/article-cave.jpg";
 import cAntiquity from "@/assets/coll-antiquity.jpg";
 import cAmericas from "@/assets/coll-americas.jpg";
 import cWWII from "@/assets/coll-wwii.jpg";
-import cIllustresAsset from "@/assets/coll-illustres.jpg.asset.json";
-const cIllustres = cIllustresAsset.url;
+import cIllustres from "@/assets/coll-illustres.jpg";
 import cAfrica from "@/assets/coll-africa.jpg";
-import pogiLogo from "@/assets/pogi-logo.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -121,10 +119,6 @@ function Hero() {
           className="absolute inset-0 h-full w-full object-cover object-[65%_center] md:object-center transition-transform duration-700 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30" />
-
-        <div className="hidden md:block absolute top-6 right-6 z-10">
-          <img src={pogiLogo.url} alt="POGI" className="h-12 w-auto object-contain drop-shadow-lg" />
-        </div>
 
         <div className="relative z-10 mx-auto max-w-[1400px] h-full px-6 flex flex-col justify-end pb-20">
           <div className="max-w-3xl">
