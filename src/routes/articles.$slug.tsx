@@ -114,7 +114,7 @@ function ArticleBySlug() {
 
   const { html: patchedHtml, toc } = useMemo(() => {
     if (!article) return { html: "", toc: [] as TocItem[] };
-    return extractToc(article.content ?? "");
+    return extractToc(stripInlineTypography(article.content ?? ""));
   }, [article]);
 
   const safeHtml = useMemo(
