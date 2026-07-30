@@ -56,3 +56,29 @@ export function extractToc(html: string): { html: string; toc: TocItem[] } {
   });
   return { html: patched, toc };
 }
+
+/**
+ * Remove every font-related formatting coming from the WYSIWYG or from pasted
+ * content so that only the editorial charter (.article-prose) applies.
+ * - unwraps <font> / <span> wrappers
+ * - drops style / face / size / color / align / class attributes
+ * - converts layout <div> into semantic <p>
+ */
+export function stripInlineTypography(html: string): string {
+  if (!html) return "";
+  let out = html;
+  // Unwrap <font> and plain <span> wrappers (keep their content)
+  out = out.replace(/<\/?font[^>]*>/gi, "");
+  out = out.replace(/<span[^>]*>/gi, "").replace(/<\/span>/gi, "");
+  // Drop formatting attributes on every remaining tag
+  out = out.replace(/<([a-z][a-z0-9]*)((?:\s+[^>]*)?)>/gi, (_m, tag, attrs) => {
+    const cleaned = String(attrs).replace(
+      /\s+(style|face|size|color|bgcolor|align|width|height|class)\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi,
+      "",
+    );
+    return `<${tag}${cleaned}>`;
+  });
+  // Layout divs -> paragraphs
+  out = out.replace(/<div(\s[^>]*)?>/gi, "<p>").replace(/<\/div>/gi, "</p>");
+  return out;
+}

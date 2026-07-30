@@ -17,7 +17,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Skeleton } from "@/components/Skeleton";
 import { supabase } from "@/integrations/supabase/client";
-import { extractToc, readingTimeMin, type TocItem } from "@/lib/article-utils";
+import { extractToc, readingTimeMin, stripInlineTypography, type TocItem } from "@/lib/article-utils";
 
 export const Route = createFileRoute("/articles/$slug")({
   component: ArticleBySlug,
@@ -114,13 +114,15 @@ function ArticleBySlug() {
 
   const { html: patchedHtml, toc } = useMemo(() => {
     if (!article) return { html: "", toc: [] as TocItem[] };
-    return extractToc(article.content ?? "");
+    return extractToc(stripInlineTypography(article.content ?? ""));
   }, [article]);
 
   const safeHtml = useMemo(
     () =>
       patchedHtml
         ? DOMPurify.sanitize(patchedHtml, {
+            FORBID_TAGS: ["font", "style"],
+            FORBID_ATTR: ["style", "face", "size", "color", "bgcolor", "align"],
             ADD_TAGS: ["iframe", "figure", "figcaption"],
             ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "src", "target", "rel", "id", "loading", "alt"],
           })
