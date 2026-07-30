@@ -34,8 +34,8 @@ function decodeEntities(s: string): string {
     .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)));
 }
 
-/** Keep TOC labels consistent when legacy headings were saved in full caps. */
-function normalizeTocLabel(text: string): string {
+/** Keep headings consistent when legacy content was saved in full caps. */
+export function normalizeTocLabel(text: string): string {
   const letters = Array.from(text).filter((char) => char.toLocaleLowerCase("fr-FR") !== char.toLocaleUpperCase("fr-FR"));
   if (letters.length === 0) return text;
 
