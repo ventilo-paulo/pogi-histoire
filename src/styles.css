@@ -459,7 +459,7 @@ html, body {
   background: rgba(245,200,0,0.08);
   font-weight: 600;
 }
-.toc-link.lvl-3 { padding-left: 22px; font-size: 0.82rem; }
+.toc-link.lvl-3 { padding-left: 22px; }
 
 
 /* ---------- Sticky header offset for anchored titles ---------- */
