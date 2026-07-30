@@ -34,8 +34,8 @@ function decodeEntities(s: string): string {
     .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)));
 }
 
-/** Keep TOC labels consistent when legacy headings were saved in full caps. */
-function normalizeTocLabel(text: string): string {
+/** Keep headings consistent when legacy content was saved in full caps. */
+export function normalizeTocLabel(text: string): string {
   const letters = Array.from(text).filter((char) => char.toLocaleLowerCase("fr-FR") !== char.toLocaleUpperCase("fr-FR"));
   if (letters.length === 0) return text;
 
@@ -67,7 +67,11 @@ export function extractToc(html: string): { html: string; toc: TocItem[] } {
     toc.push({ id, text, level });
     const hasId = /\sid=/.test(attrs);
     const newAttrs = hasId ? attrs : `${attrs} id="${id}"`;
-    return `<h${lvl}${newAttrs}>${inner}</h${lvl}>`;
+    // Legacy headings saved in FULL CAPS are rewritten in sentence case so
+    // every article follows the same editorial charter.
+    const wasAllCaps = text !== headingText;
+    const inner2 = wasAllCaps ? text : String(inner);
+    return `<h${lvl}${newAttrs}>${inner2}</h${lvl}>`;
   });
   return { html: patched, toc };
 }
