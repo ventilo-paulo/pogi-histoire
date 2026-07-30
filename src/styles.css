@@ -450,6 +450,10 @@ html, body {
   color: #555;
   font-size: 0.88rem;
   line-height: 1.4;
+  font-family: Inter, system-ui, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  text-transform: none;
   transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 }
 .toc-link:hover { color: #1A1A1A; }
@@ -459,9 +463,6 @@ html, body {
   background: rgba(245,200,0,0.08);
   font-weight: 600;
 }
-.toc-link.lvl-3 { padding-left: 22px; }
-
-
 /* ---------- Sticky header offset for anchored titles ---------- */
 h1, h2, h3, [id] {
   scroll-margin-top: 96px;
