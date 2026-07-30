@@ -11,7 +11,7 @@ export const Route = createFileRoute("/a-propos")({
       {
         name: "description",
         content:
-          "POGI Histoire est un média indépendant consacré à l'histoire, porté par Paul, journaliste. Récits documentés et sourcés, en articles et bientôt en vidéos.",
+          "POGI Histoire est un média indépendant consacré à l'histoire, porté par Guillaume Guest et Paul Lesaulnier. Récits documentés et sourcés, en articles et bientôt en vidéos.",
       },
       { property: "og:title", content: "À propos — POGI Histoire" },
       {
@@ -39,7 +39,8 @@ function AboutPage() {
           <div className="mt-10 space-y-6 text-[17px] leading-[1.75] text-pogi-dark/90">
             <p>
               <strong>POGI Histoire</strong> est un média indépendant consacré à l'histoire et à
-              ses moments marquants, porté par <strong>Paul</strong>, journaliste.
+              ses moments marquants, porté par <strong>Guillaume Guest</strong> et{" "}
+              <strong>Paul Lesaulnier</strong>.
             </p>
             <p>
               Des récits documentés et sourcés, vérifiés auprès de références historiques,
