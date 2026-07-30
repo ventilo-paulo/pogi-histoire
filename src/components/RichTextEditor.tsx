@@ -200,24 +200,8 @@ export default function RichTextEditor({ value, onChange, minHeight = 380 }: Pro
             >
               {BLOCKS.map((b) => <option key={b.value} value={b.value}>{b.label}</option>)}
             </Select>
-            <Select
-              title="Police"
-              onChange={(v) => { if (v) exec("fontName", v); }}
-              value=""
-              minWidth={110}
-            >
-              <option value="" disabled>Police</option>
-              {FONTS.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
-            </Select>
-            <Select
-              title="Taille"
-              onChange={(v) => { if (v) exec("fontSize", v); }}
-              value=""
-              minWidth={90}
-            >
-              <option value="" disabled>Taille</option>
-              {SIZES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
-            </Select>
+            {/* Police et taille retirées : la charte éditoriale s'applique automatiquement */}
+
           </Group>
 
           {/* Mise en forme du texte */}
