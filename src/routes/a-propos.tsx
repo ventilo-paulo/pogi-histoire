@@ -39,16 +39,25 @@ function AboutPage() {
         <Reveal>
           <div className="mt-10 space-y-6 text-[17px] leading-[1.75] text-pogi-dark/90">
             <p>
-              <strong>POGI Histoire</strong> est un média indépendant consacré à l'histoire et à
-              ses moments marquants, porté par <strong>Guillaume Guest</strong> et{" "}
-              <strong>Paul Lesaulnier</strong>.
+              <strong>POGI Histoire</strong> est un média indépendant consacré à l'histoire, porté
+              par <strong>Guillaume Guest</strong> et <strong>Paul Lesaulnier</strong>.
             </p>
             <p>
-              Des récits documentés et sourcés, vérifiés auprès de références historiques,
-              publiés en articles et bientôt en vidéos via la chaîne YouTube{" "}
+              On y raconte des événements marquants en cherchant à comprendre ce qui s'est joué
+              derrière : les rapports de force, les décisions, ce qu'on a préféré taire. Une date
+              seule n'explique jamais grand-chose.
+            </p>
+            <p>
+              Chaque sujet est documenté et vérifié à partir de travaux d'historiens, d'archives et
+              de sources primaires quand elles sont accessibles. Les sources sont citées en fin
+              d'article. Quand les historiens ne s'accordent pas entre eux, sur un bilan humain par
+              exemple, nous le précisons au lieu de trancher.
+            </p>
+            <p>
+              Les récits paraissent ici en articles, et bientôt en vidéo sur la chaîne YouTube{" "}
               <strong>POGI Histoire</strong>.
             </p>
-            <p>Chaque article cite ses sources en fin de texte.</p>
+            <p>Si vous repérez une erreur ou si vous avez une idée de sujet, écrivez-nous.</p>
           </div>
         </Reveal>
 
