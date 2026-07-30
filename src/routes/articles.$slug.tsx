@@ -268,10 +268,10 @@ function ArticleBySlug() {
         {/* Body: TOC + content */}
         <div className="mx-auto max-w-[1100px] px-6 py-10 grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-10">
           <aside className="hidden lg:block">
-            {toc.length > 1 && <Toc items={toc} />}
+            {toc.length > 0 && <Toc items={toc} />}
           </aside>
           <div>
-            {toc.length > 1 && (
+            {toc.length > 0 && (
               <details className="lg:hidden mb-6 border border-black/10 rounded-lg bg-white/70">
                 <summary className="cursor-pointer px-4 py-3 flex items-center gap-2 font-semibold uppercase tracking-wider text-sm">
                   <List size={16} /> Sommaire
