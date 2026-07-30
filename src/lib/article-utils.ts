@@ -34,13 +34,28 @@ function decodeEntities(s: string): string {
     .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)));
 }
 
+/** Keep TOC labels consistent when legacy headings were saved in full caps. */
+function normalizeTocLabel(text: string): string {
+  const letters = Array.from(text).filter((char) => char.toLocaleLowerCase("fr-FR") !== char.toLocaleUpperCase("fr-FR"));
+  if (letters.length === 0) return text;
+
+  const uppercaseCount = letters.filter((char) => char === char.toLocaleUpperCase("fr-FR")).length;
+  if (uppercaseCount / letters.length < 0.8) return text;
+
+  const lowercase = text.toLocaleLowerCase("fr-FR");
+  return lowercase.replace(/^([^\p{L}]*)(\p{L})/u, (_match, prefix: string, firstLetter: string) =>
+    `${prefix}${firstLetter.toLocaleUpperCase("fr-FR")}`,
+  );
+}
+
 export function extractToc(html: string): { html: string; toc: TocItem[] } {
   const toc: TocItem[] = [];
   const used = new Set<string>();
   const patched = html.replace(/<h([23])([^>]*)>([\s\S]*?)<\/h\1>/gi, (_m, lvl, attrs, inner) => {
     const level = Number(lvl) as 2 | 3;
     const rawText = String(inner).replace(/<[^>]+>/g, "");
-    const text = decodeEntities(rawText).replace(/\s+/g, " ").trim();
+    const headingText = decodeEntities(rawText).replace(/\s+/g, " ").trim();
+    const text = normalizeTocLabel(headingText);
     if (!text) return _m;
     let id = slugifyAnchor(text);
     if (!id) return _m;
