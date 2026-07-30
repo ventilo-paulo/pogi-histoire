@@ -22,7 +22,12 @@ export default defineTool({
       .order("published_at", { ascending: false })
       .limit(limit ?? 20);
     if (category) q = q.eq("category", category);
-    if (query) q = q.or(`title.ilike.%${query}%,excerpt.ilike.%${query}%`);
+    if (query) {
+      // Treat the search text as plain data: strip PostgREST filter metacharacters
+      // (comma, parentheses, quotes, backslash, wildcards) so it cannot inject clauses.
+      const safe = query.replace(/[,()"'\\%*]/g, " ").replace(/\s+/g, " ").trim().slice(0, 100);
+      if (safe) q = q.or(`title.ilike."%${safe}%",excerpt.ilike."%${safe}%"`);
+    }
     const { data, error } = await q;
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
     return {
