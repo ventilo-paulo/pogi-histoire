@@ -145,8 +145,9 @@ function ChartePage() {
               <div className="text-white font-semibold mt-1">{r.label}</div>
               <dl className="mt-4 space-y-2 text-sm">
                 <Field label="Police" value={r.font} />
-                <Field label="Taille mobile" value={r.sizeMobile} />
-                <Field label="Taille desktop" value={r.sizeDesktop} />
+                <Field label="Taille (Word)" value={r.sizePt} />
+                <Field label="Taille écran" value={r.sizePx} />
+
                 <Field label="Interlignage" value={r.lineHeight} />
                 {r.notes && <Field label="Notes" value={r.notes} />}
               </dl>
