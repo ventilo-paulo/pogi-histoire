@@ -9,8 +9,8 @@ type Row = {
   key: string;
   label: string;
   font: string;
-  sizeMobile: string;
-  sizeDesktop: string;
+  sizePt: string;
+  sizePx: string;
   lineHeight: string;
   notes?: string;
   preview: React.ReactNode;
@@ -21,8 +21,8 @@ const rows: Row[] = [
     key: "h1",
     label: "Titre d'article (H1)",
     font: "Bebas Neue (display condensée)",
-    sizeMobile: "40 px",
-    sizeDesktop: "56 px",
+    sizePt: "20 pt",
+    sizePx: "27 px",
     lineHeight: "1.1",
     notes: "Majuscules, letter-spacing 0.02em",
     preview: <h1>Versailles ou la mise en scène du pouvoir absolu</h1>,
@@ -31,27 +31,38 @@ const rows: Row[] = [
     key: "h2",
     label: "Intertitre H2",
     font: "Bebas Neue",
-    sizeMobile: "28 px",
-    sizeDesktop: "34 px",
+    sizePt: "16 pt",
+    sizePx: "21 px",
     lineHeight: "1.1",
-    notes: "Marge haute 48 px, basse 16 px",
+    notes: "Marge haute 40 px, basse 14 px",
     preview: <h2>Un enfant humilié, un roi obsédé</h2>,
   },
   {
     key: "h3",
     label: "Intertitre H3",
     font: "Bebas Neue",
-    sizeMobile: "22 px",
-    sizeDesktop: "26 px",
+    sizePt: "14 pt",
+    sizePx: "19 px",
     lineHeight: "1.1",
+    notes: "Marge haute 30 px, basse 10 px",
     preview: <h3>Voler les artistes du vaincu</h3>,
+  },
+  {
+    key: "h4",
+    label: "Intertitre H4",
+    font: "Bebas Neue",
+    sizePt: "14 pt",
+    sizePx: "19 px",
+    lineHeight: "1.1",
+    notes: "Même taille que H3, marges réduites",
+    preview: <h4>Le protocole du lever</h4>,
   },
   {
     key: "body",
     label: "Corps de texte",
     font: "Inter (sans-serif)",
-    sizeMobile: "17 px",
-    sizeDesktop: "19 px",
+    sizePt: "12 pt",
+    sizePx: "16 px",
     lineHeight: "1.75",
     notes: "Largeur max 720 px centrée, paragraphes espacés de 24 px",
     preview: (
@@ -71,8 +82,8 @@ const rows: Row[] = [
     key: "quote",
     label: "Citation",
     font: "Inter, italique",
-    sizeMobile: "17 px",
-    sizeDesktop: "19 px",
+    sizePt: "12 pt",
+    sizePx: "16 px",
     lineHeight: "1.75",
     notes: "Bordure gauche jaune (4 px), padding gauche 20 px",
     preview: (
@@ -85,8 +96,8 @@ const rows: Row[] = [
     key: "caption",
     label: "Légende d'image",
     font: "Inter, italique",
-    sizeMobile: "14 px",
-    sizeDesktop: "14 px",
+    sizePt: "10,5 pt",
+    sizePx: "14 px",
     lineHeight: "1.5",
     notes: "Centrée, gris #6B7280",
     preview: <p className="caption">Galerie des Glaces, château de Versailles — 1684.</p>,
@@ -95,8 +106,8 @@ const rows: Row[] = [
     key: "list",
     label: "Listes (à puces / numérotées)",
     font: "Inter",
-    sizeMobile: "17 px",
-    sizeDesktop: "19 px",
+    sizePt: "12 pt",
+    sizePx: "16 px",
     lineHeight: "1.75",
     preview: (
       <ul>
@@ -107,6 +118,7 @@ const rows: Row[] = [
     ),
   },
 ];
+
 
 function ChartePage() {
   return (
@@ -133,8 +145,9 @@ function ChartePage() {
               <div className="text-white font-semibold mt-1">{r.label}</div>
               <dl className="mt-4 space-y-2 text-sm">
                 <Field label="Police" value={r.font} />
-                <Field label="Taille mobile" value={r.sizeMobile} />
-                <Field label="Taille desktop" value={r.sizeDesktop} />
+                <Field label="Taille (Word)" value={r.sizePt} />
+                <Field label="Taille écran" value={r.sizePx} />
+
                 <Field label="Interlignage" value={r.lineHeight} />
                 {r.notes && <Field label="Notes" value={r.notes} />}
               </dl>
