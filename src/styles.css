@@ -276,15 +276,14 @@ html, body {
 .article-prose {
   color: #1A1A1A;
   font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  font-size: 17px;
+  /* Corps : 12 pt Word = 16 px, taille fixe sur tous les écrans */
+  font-size: 16px;
   line-height: 1.75;
   max-width: 720px;
   margin-left: auto;
   margin-right: auto;
 }
-@media (min-width: 768px) {
-  .article-prose { font-size: 19px; }
-}
+
 
 /* Neutralize per-word font/size/color chosen in the WYSIWYG or pasted from external sources.
    Applies to ALL descendants; heading rules below re-override with higher specificity. */
