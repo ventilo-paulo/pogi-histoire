@@ -67,7 +67,13 @@ export function extractToc(html: string): { html: string; toc: TocItem[] } {
     toc.push({ id, text, level });
     const hasId = /\sid=/.test(attrs);
     const newAttrs = hasId ? attrs : `${attrs} id="${id}"`;
-    return `<h${lvl}${newAttrs}>${inner}</h${lvl}>`;
+    // Normalize ALL-CAPS legacy headings in the rendered body too, so every
+    // article follows the same editorial charter casing.
+    const normalizedInner = String(inner).replace(/>?([^<>]+)/g, (seg: string) => {
+      if (seg.startsWith(">")) return `>${normalizeTocLabel(seg.slice(1))}`;
+      return normalizeTocLabel(seg);
+    });
+    return `<h${lvl}${newAttrs}>${normalizedInner}</h${lvl}>`;
   });
   return { html: patched, toc };
 }
