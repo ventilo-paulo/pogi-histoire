@@ -277,7 +277,7 @@ function ArticleBySlug() {
                   <List size={16} /> Sommaire
                 </summary>
                 <div className="px-2 pb-3">
-                  <Toc items={toc} />
+                  <Toc items={toc} showTitle={false} />
                 </div>
               </details>
             )}
@@ -569,7 +569,7 @@ function ShareButtons({ title }: { title: string }) {
 
 /* -------------------- Table of contents -------------------- */
 
-function Toc({ items }: { items: TocItem[] }) {
+function Toc({ items, showTitle = true }: { items: TocItem[]; showTitle?: boolean }) {
   const [active, setActive] = useState<string | null>(items[0]?.id ?? null);
   const raf = useRef<number | null>(null);
 
@@ -601,7 +601,9 @@ function Toc({ items }: { items: TocItem[] }) {
 
   return (
     <nav className="lg:sticky lg:top-[88px]">
-      <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold mb-2 px-2">Sommaire</p>
+      {showTitle && (
+        <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold mb-2 px-2">Sommaire</p>
+      )}
       <div className="border-l border-black/10">
         {items.map((it) => (
           <a
@@ -616,7 +618,7 @@ function Toc({ items }: { items: TocItem[] }) {
                 history.replaceState(null, "", `#${it.id}`);
               }
             }}
-            className={`toc-link lvl-${it.level} ${active === it.id ? "is-active" : ""}`}
+            className={`toc-link ${active === it.id ? "is-active" : ""}`}
           >
             {it.text}
           </a>
