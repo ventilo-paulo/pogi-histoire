@@ -21,7 +21,10 @@ export const Route = createFileRoute("/videos")({
       { property: "og:description", content: "Vidéos d'histoire, longs formats et recommandations." },
       { property: "og:image", content: absUrl(vOradour) },
       { name: "twitter:image", content: absUrl(vOradour) },
+      { property: "og:url", content: "https://pogi-histoire.lovable.app/videos" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://pogi-histoire.lovable.app/videos" }],
   }),
   component: VideosPage,
 });

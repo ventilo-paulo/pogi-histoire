@@ -22,6 +22,23 @@ export const Route = createFileRoute("/collections")({
       { property: "og:description", content: "Toutes les collections d'histoire de POGI." },
       { property: "og:image", content: absUrl(cWWII) },
       { name: "twitter:image", content: absUrl(cWWII) },
+      { property: "og:url", content: "https://pogi-histoire.lovable.app/collections" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+    links: [{ rel: "canonical", href: "https://pogi-histoire.lovable.app/collections" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "Collections — POGI Histoire",
+          description:
+            "Les collections thématiques de POGI Histoire : Seconde Guerre Mondiale, Antiquité, Moyen-Âge, Les Amériques, Les illustres et L'Afrique.",
+          url: "https://pogi-histoire.lovable.app/collections",
+          isPartOf: { "@id": "https://pogi-histoire.lovable.app/#website" },
+        }),
+      },
     ],
   }),
   component: CollectionsPage,

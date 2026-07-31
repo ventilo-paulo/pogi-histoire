@@ -23,12 +23,15 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "POGI Histoire — Accueil" },
-      { name: "description", content: "1991, Monsters of Rock : le jour où l'URSS chuta en musique. Découvrez nos articles et collections." },
+      { name: "description", content: "POGI Histoire : récits d'histoire documentés et sourcés, articles, collections thématiques et vidéos." },
       { property: "og:title", content: "POGI Histoire — Accueil" },
-      { property: "og:description", content: "1991, Monsters of Rock : le jour où l'URSS chuta en musique. Découvrez nos articles et collections." },
+      { property: "og:description", content: "POGI Histoire : récits d'histoire documentés et sourcés, articles, collections thématiques et vidéos." },
       { property: "og:image", content: absUrl(heroConcert) },
       { name: "twitter:image", content: absUrl(heroConcert) },
+      { property: "og:url", content: "https://pogi-histoire.lovable.app/" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://pogi-histoire.lovable.app/" }],
   }),
   component: Home,
 });

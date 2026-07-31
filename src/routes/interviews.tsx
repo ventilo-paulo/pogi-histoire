@@ -17,7 +17,10 @@ export const Route = createFileRoute("/interviews")({
       { name: "description", content: "Les voix du passé : entretiens et interviews publiés par POGI Histoire." },
       { property: "og:title", content: "Interviews — POGI Histoire" },
       { property: "og:description", content: "Les voix du passé : entretiens et interviews." },
+      { property: "og:url", content: "https://pogi-histoire.lovable.app/interviews" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://pogi-histoire.lovable.app/interviews" }],
   }),
   component: InterviewsPage,
 });
