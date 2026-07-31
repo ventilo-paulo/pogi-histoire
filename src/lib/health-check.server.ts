@@ -84,47 +84,79 @@ function extractImages(html: string, max = 8) {
 }
 
 async function checkPage(url: string, label: string): Promise<{ check: HealthCheck; html?: string }> {
+  const hops: string[] = [];
+  let current = url;
+  let totalMs = 0;
+
   try {
-    const { res, ms } = await timedFetch(url);
-    if (res.status >= 300 && res.status < 400) {
+    for (let i = 0; i < 5; i++) {
+      const { res, ms } = await timedFetch(current);
+      totalMs += ms;
+
+      if (res.status >= 300 && res.status < 400) {
+        const location = res.headers.get("location");
+        hops.push(`${res.status} ${current} → ${location ?? "?"}`);
+        if (!location) break;
+        current = new URL(location, current).href;
+        continue;
+      }
+
+      const chain = hops.length ? hops.join("\n") : null;
+
+      if (!res.ok) {
+        return {
+          check: {
+            target: url,
+            kind: "page",
+            label,
+            status: "fail",
+            http_status: res.status,
+            response_ms: totalMs,
+            detail: `Le serveur répond ${res.status} (${res.statusText || "erreur"})`,
+            redirect_chain: chain,
+            response_bytes: null,
+            snapshot_url: snapshotUrl(url),
+          },
+        };
+      }
+
+      const html = await res.text();
+      const bytes = new TextEncoder().encode(html).length;
+      const problems = inspectHtml(html);
+      // A redirected canonical URL is itself a problem for SEO/monitoring.
+      if (hops.length) problems.unshift(`redirection ${hops.length > 1 ? "en chaîne " : ""}avant réponse`);
+      const failed = problems.length > 0;
+
       return {
         check: {
           target: url,
           kind: "page",
           label,
-          status: "fail",
+          status: failed ? "fail" : "ok",
           http_status: res.status,
-          response_ms: ms,
-          detail: `Redirection inattendue vers ${res.headers.get("location") ?? "?"}`,
+          response_ms: totalMs,
+          detail: failed ? problems.join(", ") : null,
+          redirect_chain: chain,
+          response_bytes: bytes,
+          snapshot_url: failed ? snapshotUrl(url) : null,
         },
+        html: hops.length ? undefined : html,
       };
     }
-    if (!res.ok) {
-      return {
-        check: {
-          target: url,
-          kind: "page",
-          label,
-          status: "fail",
-          http_status: res.status,
-          response_ms: ms,
-          detail: `Le serveur répond ${res.status}`,
-        },
-      };
-    }
-    const html = await res.text();
-    const problems = inspectHtml(html);
+
     return {
       check: {
         target: url,
         kind: "page",
         label,
-        status: problems.length ? "fail" : "ok",
-        http_status: res.status,
-        response_ms: ms,
-        detail: problems.length ? problems.join(", ") : null,
+        status: "fail",
+        http_status: null,
+        response_ms: totalMs,
+        detail: "Boucle de redirection (plus de 5 sauts)",
+        redirect_chain: hops.join("\n"),
+        response_bytes: null,
+        snapshot_url: snapshotUrl(url),
       },
-      html,
     };
   } catch (e) {
     return {
@@ -134,12 +166,16 @@ async function checkPage(url: string, label: string): Promise<{ check: HealthChe
         label,
         status: "fail",
         http_status: null,
-        response_ms: null,
+        response_ms: totalMs || null,
         detail: e instanceof Error ? `Page injoignable : ${e.message}` : "Page injoignable",
+        redirect_chain: hops.length ? hops.join("\n") : null,
+        response_bytes: null,
+        snapshot_url: snapshotUrl(url),
       },
     };
   }
 }
+
 
 async function checkAsset(
   url: string,
