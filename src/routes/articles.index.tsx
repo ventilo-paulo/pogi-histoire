@@ -199,7 +199,7 @@ function useCategories() {
 }
 
 function ArticlesFilterBar() {
-  const { cat, q } = Route.useSearch();
+  const { cat = "", q = "" } = Route.useSearch();
   const navigate = useNavigate({ from: "/articles" });
   const cats = useCategories();
   const items = usePublishedArticles();
