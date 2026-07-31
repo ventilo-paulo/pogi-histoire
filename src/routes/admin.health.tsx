@@ -384,6 +384,23 @@ function AdminHealth() {
               />
               M'envoyer un email dès qu'un problème est détecté (ou rétabli)
             </label>
+            <label className="flex items-center gap-3 text-sm text-white/80">
+              <input
+                type="checkbox"
+                checked={settings?.daily_summary_enabled ?? true}
+                onChange={(e) => void onSave({ daily_summary_enabled: e.target.checked })}
+                className="size-4 accent-[var(--color-pogi-yellow,#f5c518)]"
+              />
+              Récapitulatif quotidien par email (7h00) : nombre de contrôles, erreurs et éléments rétablis
+            </label>
+            <button
+              onClick={() => void onSendDigest()}
+              disabled={busy}
+              className="rounded-md border border-white/15 px-3 py-2 text-sm text-white/80 hover:bg-white/5 disabled:opacity-50"
+            >
+              Envoyer le récapitulatif maintenant
+            </button>
+
             <div className="flex flex-wrap items-center gap-2">
               <input
                 type="email"
