@@ -263,6 +263,8 @@ function AdminSeo() {
     return { indexed, pending, missing, errors, checked, total: urls.length };
   }, [urls, results]);
 
+  const unreadAlerts = useMemo(() => alerts.filter((a) => !a.read_at), [alerts]);
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return urls;
