@@ -11,7 +11,16 @@ export type HealthCheck = {
   http_status: number | null;
   response_ms: number | null;
   detail: string | null;
+  redirect_chain?: string | null;
+  response_bytes?: number | null;
+  snapshot_url?: string | null;
 };
+
+/** Free, no-key thumbnail service used to illustrate a failing page. */
+function snapshotUrl(url: string) {
+  return `https://s.wordpress.com/mshots/v1/${encodeURIComponent(url)}?w=480&h=320`;
+}
+
 
 const TIMEOUT_MS = 15000;
 
