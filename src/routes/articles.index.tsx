@@ -37,6 +37,7 @@ function ArticlesPage() {
   return (
     <div className="min-h-screen bg-pogi-light">
       <Navbar />
+      <main>
 
       {/* HERO — dernier article publié */}
       <LatestArticleHero />
@@ -59,6 +60,7 @@ function ArticlesPage() {
 
 
 
+      </main>
       <Footer />
     </div>
   );

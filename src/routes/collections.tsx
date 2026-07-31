@@ -115,6 +115,7 @@ function CollectionsPage() {
   return (
     <div className="min-h-screen bg-pogi-light">
       <Navbar />
+      <main>
       <div className="mx-auto max-w-[1400px] px-6 pt-10 pb-20">
         <Reveal>
           <h1 className="font-display text-[32px] md:text-[40px] text-pogi-dark uppercase mb-3">
@@ -146,6 +147,7 @@ function CollectionsPage() {
           </div>
         </Reveal>
       </div>
+      </main>
       <Footer />
     </div>
   );

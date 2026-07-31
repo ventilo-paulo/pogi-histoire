@@ -71,6 +71,7 @@ function VideosPage() {
   return (
     <div className="min-h-screen bg-pogi-dark text-white">
       <Navbar />
+      <main>
       <div className="mx-auto max-w-[1400px] px-6 pt-10 pb-20">
         <Reveal>
           <p className="text-pogi-yellow uppercase tracking-widest text-xs font-bold mb-3">Chaîne POGI</p>
@@ -104,6 +105,7 @@ function VideosPage() {
           </>
         )}
       </div>
+      </main>
       <Footer />
     </div>
   );

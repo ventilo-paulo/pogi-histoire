@@ -30,6 +30,7 @@ export const Route = createFileRoute("/videos/$slug")({
   notFoundComponent: () => (
     <div className="min-h-screen bg-pogi-dark text-white">
       <Navbar />
+      <main>
       <div className="max-w-[820px] mx-auto px-6 py-24 text-center">
         <p className="text-pogi-yellow uppercase tracking-widest text-xs mb-3">404</p>
         <h1 className="font-display text-4xl uppercase">Vidéo introuvable</h1>
@@ -38,12 +39,14 @@ export const Route = createFileRoute("/videos/$slug")({
           Retour aux vidéos
         </Link>
       </div>
+      </main>
       <Footer />
     </div>
   ),
   errorComponent: ({ error }) => (
     <div className="min-h-screen bg-pogi-dark text-white">
       <Navbar />
+      <main>
       <div className="max-w-[820px] mx-auto px-6 py-24 text-center">
         <h1 className="font-display text-3xl uppercase">Erreur</h1>
         <p className="text-white/70 mt-3 text-sm">{error.message}</p>
@@ -51,6 +54,7 @@ export const Route = createFileRoute("/videos/$slug")({
           Retour aux vidéos
         </Link>
       </div>
+      </main>
       <Footer />
     </div>
   ),
@@ -107,12 +111,14 @@ function VideoBySlug() {
     return (
       <div className="min-h-screen bg-pogi-dark text-white">
         <Navbar />
+      <main>
         <div className="mx-auto max-w-[1100px] px-6 py-10 space-y-6">
           <Skeleton className="aspect-video w-full rounded-xl" />
           <Skeleton className="h-8 w-2/3" />
           <Skeleton className="h-4 w-full" />
         </div>
-        <Footer />
+        </main>
+      <Footer />
       </div>
     );
   }
@@ -126,6 +132,7 @@ function VideoBySlug() {
   return (
     <div className="min-h-screen bg-pogi-dark text-white">
       <Navbar />
+      <main>
       <div className="mx-auto max-w-[1100px] px-6 pt-8 pb-16">
         <Link to="/videos" className="inline-flex items-center gap-2 text-white/60 hover:text-pogi-yellow text-sm uppercase tracking-wider mb-6">
           <ArrowLeft size={16} /> Toutes les vidéos
@@ -175,6 +182,7 @@ function VideoBySlug() {
           </div>
         )}
       </div>
+      </main>
       <Footer />
     </div>
   );

@@ -41,6 +41,7 @@ function InterviewsPage() {
   return (
     <div className="min-h-screen bg-pogi-dark text-white">
       <Navbar />
+      <main>
 
       <section className="mx-auto max-w-[1400px] px-6 pt-12 pb-6">
         <Reveal>
@@ -72,6 +73,7 @@ function InterviewsPage() {
         )}
       </section>
 
+      </main>
       <Footer />
     </div>
   );

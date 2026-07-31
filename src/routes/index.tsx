@@ -152,6 +152,7 @@ function Home() {
   return (
     <div className="min-h-screen bg-pogi-dark text-white">
       <Navbar />
+      <main>
 
       {/* HERO — Article à la une */}
       <Hero />
@@ -191,6 +192,7 @@ function Home() {
       </section>
 
 
+      </main>
       <Footer />
     </div>
   );

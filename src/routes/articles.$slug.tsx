@@ -24,6 +24,7 @@ export const Route = createFileRoute("/articles/$slug")({
   errorComponent: ({ error, reset }) => (
     <div className="min-h-screen bg-pogi-light text-pogi-dark">
       <Navbar />
+      <main>
       <div className="max-w-[820px] mx-auto px-6 py-24 text-center">
         <p className="text-pogi-yellow uppercase tracking-widest text-xs mb-3">Erreur</p>
         <h1 className="font-display text-4xl uppercase">Cet article n'a pas pu être chargé</h1>
@@ -33,18 +34,21 @@ export const Route = createFileRoute("/articles/$slug")({
           <Link to="/articles" className="btn btn-ghost">Retour aux articles</Link>
         </div>
       </div>
+      </main>
       <Footer />
     </div>
   ),
   notFoundComponent: () => (
     <div className="min-h-screen bg-pogi-light text-pogi-dark">
       <Navbar />
+      <main>
       <div className="max-w-[820px] mx-auto px-6 py-24 text-center">
         <p className="text-pogi-yellow uppercase tracking-widest text-xs mb-3">404</p>
         <h1 className="font-display text-4xl uppercase">Article introuvable</h1>
         <p className="text-gray-600 mt-3">Il a peut-être été déplacé ou dépublié.</p>
         <Link to="/articles" className="btn btn-primary mt-8">Retour aux articles</Link>
       </div>
+      </main>
       <Footer />
     </div>
   ),
@@ -174,6 +178,7 @@ function ArticleBySlug() {
     return (
       <div className="min-h-screen bg-pogi-light text-pogi-dark">
         <Navbar />
+      <main>
         <div className="relative h-[60vh] min-h-[420px] w-full overflow-hidden">
           <Skeleton className="absolute inset-0 rounded-none" />
         </div>
@@ -185,7 +190,8 @@ function ArticleBySlug() {
           <Skeleton className="h-4 w-11/12" />
           <Skeleton className="h-4 w-2/3" />
         </div>
-        <Footer />
+        </main>
+      <Footer />
       </div>
     );
   }
@@ -201,6 +207,7 @@ function ArticleBySlug() {
   return (
     <div className="min-h-screen bg-pogi-light text-pogi-dark">
       <Navbar />
+      <main>
       <ReadingProgress />
       <article>
         {/* Hero */}
@@ -419,6 +426,7 @@ function ArticleBySlug() {
         )}
       </article>
       <BackToTop />
+      </main>
       <Footer />
     </div>
   );
