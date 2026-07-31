@@ -3,13 +3,19 @@ import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { healthState } from "@/lib/health.functions";
 import { seoMonitorState } from "@/lib/seo-monitor.functions";
+import { supervisionExportData, supervisionRunStep } from "@/lib/supervision.functions";
+import { downloadCsv, openPdf } from "@/lib/supervision-export";
 import {
   Activity,
   AlertTriangle,
   CheckCircle2,
   Clock,
+  Download,
+  FileText,
   Gauge,
   HeartPulse,
+  Loader2,
+  Play,
   RefreshCw,
   XCircle,
 } from "lucide-react";
