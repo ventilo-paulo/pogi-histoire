@@ -17,9 +17,75 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Skeleton } from "@/components/Skeleton";
 import { supabase } from "@/integrations/supabase/client";
+import { SITE_URL, absUrl } from "@/lib/site";
 import { extractToc, readingTimeMin, stripInlineTypography, type TocItem } from "@/lib/article-utils";
 
+function clip(text: string | null | undefined, max: number, fallback: string) {
+  const t = (text ?? "").replace(/\s+/g, " ").trim();
+  if (!t) return fallback;
+  return t.length <= max ? t : `${t.slice(0, max - 1).trimEnd()}…`;
+}
+
 export const Route = createFileRoute("/articles/$slug")({
+  loader: async ({ params }) => {
+    const { data } = await supabase
+      .from("articles")
+      .select("title,slug,excerpt,image_url,author,category,published_at,updated_at")
+      .eq("slug", params.slug)
+      .eq("published", true)
+      .maybeSingle();
+    return { meta: (data as ArticleMeta | null) ?? null };
+  },
+  head: ({ params, loaderData }) => {
+    const a = loaderData?.meta ?? null;
+    const url = `${SITE_URL}/articles/${params.slug}`;
+    const title = clip(a?.title, 60, "Article — POGI Histoire");
+    const description = clip(
+      a?.excerpt ?? a?.title,
+      158,
+      "Un récit d'histoire documenté et sourcé, publié par POGI Histoire.",
+    );
+    const image = a?.image_url ? absUrl(a.image_url) : undefined;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "article" },
+        { property: "og:url", content: url },
+        { name: "twitter:card", content: "summary_large_image" },
+        ...(image
+          ? [
+              { property: "og:image", content: image },
+              { name: "twitter:image", content: image },
+            ]
+          : []),
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: a
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Article",
+                headline: a.title,
+                description,
+                mainEntityOfPage: url,
+                url,
+                ...(image ? { image: [image] } : {}),
+                ...(a.published_at ? { datePublished: a.published_at } : {}),
+                ...(a.updated_at ? { dateModified: a.updated_at } : {}),
+                author: { "@type": a.author ? "Person" : "Organization", name: a.author || "POGI Histoire" },
+                publisher: { "@type": "Organization", name: "POGI Histoire" },
+                ...(a.category ? { articleSection: a.category } : {}),
+              }),
+            },
+          ]
+        : [],
+    };
+  },
   component: ArticleBySlug,
   errorComponent: ({ error, reset }) => (
     <div className="min-h-screen bg-pogi-light text-pogi-dark">
@@ -53,6 +119,17 @@ export const Route = createFileRoute("/articles/$slug")({
     </div>
   ),
 });
+
+type ArticleMeta = {
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  image_url: string | null;
+  author: string | null;
+  category: string | null;
+  published_at: string | null;
+  updated_at: string | null;
+};
 
 type Source = { label: string; url?: string };
 

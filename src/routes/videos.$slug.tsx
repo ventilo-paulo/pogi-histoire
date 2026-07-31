@@ -5,6 +5,18 @@ import { Footer } from "@/components/Footer";
 import { Skeleton } from "@/components/Skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, ExternalLink } from "lucide-react";
+import { SITE_URL, absUrl } from "@/lib/site";
+
+type VideoMeta = {
+  title: string;
+  slug: string;
+  subtitle: string | null;
+  description: string | null;
+  thumbnail_url: string | null;
+  video_url: string;
+  category: string | null;
+  published_at: string | null;
+};
 
 type Video = {
   id: string;
@@ -19,13 +31,69 @@ type Video = {
   published_at: string | null;
 };
 
+function clip(text: string | null | undefined, max: number, fallback: string) {
+  const t = (text ?? "").replace(/\s+/g, " ").trim();
+  if (!t) return fallback;
+  return t.length <= max ? t : `${t.slice(0, max - 1).trimEnd()}…`;
+}
+
 export const Route = createFileRoute("/videos/$slug")({
-  head: ({ params }) => ({
-    meta: [
-      { title: `Vidéo — ${params.slug} — POGI Histoire` },
-      { name: "description", content: "Vidéo POGI Histoire." },
-    ],
-  }),
+  loader: async ({ params }) => {
+    const { data } = await supabase
+      .from("videos")
+      .select("title,slug,subtitle,description,thumbnail_url,video_url,category,published_at")
+      .eq("slug", params.slug)
+      .eq("published", true)
+      .maybeSingle();
+    return { meta: (data as VideoMeta | null) ?? null };
+  },
+  head: ({ params, loaderData }) => {
+    const v = loaderData?.meta ?? null;
+    const url = `${SITE_URL}/videos/${params.slug}`;
+    const title = clip(v?.title, 60, "Vidéo — POGI Histoire");
+    const description = clip(
+      v?.description ?? v?.subtitle ?? v?.title,
+      158,
+      "Une vidéo d'histoire documentée et sourcée, publiée par POGI Histoire.",
+    );
+    const image = v?.thumbnail_url ? absUrl(v.thumbnail_url) : undefined;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "video.other" },
+        { property: "og:url", content: url },
+        { name: "twitter:card", content: "summary_large_image" },
+        ...(image
+          ? [
+              { property: "og:image", content: image },
+              { name: "twitter:image", content: image },
+            ]
+          : []),
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: v
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "VideoObject",
+                name: v.title,
+                description,
+                url,
+                ...(image ? { thumbnailUrl: [image] } : {}),
+                ...(v.published_at ? { uploadDate: v.published_at } : {}),
+                contentUrl: v.video_url,
+                publisher: { "@type": "Organization", name: "POGI Histoire" },
+              }),
+            },
+          ]
+        : [],
+    };
+  },
   component: VideoBySlug,
   notFoundComponent: () => (
     <div className="min-h-screen bg-pogi-dark text-white">
