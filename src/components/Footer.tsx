@@ -11,9 +11,9 @@ const navLinks = [
 
 const aboutLinks = [
   { to: "/a-propos", label: "À propos" },
-  { to: "/statut", label: "Statut du site" },
   { href: "mailto:paul.lesaulnier27@gmail.com", label: "Contact" },
 ] as const;
+
 
 
 const YOUTUBE = "https://www.youtube.com/@PogiHistoire";

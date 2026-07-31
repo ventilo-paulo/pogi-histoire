@@ -18,7 +18,6 @@ import { Route as CollectionsRouteImport } from './routes/collections'
 import { Route as InterviewsRouteImport } from './routes/interviews'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as StatutRouteImport } from './routes/statut'
 import { Route as VideosRouteImport } from './routes/videos'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
@@ -31,6 +30,7 @@ import { Route as AdminInterviewsRouteImport } from './routes/admin.interviews'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as AdminNotionRouteImport } from './routes/admin.notion'
 import { Route as AdminSeoRouteImport } from './routes/admin.seo'
+import { Route as AdminStatutRouteImport } from './routes/admin.statut'
 import { Route as AdminVideosRouteImport } from './routes/admin.videos'
 import { Route as ArticlesIndexRouteImport } from './routes/articles.index'
 import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
@@ -85,11 +85,6 @@ const McpRoute = McpRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StatutRoute = StatutRouteImport.update({
-  id: '/statut',
-  path: '/statut',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VideosRoute = VideosRouteImport.update({
@@ -152,6 +147,11 @@ const AdminNotionRoute = AdminNotionRouteImport.update({
 const AdminSeoRoute = AdminSeoRouteImport.update({
   id: '/seo',
   path: '/seo',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminStatutRoute = AdminStatutRouteImport.update({
+  id: '/statut',
+  path: '/statut',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminVideosRoute = AdminVideosRouteImport.update({
@@ -219,7 +219,6 @@ export interface FileRoutesByFullPath {
   '/interviews': typeof InterviewsRoute
   '/mcp': typeof McpRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/statut': typeof StatutRoute
   '/videos': typeof VideosRouteWithChildren
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -231,6 +230,7 @@ export interface FileRoutesByFullPath {
   '/admin/media': typeof AdminMediaRoute
   '/admin/notion': typeof AdminNotionRoute
   '/admin/seo': typeof AdminSeoRoute
+  '/admin/statut': typeof AdminStatutRoute
   '/admin/videos': typeof AdminVideosRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/videos/$slug': typeof VideosSlugRoute
@@ -252,7 +252,6 @@ export interface FileRoutesByTo {
   '/interviews': typeof InterviewsRoute
   '/mcp': typeof McpRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/statut': typeof StatutRoute
   '/videos': typeof VideosRouteWithChildren
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -264,6 +263,7 @@ export interface FileRoutesByTo {
   '/admin/media': typeof AdminMediaRoute
   '/admin/notion': typeof AdminNotionRoute
   '/admin/seo': typeof AdminSeoRoute
+  '/admin/statut': typeof AdminStatutRoute
   '/admin/videos': typeof AdminVideosRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/videos/$slug': typeof VideosSlugRoute
@@ -287,7 +287,6 @@ export interface FileRoutesById {
   '/interviews': typeof InterviewsRoute
   '/mcp': typeof McpRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/statut': typeof StatutRoute
   '/videos': typeof VideosRouteWithChildren
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -299,6 +298,7 @@ export interface FileRoutesById {
   '/admin/media': typeof AdminMediaRoute
   '/admin/notion': typeof AdminNotionRoute
   '/admin/seo': typeof AdminSeoRoute
+  '/admin/statut': typeof AdminStatutRoute
   '/admin/videos': typeof AdminVideosRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/videos/$slug': typeof VideosSlugRoute
@@ -323,7 +323,6 @@ export interface FileRouteTypes {
     | '/interviews'
     | '/mcp'
     | '/sitemap.xml'
-    | '/statut'
     | '/videos'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -335,6 +334,7 @@ export interface FileRouteTypes {
     | '/admin/media'
     | '/admin/notion'
     | '/admin/seo'
+    | '/admin/statut'
     | '/admin/videos'
     | '/articles/$slug'
     | '/videos/$slug'
@@ -356,7 +356,6 @@ export interface FileRouteTypes {
     | '/interviews'
     | '/mcp'
     | '/sitemap.xml'
-    | '/statut'
     | '/videos'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -368,6 +367,7 @@ export interface FileRouteTypes {
     | '/admin/media'
     | '/admin/notion'
     | '/admin/seo'
+    | '/admin/statut'
     | '/admin/videos'
     | '/articles/$slug'
     | '/videos/$slug'
@@ -390,7 +390,6 @@ export interface FileRouteTypes {
     | '/interviews'
     | '/mcp'
     | '/sitemap.xml'
-    | '/statut'
     | '/videos'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -402,6 +401,7 @@ export interface FileRouteTypes {
     | '/admin/media'
     | '/admin/notion'
     | '/admin/seo'
+    | '/admin/statut'
     | '/admin/videos'
     | '/articles/$slug'
     | '/videos/$slug'
@@ -425,7 +425,6 @@ export interface RootRouteChildren {
   InterviewsRoute: typeof InterviewsRoute
   McpRoute: typeof McpRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  StatutRoute: typeof StatutRoute
   VideosRoute: typeof VideosRouteWithChildren
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -502,13 +501,6 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/statut': {
-      id: '/statut'
-      path: '/statut'
-      fullPath: '/statut'
-      preLoaderRoute: typeof StatutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/videos': {
@@ -595,6 +587,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSeoRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/statut': {
+      id: '/admin/statut'
+      path: '/statut'
+      fullPath: '/admin/statut'
+      preLoaderRoute: typeof AdminStatutRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/videos': {
       id: '/admin/videos'
       path: '/videos'
@@ -677,6 +676,7 @@ interface AdminRouteChildren {
   AdminMediaRoute: typeof AdminMediaRoute
   AdminNotionRoute: typeof AdminNotionRoute
   AdminSeoRoute: typeof AdminSeoRoute
+  AdminStatutRoute: typeof AdminStatutRoute
   AdminVideosRoute: typeof AdminVideosRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
@@ -690,6 +690,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminMediaRoute: AdminMediaRoute,
   AdminNotionRoute: AdminNotionRoute,
   AdminSeoRoute: AdminSeoRoute,
+  AdminStatutRoute: AdminStatutRoute,
   AdminVideosRoute: AdminVideosRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
@@ -717,7 +718,6 @@ const rootRouteChildren: RootRouteChildren = {
   InterviewsRoute: InterviewsRoute,
   McpRoute: McpRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  StatutRoute: StatutRoute,
   VideosRoute: VideosRouteWithChildren,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
