@@ -25,6 +25,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminArticlesRouteImport } from './routes/admin.articles'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 import { Route as AdminCharteRouteImport } from './routes/admin.charte'
+import { Route as AdminHealthRouteImport } from './routes/admin.health'
 import { Route as AdminInterviewsRouteImport } from './routes/admin.interviews'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as AdminNotionRouteImport } from './routes/admin.notion'
@@ -35,6 +36,7 @@ import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
 import { Route as VideosSlugRouteImport } from './routes/videos.$slug'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as ApiPublicHooksHealthCheckRouteImport } from './routes/api/public/hooks/health-check'
 import { Route as ApiPublicHooksNotionSyncRouteImport } from './routes/api/public/hooks/notion-sync'
 import { Route as ApiPublicHooksSeoCheckRouteImport } from './routes/api/public/hooks/seo-check'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -121,6 +123,11 @@ const AdminCharteRoute = AdminCharteRouteImport.update({
   path: '/charte',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminHealthRoute = AdminHealthRouteImport.update({
+  id: '/health',
+  path: '/health',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminInterviewsRoute = AdminInterviewsRouteImport.update({
   id: '/interviews',
   path: '/interviews',
@@ -172,6 +179,12 @@ const Char91DotmcpChar93InvokeToolToolRoute =
     path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksHealthCheckRoute =
+  ApiPublicHooksHealthCheckRouteImport.update({
+    id: '/api/public/hooks/health-check',
+    path: '/api/public/hooks/health-check',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksNotionSyncRoute =
   ApiPublicHooksNotionSyncRouteImport.update({
     id: '/api/public/hooks/notion-sync',
@@ -206,6 +219,7 @@ export interface FileRoutesByFullPath {
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/charte': typeof AdminCharteRoute
+  '/admin/health': typeof AdminHealthRoute
   '/admin/interviews': typeof AdminInterviewsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/notion': typeof AdminNotionRoute
@@ -217,6 +231,7 @@ export interface FileRoutesByFullPath {
   '/articles/': typeof ArticlesIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/api/public/hooks/health-check': typeof ApiPublicHooksHealthCheckRoute
   '/api/public/hooks/notion-sync': typeof ApiPublicHooksNotionSyncRoute
   '/api/public/hooks/seo-check': typeof ApiPublicHooksSeoCheckRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -236,6 +251,7 @@ export interface FileRoutesByTo {
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/charte': typeof AdminCharteRoute
+  '/admin/health': typeof AdminHealthRoute
   '/admin/interviews': typeof AdminInterviewsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/notion': typeof AdminNotionRoute
@@ -247,6 +263,7 @@ export interface FileRoutesByTo {
   '/articles': typeof ArticlesIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/api/public/hooks/health-check': typeof ApiPublicHooksHealthCheckRoute
   '/api/public/hooks/notion-sync': typeof ApiPublicHooksNotionSyncRoute
   '/api/public/hooks/seo-check': typeof ApiPublicHooksSeoCheckRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -268,6 +285,7 @@ export interface FileRoutesById {
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/charte': typeof AdminCharteRoute
+  '/admin/health': typeof AdminHealthRoute
   '/admin/interviews': typeof AdminInterviewsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/notion': typeof AdminNotionRoute
@@ -279,6 +297,7 @@ export interface FileRoutesById {
   '/articles/': typeof ArticlesIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/api/public/hooks/health-check': typeof ApiPublicHooksHealthCheckRoute
   '/api/public/hooks/notion-sync': typeof ApiPublicHooksNotionSyncRoute
   '/api/public/hooks/seo-check': typeof ApiPublicHooksSeoCheckRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -301,6 +320,7 @@ export interface FileRouteTypes {
     | '/admin/articles'
     | '/admin/categories'
     | '/admin/charte'
+    | '/admin/health'
     | '/admin/interviews'
     | '/admin/media'
     | '/admin/notion'
@@ -312,6 +332,7 @@ export interface FileRouteTypes {
     | '/articles/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/api/public/hooks/health-check'
     | '/api/public/hooks/notion-sync'
     | '/api/public/hooks/seo-check'
     | '/lovable/email/queue/process'
@@ -331,6 +352,7 @@ export interface FileRouteTypes {
     | '/admin/articles'
     | '/admin/categories'
     | '/admin/charte'
+    | '/admin/health'
     | '/admin/interviews'
     | '/admin/media'
     | '/admin/notion'
@@ -342,6 +364,7 @@ export interface FileRouteTypes {
     | '/articles'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/api/public/hooks/health-check'
     | '/api/public/hooks/notion-sync'
     | '/api/public/hooks/seo-check'
     | '/lovable/email/queue/process'
@@ -362,6 +385,7 @@ export interface FileRouteTypes {
     | '/admin/articles'
     | '/admin/categories'
     | '/admin/charte'
+    | '/admin/health'
     | '/admin/interviews'
     | '/admin/media'
     | '/admin/notion'
@@ -373,6 +397,7 @@ export interface FileRouteTypes {
     | '/articles/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/api/public/hooks/health-check'
     | '/api/public/hooks/notion-sync'
     | '/api/public/hooks/seo-check'
     | '/lovable/email/queue/process'
@@ -395,6 +420,7 @@ export interface RootRouteChildren {
   ArticlesIndexRoute: typeof ArticlesIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
+  ApiPublicHooksHealthCheckRoute: typeof ApiPublicHooksHealthCheckRoute
   ApiPublicHooksNotionSyncRoute: typeof ApiPublicHooksNotionSyncRoute
   ApiPublicHooksSeoCheckRoute: typeof ApiPublicHooksSeoCheckRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
@@ -514,6 +540,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCharteRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/health': {
+      id: '/admin/health'
+      path: '/health'
+      fullPath: '/admin/health'
+      preLoaderRoute: typeof AdminHealthRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/interviews': {
       id: '/admin/interviews'
       path: '/interviews'
@@ -584,6 +617,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/health-check': {
+      id: '/api/public/hooks/health-check'
+      path: '/api/public/hooks/health-check'
+      fullPath: '/api/public/hooks/health-check'
+      preLoaderRoute: typeof ApiPublicHooksHealthCheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/notion-sync': {
       id: '/api/public/hooks/notion-sync'
       path: '/api/public/hooks/notion-sync'
@@ -612,6 +652,7 @@ interface AdminRouteChildren {
   AdminArticlesRoute: typeof AdminArticlesRoute
   AdminCategoriesRoute: typeof AdminCategoriesRoute
   AdminCharteRoute: typeof AdminCharteRoute
+  AdminHealthRoute: typeof AdminHealthRoute
   AdminInterviewsRoute: typeof AdminInterviewsRoute
   AdminMediaRoute: typeof AdminMediaRoute
   AdminNotionRoute: typeof AdminNotionRoute
@@ -624,6 +665,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminArticlesRoute: AdminArticlesRoute,
   AdminCategoriesRoute: AdminCategoriesRoute,
   AdminCharteRoute: AdminCharteRoute,
+  AdminHealthRoute: AdminHealthRoute,
   AdminInterviewsRoute: AdminInterviewsRoute,
   AdminMediaRoute: AdminMediaRoute,
   AdminNotionRoute: AdminNotionRoute,
@@ -663,6 +705,7 @@ const rootRouteChildren: RootRouteChildren = {
   ArticlesIndexRoute: ArticlesIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
+  ApiPublicHooksHealthCheckRoute: ApiPublicHooksHealthCheckRoute,
   ApiPublicHooksNotionSyncRoute: ApiPublicHooksNotionSyncRoute,
   ApiPublicHooksSeoCheckRoute: ApiPublicHooksSeoCheckRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,

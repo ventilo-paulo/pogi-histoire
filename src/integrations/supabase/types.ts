@@ -430,6 +430,108 @@ export type Database = {
         }
         Relationships: []
       }
+      site_health_checks: {
+        Row: {
+          checked_at: string
+          detail: string | null
+          failing_since: string | null
+          http_status: number | null
+          kind: string
+          label: string | null
+          last_ok_at: string | null
+          response_ms: number | null
+          status: string
+          target: string
+        }
+        Insert: {
+          checked_at?: string
+          detail?: string | null
+          failing_since?: string | null
+          http_status?: number | null
+          kind: string
+          label?: string | null
+          last_ok_at?: string | null
+          response_ms?: number | null
+          status?: string
+          target: string
+        }
+        Update: {
+          checked_at?: string
+          detail?: string | null
+          failing_since?: string | null
+          http_status?: number | null
+          kind?: string
+          label?: string | null
+          last_ok_at?: string | null
+          response_ms?: number | null
+          status?: string
+          target?: string
+        }
+        Relationships: []
+      }
+      site_health_runs: {
+        Row: {
+          checks_failed: number
+          checks_ok: number
+          checks_total: number
+          duration_ms: number | null
+          finished_at: string | null
+          id: string
+          message: string | null
+          ok: boolean
+          started_at: string
+          trigger: string
+        }
+        Insert: {
+          checks_failed?: number
+          checks_ok?: number
+          checks_total?: number
+          duration_ms?: number | null
+          finished_at?: string | null
+          id?: string
+          message?: string | null
+          ok?: boolean
+          started_at?: string
+          trigger?: string
+        }
+        Update: {
+          checks_failed?: number
+          checks_ok?: number
+          checks_total?: number
+          duration_ms?: number | null
+          finished_at?: string | null
+          id?: string
+          message?: string | null
+          ok?: boolean
+          started_at?: string
+          trigger?: string
+        }
+        Relationships: []
+      }
+      site_health_settings: {
+        Row: {
+          email_enabled: boolean
+          enabled: boolean
+          id: boolean
+          notify_email: string | null
+          updated_at: string
+        }
+        Insert: {
+          email_enabled?: boolean
+          enabled?: boolean
+          id?: boolean
+          notify_email?: string | null
+          updated_at?: string
+        }
+        Update: {
+          email_enabled?: boolean
+          enabled?: boolean
+          id?: boolean
+          notify_email?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       suppressed_emails: {
         Row: {
           created_at: string

@@ -1,0 +1,87 @@
+import { createServerFn } from "@tanstack/react-start";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+
+async function requireAdmin(context: { supabase: any; userId: string }) {
+  const { data, error } = await context.supabase.rpc("has_role", {
+    _user_id: context.userId,
+    _role: "admin",
+  });
+  if (error || !data) throw new Error("Forbidden");
+}
+
+/** Latest health runs, per-target statuses, settings and health alerts. */
+export const healthState = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await requireAdmin(context as any);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const [{ data: runs }, { data: checks }, { data: settings }, { data: alerts }] =
+      await Promise.all([
+        supabaseAdmin
+          .from("site_health_runs" as any)
+          .select("*")
+          .order("started_at", { ascending: false })
+          .limit(10),
+        supabaseAdmin.from("site_health_checks" as any).select("*"),
+        supabaseAdmin.from("site_health_settings" as any).select("*").maybeSingle(),
+        supabaseAdmin
+          .from("seo_alerts" as any)
+          .select("*")
+          .eq("kind", "health")
+          .order("created_at", { ascending: false })
+          .limit(30),
+      ]);
+    return {
+      runs: (runs as any[]) ?? [],
+      checks: (checks as any[]) ?? [],
+      settings: (settings as any) ?? null,
+      alerts: (alerts as any[]) ?? [],
+    };
+  });
+
+/** Run the full site health crawl on demand. */
+export const healthRunNow = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await requireAdmin(context as any);
+    const { runSiteHealthCheck } = await import("@/lib/health-check.server");
+    return runSiteHealthCheck("manual");
+  });
+
+/** Update monitoring settings (recipient, email on/off, monitoring on/off). */
+export const healthSaveSettings = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { enabled?: boolean; email_enabled?: boolean; notify_email?: string }) => {
+    if (input.notify_email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(input.notify_email)) {
+      throw new Error("Adresse email invalide");
+    }
+    return input;
+  })
+  .handler(async ({ data, context }) => {
+    await requireAdmin(context as any);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("site_health_settings" as any)
+      .update({ ...data, updated_at: new Date().toISOString() })
+      .eq("id", true);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/** Mark health alerts as read. */
+export const healthMarkAlertsRead = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { id?: string } | undefined) => input ?? {})
+  .handler(async ({ data, context }) => {
+    await requireAdmin(context as any);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    let q = supabaseAdmin
+      .from("seo_alerts" as any)
+      .update({ read_at: new Date().toISOString() })
+      .eq("kind", "health")
+      .is("read_at", null);
+    if (data.id) q = q.eq("id", data.id);
+    const { error } = await q;
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
