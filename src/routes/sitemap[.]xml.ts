@@ -44,6 +44,27 @@ export const Route = createFileRoute("/sitemap.xml")({
           console.error("sitemap: failed to load articles", e);
         }
 
+        try {
+          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+          const { data } = await supabaseAdmin
+            .from("videos")
+            .select("slug,published_at")
+            .eq("published", true)
+            .order("published_at", { ascending: false });
+
+          for (const v of data ?? []) {
+            if (!v.slug) continue;
+            entries.push({
+              path: `/videos/${v.slug}`,
+              lastmod: v.published_at?.slice(0, 10),
+              changefreq: "monthly",
+              priority: "0.6",
+            });
+          }
+        } catch (e) {
+          console.error("sitemap: failed to load videos", e);
+        }
+
         const urls = entries.map((e) =>
           [
             `  <url>`,
