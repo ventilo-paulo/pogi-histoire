@@ -7,7 +7,12 @@ import {
   gscListSiteUrls,
   gscInspectUrls,
 } from "@/lib/gsc.functions";
-import { RefreshCw, Upload, CheckCircle2, AlertTriangle, XCircle, Clock, Search } from "lucide-react";
+import {
+  seoMonitorState,
+  seoRunCheckNow,
+  seoMarkAlertsRead,
+} from "@/lib/seo-monitor.functions";
+import { RefreshCw, Upload, CheckCircle2, AlertTriangle, XCircle, Clock, Search, Bell, BellOff, Play, CalendarClock } from "lucide-react";
 
 export const Route = createFileRoute("/admin/seo")({
   head: () => ({ meta: [{ title: "Indexation — Admin POGI", name: "robots", content: "noindex" }] }),
@@ -92,6 +97,11 @@ function AdminSeo() {
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const monitorState = useServerFn(seoMonitorState);
+  const runCheckNow = useServerFn(seoRunCheckNow);
+  const markRead = useServerFn(seoMarkAlertsRead);
+  const [runs, setRuns] = useState<any[]>([]);
+  const [alerts, setAlerts] = useState<any[]>([]);
 
   useEffect(() => {
     try {
@@ -105,6 +115,33 @@ function AdminSeo() {
       /* ignore */
     }
   }, []);
+
+  async function loadMonitor() {
+    try {
+      const state = (await monitorState()) as any;
+      setRuns(state.runs ?? []);
+      setAlerts(state.alerts ?? []);
+      const fromDb: Record<string, InspectResult> = {};
+      let latest: string | null = null;
+      for (const s of state.statuses ?? []) {
+        fromDb[s.url] = {
+          url: s.url,
+          verdict: s.verdict ?? undefined,
+          coverageState: s.coverage_state ?? undefined,
+          lastCrawlTime: s.last_crawl_time ?? undefined,
+          robotsTxtState: s.robots_state ?? undefined,
+          error: s.error ?? undefined,
+        };
+        if (!latest || (s.checked_at && s.checked_at > latest)) latest = s.checked_at;
+      }
+      if (Object.keys(fromDb).length) {
+        setResults((prev) => ({ ...prev, ...fromDb }));
+        if (latest) setCheckedAt((prev) => (!prev || latest! > prev ? latest! : prev));
+      }
+    } catch {
+      /* monitoring optional */
+    }
+  }
 
   async function load(selected?: string) {
     setLoading(true);
@@ -123,6 +160,7 @@ function AdminSeo() {
       }
       const list = (await listUrls()) as any;
       setUrls(list.urls ?? []);
+      await loadMonitor();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erreur inconnue");
     } finally {
@@ -130,10 +168,41 @@ function AdminSeo() {
     }
   }
 
+  async function onRunCheckNow() {
+    setBusy(true);
+    setNotice(null);
+    setError(null);
+    try {
+      const res = (await runCheckNow()) as any;
+      if (res.ok) {
+        setNotice(
+          `Vérification automatique terminée : ${res.counts.indexed} indexées, ${res.counts.pending} en attente, ${res.counts.missing + res.counts.error} en anomalie${res.alerts ? ` · ${res.alerts} alerte(s)` : ""}.`,
+        );
+      } else {
+        setError(res.error ?? "Échec de la vérification.");
+      }
+      await load(siteUrl ?? undefined);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erreur inconnue");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onMarkRead(id?: string) {
+    try {
+      await markRead({ data: id ? { id } : {} });
+      await loadMonitor();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erreur inconnue");
+    }
+  }
+
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
   async function onSubmitSitemap() {
     if (!siteUrl) return;
@@ -194,6 +263,8 @@ function AdminSeo() {
     return { indexed, pending, missing, errors, checked, total: urls.length };
   }, [urls, results]);
 
+  const unreadAlerts = useMemo(() => alerts.filter((a) => !a.read_at), [alerts]);
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return urls;
@@ -218,12 +289,20 @@ function AdminSeo() {
             <RefreshCw size={16} /> Actualiser
           </button>
           <button
+            onClick={onRunCheckNow}
+            disabled={busy}
+            className="inline-flex items-center gap-2 rounded-md border border-white/15 px-4 py-2 text-sm text-white/80 hover:bg-white/5 disabled:opacity-50"
+          >
+            <Play size={16} /> Lancer la vérification
+          </button>
+          <button
             onClick={onSubmitSitemap}
             disabled={busy || !siteUrl}
             className="inline-flex items-center gap-2 rounded-md bg-pogi-yellow px-4 py-2 text-sm font-bold uppercase text-pogi-dark disabled:opacity-50"
           >
             <Upload size={16} /> Soumettre le sitemap
           </button>
+
         </div>
       </div>
 
@@ -263,6 +342,124 @@ function AdminSeo() {
                 <p className="text-xs uppercase tracking-wider text-white/50">Propriété</p>
                 <p className="text-white font-semibold break-all">{siteUrl}</p>
               </div>
+
+              <section className="rounded-xl border border-white/10 bg-white/5 p-5">
+                <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+                  <h2 className="font-display uppercase text-xl text-white flex items-center gap-2">
+                    <Bell size={18} /> Alertes
+                    {unreadAlerts.length > 0 && (
+                      <span className="rounded-full bg-red-500/20 px-2 py-0.5 text-xs text-red-200">
+                        {unreadAlerts.length}
+                      </span>
+                    )}
+                  </h2>
+                  {unreadAlerts.length > 0 && (
+                    <button
+                      onClick={() => onMarkRead()}
+                      className="inline-flex items-center gap-2 rounded-md border border-white/15 px-3 py-1.5 text-xs text-white/70 hover:bg-white/5"
+                    >
+                      <BellOff size={14} /> Tout marquer comme lu
+                    </button>
+                  )}
+                </div>
+                {alerts.length === 0 ? (
+                  <p className="text-white/60 text-sm">
+                    Aucune alerte. Vous serez notifié ici dès qu'un sitemap tombe en erreur ou qu'une page passe en
+                    « non indexée ».
+                  </p>
+                ) : (
+                  <ul className="space-y-2">
+                    {alerts.slice(0, 20).map((a) => (
+                      <li
+                        key={a.id}
+                        className={`rounded-lg border px-4 py-3 text-sm ${
+                          a.read_at
+                            ? "border-white/10 bg-white/5 text-white/50"
+                            : a.level === "error"
+                              ? "border-red-500/40 bg-red-500/10 text-red-100"
+                              : "border-pogi-yellow/40 bg-pogi-yellow/10 text-pogi-yellow"
+                        }`}
+                      >
+                        <div className="flex flex-wrap items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="font-semibold flex items-center gap-2">
+                              {a.level === "error" ? <XCircle size={14} /> : <AlertTriangle size={14} />}
+                              {a.title}
+                            </p>
+                            {a.detail && <p className="opacity-80 mt-0.5 break-all">{a.detail}</p>}
+                            {a.target && <p className="opacity-60 text-xs mt-0.5 break-all">{a.target}</p>}
+                          </div>
+                          <div className="flex items-center gap-3 shrink-0">
+                            <span className="text-xs opacity-70">{fmt(a.created_at)}</span>
+                            {!a.read_at && (
+                              <button
+                                onClick={() => onMarkRead(a.id)}
+                                className="text-xs underline opacity-80 hover:opacity-100"
+                              >
+                                Lu
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
+
+              <section className="rounded-xl border border-white/10 bg-white/5 p-5">
+                <h2 className="font-display uppercase text-xl text-white mb-3 flex items-center gap-2">
+                  <CalendarClock size={18} /> Vérification automatique
+                </h2>
+                <p className="text-white/60 text-sm mb-4">
+                  Un contrôle complet du sitemap et de toutes les URLs publiées est exécuté automatiquement chaque
+                  jour à 5h00. Les anomalies génèrent une alerte ci-dessus.
+                </p>
+                {runs.length === 0 ? (
+                  <p className="text-white/50 text-sm">Aucune exécution enregistrée pour le moment.</p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm min-w-[640px]">
+                      <thead className="text-white/50 text-xs uppercase">
+                        <tr>
+                          <th className="text-left py-2">Date</th>
+                          <th className="text-left py-2">Déclencheur</th>
+                          <th className="text-left py-2">Sitemap</th>
+                          <th className="text-left py-2">Indexées</th>
+                          <th className="text-left py-2">En attente</th>
+                          <th className="text-left py-2">Anomalies</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {runs.map((r) => (
+                          <tr key={r.id} className="border-t border-white/10">
+                            <td className="py-2 pr-4 text-white/80">{fmt(r.started_at)}</td>
+                            <td className="py-2 pr-4 text-white/60">
+                              {r.trigger === "cron" ? "Automatique" : "Manuelle"}
+                            </td>
+                            <td className="py-2 pr-4">
+                              {!r.ok ? (
+                                <span className="text-red-300">Échec</span>
+                              ) : r.sitemap_status === "error" ? (
+                                <span className="text-red-300">Erreur</span>
+                              ) : r.sitemap_status === "warning" ? (
+                                <span className="text-pogi-yellow">Avertissement</span>
+                              ) : (
+                                <span className="text-emerald-300">OK</span>
+                              )}
+                            </td>
+                            <td className="py-2 pr-4 text-emerald-300">{r.urls_indexed}</td>
+                            <td className="py-2 pr-4 text-pogi-yellow">{r.urls_pending}</td>
+                            <td className="py-2 text-orange-300">{r.urls_missing + r.urls_error}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </section>
+
+
 
               <section className="rounded-xl border border-white/10 bg-white/5 p-5">
                 <h2 className="font-display uppercase text-xl text-white mb-4">Sitemaps</h2>
