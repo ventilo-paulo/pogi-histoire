@@ -18,19 +18,39 @@ function gatewayHeaders() {
   };
 }
 
-async function gsc(path: string, init?: RequestInit) {
-  const response = await fetch(`${GATEWAY}${path}`, {
-    ...init,
-    headers: { ...gatewayHeaders(), ...(init?.headers ?? {}) },
-  });
+async function gsc(path: string, init?: RequestInit, attempt = 0): Promise<any> {
+  let response: Response;
+  try {
+    response = await fetch(`${GATEWAY}${path}`, {
+      ...init,
+      headers: { ...gatewayHeaders(), ...(init?.headers ?? {}) },
+    });
+  } catch (e) {
+    if (attempt < 2) {
+      await new Promise((r) => setTimeout(r, 600 * 2 ** attempt));
+      return gsc(path, init, attempt + 1);
+    }
+    throw new Error("Search Console est momentanément injoignable. Réessayez dans quelques instants.");
+  }
   if (!response.ok) {
     const body = await response.text();
     console.error(`GSC request failed [${response.status}] ${path}: ${body}`);
+    // Transient gateway/upstream failures: retry with backoff before surfacing.
+    if ((response.status === 429 || response.status >= 500) && attempt < 2) {
+      await new Promise((r) => setTimeout(r, 600 * 2 ** attempt));
+      return gsc(path, init, attempt + 1);
+    }
+    if (response.status === 429 || response.status >= 500) {
+      throw new Error(
+        "Search Console est momentanément indisponible (erreur passagère du service Google). Réessayez dans quelques instants.",
+      );
+    }
     throw new Error(`Search Console a répondu ${response.status}: ${body.slice(0, 400)}`);
   }
   const text = await response.text();
   return text ? JSON.parse(text) : {};
 }
+
 
 function coversTarget(siteUrl: string, target: URL) {
   if (siteUrl.startsWith("sc-domain:")) {
