@@ -97,6 +97,11 @@ function AdminSeo() {
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const monitorState = useServerFn(seoMonitorState);
+  const runCheckNow = useServerFn(seoRunCheckNow);
+  const markRead = useServerFn(seoMarkAlertsRead);
+  const [runs, setRuns] = useState<any[]>([]);
+  const [alerts, setAlerts] = useState<any[]>([]);
 
   useEffect(() => {
     try {
@@ -110,6 +115,33 @@ function AdminSeo() {
       /* ignore */
     }
   }, []);
+
+  async function loadMonitor() {
+    try {
+      const state = (await monitorState()) as any;
+      setRuns(state.runs ?? []);
+      setAlerts(state.alerts ?? []);
+      const fromDb: Record<string, InspectResult> = {};
+      let latest: string | null = null;
+      for (const s of state.statuses ?? []) {
+        fromDb[s.url] = {
+          url: s.url,
+          verdict: s.verdict ?? undefined,
+          coverageState: s.coverage_state ?? undefined,
+          lastCrawlTime: s.last_crawl_time ?? undefined,
+          robotsTxtState: s.robots_state ?? undefined,
+          error: s.error ?? undefined,
+        };
+        if (!latest || (s.checked_at && s.checked_at > latest)) latest = s.checked_at;
+      }
+      if (Object.keys(fromDb).length) {
+        setResults((prev) => ({ ...prev, ...fromDb }));
+        if (latest) setCheckedAt((prev) => (!prev || latest! > prev ? latest! : prev));
+      }
+    } catch {
+      /* monitoring optional */
+    }
+  }
 
   async function load(selected?: string) {
     setLoading(true);
@@ -128,6 +160,7 @@ function AdminSeo() {
       }
       const list = (await listUrls()) as any;
       setUrls(list.urls ?? []);
+      await loadMonitor();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erreur inconnue");
     } finally {
@@ -135,10 +168,41 @@ function AdminSeo() {
     }
   }
 
+  async function onRunCheckNow() {
+    setBusy(true);
+    setNotice(null);
+    setError(null);
+    try {
+      const res = (await runCheckNow()) as any;
+      if (res.ok) {
+        setNotice(
+          `Vérification automatique terminée : ${res.counts.indexed} indexées, ${res.counts.pending} en attente, ${res.counts.missing + res.counts.error} en anomalie${res.alerts ? ` · ${res.alerts} alerte(s)` : ""}.`,
+        );
+      } else {
+        setError(res.error ?? "Échec de la vérification.");
+      }
+      await load(siteUrl ?? undefined);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erreur inconnue");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onMarkRead(id?: string) {
+    try {
+      await markRead({ data: id ? { id } : {} });
+      await loadMonitor();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erreur inconnue");
+    }
+  }
+
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
   async function onSubmitSitemap() {
     if (!siteUrl) return;
