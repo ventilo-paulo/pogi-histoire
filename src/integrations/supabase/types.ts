@@ -439,7 +439,10 @@ export type Database = {
           kind: string
           label: string | null
           last_ok_at: string | null
+          redirect_chain: string | null
+          response_bytes: number | null
           response_ms: number | null
+          snapshot_url: string | null
           status: string
           target: string
         }
@@ -451,7 +454,10 @@ export type Database = {
           kind: string
           label?: string | null
           last_ok_at?: string | null
+          redirect_chain?: string | null
+          response_bytes?: number | null
           response_ms?: number | null
+          snapshot_url?: string | null
           status?: string
           target: string
         }
@@ -463,7 +469,10 @@ export type Database = {
           kind?: string
           label?: string | null
           last_ok_at?: string | null
+          redirect_chain?: string | null
+          response_bytes?: number | null
           response_ms?: number | null
+          snapshot_url?: string | null
           status?: string
           target?: string
         }
@@ -510,23 +519,29 @@ export type Database = {
       }
       site_health_settings: {
         Row: {
+          daily_summary_enabled: boolean
           email_enabled: boolean
           enabled: boolean
           id: boolean
+          last_daily_summary_at: string | null
           notify_email: string | null
           updated_at: string
         }
         Insert: {
+          daily_summary_enabled?: boolean
           email_enabled?: boolean
           enabled?: boolean
           id?: boolean
+          last_daily_summary_at?: string | null
           notify_email?: string | null
           updated_at?: string
         }
         Update: {
+          daily_summary_enabled?: boolean
           email_enabled?: boolean
           enabled?: boolean
           id?: boolean
+          last_daily_summary_at?: string | null
           notify_email?: string | null
           updated_at?: string
         }
