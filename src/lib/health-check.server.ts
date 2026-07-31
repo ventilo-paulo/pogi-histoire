@@ -304,9 +304,16 @@ export async function runSiteHealthCheck(trigger: "cron" | "manual" = "cron") {
     const { data: previousRows } = await supabaseAdmin
       .from("site_health_checks" as any)
       .select("target,status,failing_since,last_ok_at");
-    const previous = new Map<string, { status: string; failing_since: string | null }>();
+    const previous = new Map<
+      string,
+      { status: string; failing_since: string | null; last_ok_at: string | null }
+    >();
     for (const r of (previousRows as any[]) ?? [])
-      previous.set(r.target, { status: r.status, failing_since: r.failing_since });
+      previous.set(r.target, {
+        status: r.status,
+        failing_since: r.failing_since,
+        last_ok_at: r.last_ok_at,
+      });
 
     const now = new Date().toISOString();
     const broke: HealthCheck[] = [];
@@ -324,7 +331,8 @@ export async function runSiteHealthCheck(trigger: "cron" | "manual" = "cron") {
         response_ms: c.response_ms,
         detail: c.detail,
         checked_at: now,
-        last_ok_at: c.status === "ok" ? now : (before ? undefined : null),
+        last_ok_at: c.status === "ok" ? now : (before?.last_ok_at ?? null),
+
         failing_since:
           c.status === "fail" ? (before?.failing_since ?? now) : null,
       };
