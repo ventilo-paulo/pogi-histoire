@@ -205,6 +205,7 @@ async function checkAsset(
       http_status: res.status,
       response_ms: ms,
       detail: problem,
+      response_bytes: new TextEncoder().encode(body).length,
     };
   } catch (e) {
     return {
@@ -223,6 +224,7 @@ async function checkImage(url: string): Promise<HealthCheck> {
   try {
     const { res, ms } = await timedFetch(url, { method: "GET", headers: { Range: "bytes=0-1024" } });
     const ok = res.status >= 200 && res.status < 400;
+    const len = res.headers.get("content-range")?.split("/")[1] ?? res.headers.get("content-length");
     return {
       target: url,
       kind: "image",
@@ -231,7 +233,9 @@ async function checkImage(url: string): Promise<HealthCheck> {
       http_status: res.status,
       response_ms: ms,
       detail: ok ? null : `Image cassée (${res.status})`,
+      response_bytes: len && /^\d+$/.test(len) ? Number(len) : null,
     };
+
   } catch (e) {
     return {
       target: url,
