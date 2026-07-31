@@ -327,12 +327,32 @@ function AdminHealth() {
                         </td>
                         <td className="py-2 text-white/60">
                           {c.detail ?? "—"}
+                          <span className="block text-xs text-white/40">
+                            HTTP {c.http_status ?? "aucune réponse"}
+                            {fmtBytes(c.response_bytes) ? ` · ${fmtBytes(c.response_bytes)}` : ""}
+                          </span>
+                          {c.redirect_chain && (
+                            <span className="block text-xs text-amber-200/70 whitespace-pre-line break-all">
+                              {c.redirect_chain}
+                            </span>
+                          )}
                           {c.status === "fail" && c.failing_since && (
                             <span className="block text-xs text-white/40">
                               depuis {fmt(c.failing_since)}
                             </span>
                           )}
+                          {c.status === "fail" && c.snapshot_url && (
+                            <a href={c.target} target="_blank" rel="noreferrer">
+                              <img
+                                src={c.snapshot_url}
+                                alt={`Aperçu de ${c.label}`}
+                                loading="lazy"
+                                className="mt-2 w-40 rounded-md border border-white/15 bg-black/40"
+                              />
+                            </a>
+                          )}
                         </td>
+
                       </tr>
                     ))}
                   </tbody>
