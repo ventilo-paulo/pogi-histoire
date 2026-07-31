@@ -26,16 +26,19 @@ export const Route = createFileRoute("/articles/")({
     ],
     links: [{ rel: "canonical", href: "https://pogi-histoire.lovable.app/articles" }],
   }),
-  validateSearch: (s: Record<string, unknown>) => ({
-    cat: typeof s.cat === "string" ? s.cat : "",
-    q: typeof s.q === "string" ? s.q : "",
-  }),
+  validateSearch: (s: Record<string, unknown>) => {
+    const out: { cat?: string; q?: string } = {};
+    if (typeof s.cat === "string" && s.cat) out.cat = s.cat;
+    if (typeof s.q === "string" && s.q) out.q = s.q;
+    return out;
+  },
   component: ArticlesPage,
 });
 
 function ArticlesPage() {
-  const { cat, q } = Route.useSearch();
+  const { cat = "", q = "" } = Route.useSearch();
   const filtering = !!(cat || q.trim());
+
 
 
   return (
