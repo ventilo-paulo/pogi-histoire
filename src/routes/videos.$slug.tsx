@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { InternalLinks } from "@/components/InternalLinks";
 import { Skeleton } from "@/components/Skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, ExternalLink } from "lucide-react";
@@ -250,6 +251,7 @@ function VideoBySlug() {
           </div>
         )}
       </div>
+      <InternalLinks variant="dark" category={video.category} excludeVideoSlug={video.slug} />
       </main>
       <Footer />
     </div>

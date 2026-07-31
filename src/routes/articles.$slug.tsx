@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { InternalLinks } from "@/components/InternalLinks";
 import { Skeleton } from "@/components/Skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { SITE_URL, absUrl } from "@/lib/site";
@@ -503,6 +504,7 @@ function ArticleBySlug() {
         )}
       </article>
       <BackToTop />
+      <InternalLinks variant="light" showArticles={false} category={article.category} videosTitle="Vidéos recommandées" />
       </main>
       <Footer />
     </div>

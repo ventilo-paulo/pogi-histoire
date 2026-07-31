@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSyncExternalStore } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { InternalLinks } from "@/components/InternalLinks";
 import { HScroll } from "@/components/HScroll";
 import { Reveal } from "@/components/Reveal";
 import { ArticleCardSkeleton } from "@/components/Skeleton";
@@ -195,6 +196,7 @@ function Home() {
       </section>
 
 
+      <InternalLinks variant="dark" articlesTitle="Articles connexes" videosTitle="Vidéos recommandées" />
       </main>
       <Footer />
     </div>

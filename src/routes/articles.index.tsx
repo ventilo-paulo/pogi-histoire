@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { InternalLinks } from "@/components/InternalLinks";
 import { HScroll } from "@/components/HScroll";
 import { Reveal } from "@/components/Reveal";
 import { ArticleCardSkeleton, ArticleCardSkeletonGrid } from "@/components/Skeleton";
@@ -63,6 +64,7 @@ function ArticlesPage() {
 
 
 
+      <InternalLinks variant="light" showArticles={false} videosTitle="Vidéos recommandées" />
       </main>
       <Footer />
     </div>
