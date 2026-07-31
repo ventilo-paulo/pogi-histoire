@@ -303,7 +303,7 @@ export async function runSiteHealthCheck(trigger: "cron" | "manual" = "cron") {
     // --- Compare with previous state ---
     const { data: previousRows } = await supabaseAdmin
       .from("site_health_checks" as any)
-      .select("target,status,failing_since");
+      .select("target,status,failing_since,last_ok_at");
     const previous = new Map<string, { status: string; failing_since: string | null }>();
     for (const r of (previousRows as any[]) ?? [])
       previous.set(r.target, { status: r.status, failing_since: r.failing_since });
