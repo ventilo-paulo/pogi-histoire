@@ -6,6 +6,7 @@ import {
   healthRunNow,
   healthSaveSettings,
   healthMarkAlertsRead,
+  healthSendDigest,
 } from "@/lib/health.functions";
 import {
   Activity,
@@ -76,6 +77,7 @@ type Alert = {
 type Settings = {
   enabled: boolean;
   email_enabled: boolean;
+  daily_summary_enabled?: boolean;
   notify_email: string | null;
 } | null;
 
@@ -100,6 +102,7 @@ function AdminHealth() {
   const runNow = useServerFn(healthRunNow);
   const saveSettings = useServerFn(healthSaveSettings);
   const markRead = useServerFn(healthMarkAlertsRead);
+  const sendDigest = useServerFn(healthSendDigest);
 
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -131,6 +134,24 @@ function AdminHealth() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  const onSendDigest = async () => {
+    setBusy(true);
+    setError(null);
+    setNotice(null);
+    try {
+      const r: any = await sendDigest({ data: {} as any });
+      setNotice(
+        r?.skipped
+          ? "Récapitulatif désactivé ou adresse email manquante."
+          : `Récapitulatif envoyé : ${r.checks} vérifications, ${r.errors} erreur(s), ${r.recovered} rétablissement(s).`,
+      );
+    } catch (e: any) {
+      setError(e?.message ?? "Envoi impossible");
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const onRun = async () => {
     setBusy(true);
