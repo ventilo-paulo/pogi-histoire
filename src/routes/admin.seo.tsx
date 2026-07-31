@@ -121,7 +121,7 @@ function AdminSeo() {
         setSiteUrl(null);
         setError("Aucune propriété Search Console vérifiée pour ce site.");
       }
-      const list = (await listUrls({ data: {} })) as any;
+      const list = (await listUrls()) as any;
       setUrls(list.urls ?? []);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erreur inconnue");
