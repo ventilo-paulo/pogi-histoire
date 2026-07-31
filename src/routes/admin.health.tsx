@@ -37,10 +37,21 @@ type Check = {
   http_status: number | null;
   response_ms: number | null;
   detail: string | null;
+  redirect_chain?: string | null;
+  response_bytes?: number | null;
+  snapshot_url?: string | null;
   checked_at: string;
   last_ok_at: string | null;
   failing_since: string | null;
 };
+
+function fmtBytes(n?: number | null) {
+  if (n == null) return null;
+  if (n < 1024) return `${n} o`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} Ko`;
+  return `${(n / 1024 / 1024).toFixed(2)} Mo`;
+}
+
 type Run = {
   id: string;
   started_at: string;
