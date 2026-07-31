@@ -416,6 +416,9 @@ export async function runSiteHealthCheck(trigger: "cron" | "manual" = "cron") {
         http_status: c.http_status,
         response_ms: c.response_ms,
         detail: c.detail,
+        redirect_chain: c.redirect_chain ?? null,
+        response_bytes: c.response_bytes ?? null,
+        snapshot_url: c.status === "fail" ? (c.snapshot_url ?? null) : null,
         checked_at: now,
         last_ok_at: c.status === "ok" ? now : (before?.last_ok_at ?? null),
 
@@ -432,14 +435,14 @@ export async function runSiteHealthCheck(trigger: "cron" | "manual" = "cron") {
         kind: "health",
         target: c.target,
         title: `Cassé : ${c.label}`,
-        detail: c.detail ?? "Ressource indisponible",
+        detail: describeCheck(c),
       })),
       ...recovered.map((c) => ({
         level: "info",
         kind: "health",
         target: c.target,
         title: `Rétabli : ${c.label}`,
-        detail: "La ressource répond de nouveau normalement.",
+        detail: `La ressource répond de nouveau normalement · HTTP ${c.http_status ?? "OK"}${c.response_ms != null ? ` · ${c.response_ms} ms` : ""}`,
       })),
     ];
     if (alerts.length) {
@@ -449,14 +452,17 @@ export async function runSiteHealthCheck(trigger: "cron" | "manual" = "cron") {
     if (broke.length) {
       await notifyByEmail(
         `🚨 ${broke.length} problème(s) détecté(s) sur pogi-histoire`,
-        broke.map((c) => `<strong>${c.label}</strong> — ${c.detail ?? "indisponible"} (${c.target})`),
+        broke.map(checkEmailBlock),
       );
     } else if (recovered.length) {
       await notifyByEmail(
         `✅ Site rétabli (${recovered.length} élément(s))`,
-        recovered.map((c) => `<strong>${c.label}</strong> répond de nouveau (${c.target})`),
+        recovered.map(
+          (c) => `<li><strong>${c.label}</strong> répond de nouveau (HTTP ${c.http_status ?? "OK"}) — ${c.target}</li>`,
+        ),
       );
     }
+
 
     const failed = checks.filter((c) => c.status === "fail").length;
     if (runId) {
