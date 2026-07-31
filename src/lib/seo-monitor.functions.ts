@@ -46,8 +46,8 @@ export const seoRunCheckNow = createServerFn({ method: "POST" })
 
 /** Mark alerts as read (all, or a single one). */
 export const seoMarkAlertsRead = createServerFn({ method: "POST" })
-  .inputValidator((input: { id?: string } | undefined) => input ?? {})
   .middleware([requireSupabaseAuth])
+  .inputValidator((input: { id?: string } | undefined) => input ?? {})
   .handler(async ({ data, context }) => {
     await requireAdmin(context as any);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
