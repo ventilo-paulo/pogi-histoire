@@ -209,6 +209,140 @@ export type Database = {
         }
         Relationships: []
       }
+      seo_alerts: {
+        Row: {
+          created_at: string
+          detail: string | null
+          id: string
+          kind: string
+          level: string
+          read_at: string | null
+          run_id: string | null
+          target: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          detail?: string | null
+          id?: string
+          kind: string
+          level?: string
+          read_at?: string | null
+          run_id?: string | null
+          target?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          detail?: string | null
+          id?: string
+          kind?: string
+          level?: string
+          read_at?: string | null
+          run_id?: string | null
+          target?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seo_alerts_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "seo_index_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      seo_index_runs: {
+        Row: {
+          finished_at: string | null
+          id: string
+          message: string | null
+          ok: boolean
+          sitemap_errors: number
+          sitemap_status: string | null
+          sitemap_warnings: number
+          started_at: string
+          trigger: string
+          urls_error: number
+          urls_indexed: number
+          urls_missing: number
+          urls_pending: number
+          urls_total: number
+        }
+        Insert: {
+          finished_at?: string | null
+          id?: string
+          message?: string | null
+          ok?: boolean
+          sitemap_errors?: number
+          sitemap_status?: string | null
+          sitemap_warnings?: number
+          started_at?: string
+          trigger?: string
+          urls_error?: number
+          urls_indexed?: number
+          urls_missing?: number
+          urls_pending?: number
+          urls_total?: number
+        }
+        Update: {
+          finished_at?: string | null
+          id?: string
+          message?: string | null
+          ok?: boolean
+          sitemap_errors?: number
+          sitemap_status?: string | null
+          sitemap_warnings?: number
+          started_at?: string
+          trigger?: string
+          urls_error?: number
+          urls_indexed?: number
+          urls_missing?: number
+          urls_pending?: number
+          urls_total?: number
+        }
+        Relationships: []
+      }
+      seo_url_status: {
+        Row: {
+          checked_at: string
+          coverage_state: string | null
+          error: string | null
+          kind: string | null
+          label: string | null
+          last_crawl_time: string | null
+          robots_state: string | null
+          updated_at: string
+          url: string
+          verdict: string | null
+        }
+        Insert: {
+          checked_at?: string
+          coverage_state?: string | null
+          error?: string | null
+          kind?: string | null
+          label?: string | null
+          last_crawl_time?: string | null
+          robots_state?: string | null
+          updated_at?: string
+          url: string
+          verdict?: string | null
+        }
+        Update: {
+          checked_at?: string
+          coverage_state?: string | null
+          error?: string | null
+          kind?: string | null
+          label?: string | null
+          last_crawl_time?: string | null
+          robots_state?: string | null
+          updated_at?: string
+          url?: string
+          verdict?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
