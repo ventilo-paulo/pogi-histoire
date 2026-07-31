@@ -3,13 +3,19 @@ import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { healthState } from "@/lib/health.functions";
 import { seoMonitorState } from "@/lib/seo-monitor.functions";
+import { supervisionExportData, supervisionRunStep } from "@/lib/supervision.functions";
+import { downloadCsv, openPdf } from "@/lib/supervision-export";
 import {
   Activity,
   AlertTriangle,
   CheckCircle2,
   Clock,
+  Download,
+  FileText,
   Gauge,
   HeartPulse,
+  Loader2,
+  Play,
   RefreshCw,
   XCircle,
 } from "lucide-react";
@@ -75,6 +81,66 @@ function AdminStatut() {
 
   const allGood = failing.length === 0;
 
+  /* ---- Relance immédiate des contrôles ---- */
+  const runStep = useServerFn(supervisionRunStep);
+  const [running, setRunning] = useState(false);
+  const [progress, setProgress] = useState<{ pct: number; label: string } | null>(null);
+  const [runResult, setRunResult] = useState<string | null>(null);
+
+  const runAllChecks = useCallback(async () => {
+    setRunning(true);
+    setRunResult(null);
+    setError(null);
+    const lines: string[] = [];
+    try {
+      setProgress({ pct: 10, label: "Contrôle de santé du site en cours…" });
+      const h: any = await runStep({ data: { step: "health" } });
+      lines.push(`Santé : ${h.total} élément(s) testé(s), ${h.failed} en erreur`);
+      setProgress({ pct: 55, label: "Vérification de l'indexation Google…" });
+      try {
+        const s: any = await runStep({ data: { step: "seo" } });
+        lines.push(`Indexation : ${s.total} URL contrôlée(s), ${s.recovered} indexée(s)`);
+      } catch (e: any) {
+        lines.push(`Indexation : échec (${e?.message ?? "erreur"})`);
+      }
+      setProgress({ pct: 90, label: "Actualisation du tableau de bord…" });
+      await load();
+      setProgress({ pct: 100, label: "Terminé" });
+      setRunResult(lines.join(" · "));
+    } catch (e: any) {
+      setError(e?.message ?? "Le contrôle a échoué");
+    } finally {
+      setRunning(false);
+      setTimeout(() => setProgress(null), 2500);
+    }
+  }, [runStep, load]);
+
+  /* ---- Export CSV / PDF ---- */
+  const fetchExport = useServerFn(supervisionExportData);
+  const today = new Date().toISOString().slice(0, 10);
+  const monthAgo = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10);
+  const [from, setFrom] = useState(monthAgo);
+  const [to, setTo] = useState(today);
+  const [exporting, setExporting] = useState<"csv" | "pdf" | null>(null);
+  const [exportError, setExportError] = useState<string | null>(null);
+
+  const doExport = useCallback(
+    async (kind: "csv" | "pdf") => {
+      setExporting(kind);
+      setExportError(null);
+      try {
+        const data: any = await fetchExport({ data: { from, to } });
+        if (kind === "csv") downloadCsv(data);
+        else openPdf(data);
+      } catch (e: any) {
+        setExportError(e?.message ?? "Export impossible");
+      } finally {
+        setExporting(null);
+      }
+    },
+    [fetchExport, from, to],
+  );
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -84,14 +150,102 @@ function AdminStatut() {
             Vue d'ensemble : disponibilité des pages, incidents récents et indexation Google.
           </p>
         </div>
-        <button
-          onClick={() => void load()}
-          disabled={loading}
-          className="inline-flex items-center gap-2 rounded-md border border-white/15 px-4 py-2 text-sm text-white/80 hover:bg-white/5 disabled:opacity-50"
-        >
-          <RefreshCw size={16} /> Actualiser
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => void runAllChecks()}
+            disabled={running}
+            className="inline-flex items-center gap-2 rounded-md bg-pogi-yellow px-4 py-2 text-sm font-semibold text-black hover:opacity-90 disabled:opacity-60"
+          >
+            {running ? <Loader2 size={16} className="animate-spin" /> : <Play size={16} />}
+            {running ? "Contrôle en cours…" : "Lancer un check maintenant"}
+          </button>
+          <button
+            onClick={() => void load()}
+            disabled={loading || running}
+            className="inline-flex items-center gap-2 rounded-md border border-white/15 px-4 py-2 text-sm text-white/80 hover:bg-white/5 disabled:opacity-50"
+          >
+            <RefreshCw size={16} /> Actualiser
+          </button>
+        </div>
       </div>
+
+      {progress && (
+        <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+          <div className="flex items-center justify-between text-sm text-white/80">
+            <span>{progress.label}</span>
+            <span className="text-white/50">{progress.pct}%</span>
+          </div>
+          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-white/10">
+            <div
+              className="h-full bg-pogi-yellow transition-all duration-500"
+              style={{ width: `${progress.pct}%` }}
+            />
+          </div>
+        </div>
+      )}
+
+      {runResult && !running && (
+        <div className="rounded-md border border-emerald-500/40 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-100">
+          {runResult}
+        </div>
+      )}
+
+      {/* Export de l'historique */}
+      <section className="rounded-xl border border-white/10 bg-white/5 p-5">
+        <h2 className="font-display uppercase text-white text-lg flex items-center gap-2">
+          <Download size={18} /> Export de l'historique
+        </h2>
+        <p className="text-white/50 text-sm mt-1">
+          Contrôles de santé, contrôles d'indexation et incidents sur la période choisie.
+        </p>
+        <div className="mt-4 flex flex-wrap items-end gap-3">
+          <label className="text-xs uppercase tracking-wide text-white/50">
+            Du
+            <input
+              type="date"
+              value={from}
+              max={to}
+              onChange={(e) => setFrom(e.target.value)}
+              className="mt-1 block rounded-md border border-white/15 bg-black/30 px-3 py-2 text-sm text-white"
+            />
+          </label>
+          <label className="text-xs uppercase tracking-wide text-white/50">
+            Au
+            <input
+              type="date"
+              value={to}
+              min={from}
+              onChange={(e) => setTo(e.target.value)}
+              className="mt-1 block rounded-md border border-white/15 bg-black/30 px-3 py-2 text-sm text-white"
+            />
+          </label>
+          <button
+            onClick={() => void doExport("csv")}
+            disabled={!!exporting}
+            className="inline-flex items-center gap-2 rounded-md border border-white/15 px-4 py-2 text-sm text-white/85 hover:bg-white/5 disabled:opacity-50"
+          >
+            {exporting === "csv" ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <Download size={16} />
+            )}
+            Export CSV
+          </button>
+          <button
+            onClick={() => void doExport("pdf")}
+            disabled={!!exporting}
+            className="inline-flex items-center gap-2 rounded-md border border-white/15 px-4 py-2 text-sm text-white/85 hover:bg-white/5 disabled:opacity-50"
+          >
+            {exporting === "pdf" ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <FileText size={16} />
+            )}
+            Export PDF
+          </button>
+        </div>
+        {exportError && <p className="mt-3 text-sm text-red-300">{exportError}</p>}
+      </section>
 
       {error && (
         <div className="rounded-md border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
