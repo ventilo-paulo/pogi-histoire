@@ -511,3 +511,82 @@ export async function runSiteHealthCheck(trigger: "cron" | "manual" = "cron") {
     return { ok: false, runId, error: message };
   }
 }
+
+/** Daily digest: number of checks, errors detected and items recovered over 24h. */
+export async function runDailyHealthSummary() {
+  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+  const { data: settings } = await supabaseAdmin
+    .from("site_health_settings" as any)
+    .select("daily_summary_enabled,email_enabled,notify_email")
+    .maybeSingle();
+  const s = settings as any;
+  if (!s?.daily_summary_enabled || !s?.email_enabled || !s?.notify_email) {
+    return { ok: true, skipped: "daily summary disabled" };
+  }
+
+  const [{ data: runs }, { data: alerts }, { data: current }] = await Promise.all([
+    supabaseAdmin.from("site_health_runs" as any).select("*").gte("started_at", since),
+    supabaseAdmin
+      .from("seo_alerts" as any)
+      .select("*")
+      .eq("kind", "health")
+      .gte("created_at", since)
+      .order("created_at", { ascending: false }),
+    supabaseAdmin.from("site_health_checks" as any).select("*"),
+  ]);
+
+  const runList = ((runs as any[]) ?? []).filter((r) => r.finished_at);
+  const checksTotal = runList.reduce((n, r) => n + (r.checks_total ?? 0), 0);
+  const alertList = (alerts as any[]) ?? [];
+  const errors = alertList.filter((a) => a.level === "error");
+  const recovered = alertList.filter((a) => a.level === "info");
+  const failing = ((current as any[]) ?? []).filter((c) => c.status === "fail");
+
+  const lines: string[] = [
+    `<li><strong>${runList.length}</strong> contrôle(s) automatique(s) exécuté(s), <strong>${checksTotal}</strong> vérification(s) au total</li>`,
+    `<li><strong>${errors.length}</strong> problème(s) détecté(s) sur 24 h</li>`,
+    `<li><strong>${recovered.length}</strong> élément(s) rétabli(s)</li>`,
+    `<li><strong>${failing.length}</strong> élément(s) actuellement en échec</li>`,
+  ];
+
+  for (const c of failing) {
+    lines.push(
+      checkEmailBlock({
+        target: c.target,
+        kind: c.kind,
+        label: c.label,
+        status: "fail",
+        http_status: c.http_status,
+        response_ms: c.response_ms,
+        detail: c.detail,
+        redirect_chain: c.redirect_chain,
+        response_bytes: c.response_bytes,
+        snapshot_url: c.snapshot_url,
+      }),
+    );
+  }
+  for (const a of recovered) {
+    lines.push(`<li>✅ ${a.title} — ${a.detail ?? ""}</li>`);
+  }
+
+  const subject = failing.length
+    ? `📋 Récapitulatif quotidien — ${failing.length} problème(s) en cours`
+    : `📋 Récapitulatif quotidien — tout fonctionne`;
+
+  await notifyByEmail(subject, lines, "site-health-daily-summary");
+
+  await supabaseAdmin
+    .from("site_health_settings" as any)
+    .update({ last_daily_summary_at: new Date().toISOString() })
+    .eq("id", true);
+
+  return {
+    ok: true,
+    runs: runList.length,
+    checks: checksTotal,
+    errors: errors.length,
+    recovered: recovered.length,
+    failing: failing.length,
+  };
+}
