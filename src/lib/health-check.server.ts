@@ -37,7 +37,9 @@ function inspectHtml(html: string) {
   const problems: string[] = [];
   const lower = html.toLowerCase();
   if (!/<title[^>]*>[^<]{3,}<\/title>/i.test(html)) problems.push("titre de page manquant");
-  if (!lower.includes("<main")) problems.push("contenu principal absent");
+  // The app streams/hydrates content, so accept any real content container.
+  if (!/<main|<article|<h1|<section/i.test(html)) problems.push("contenu principal absent");
+
   if (html.length < 1500) problems.push("page quasiment vide");
   if (lower.includes("article introuvable") || lower.includes("page introuvable"))
     problems.push("page d'erreur 404 affichée");
