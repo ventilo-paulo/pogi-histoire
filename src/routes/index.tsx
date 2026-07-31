@@ -34,11 +34,11 @@ export const Route = createFileRoute("/")({
 });
 
 const fallbackArticles = [
-  { img: aNapoleon, alt: "Napoléon" },
-  { img: aWoman, alt: "Portrait ancien" },
-  { img: aNazca, alt: "Lignes de Nazca" },
-  { img: aAstro, alt: "Astronaute" },
-  { img: aCave, alt: "Peinture rupestre" },
+  { img: aNapoleon, alt: "Portrait de Napoléon Bonaparte" },
+  { img: aWoman, alt: "Portrait ancien d'une femme" },
+  { img: aNazca, alt: "Géoglyphes des lignes de Nazca" },
+  { img: aAstro, alt: "Astronaute en sortie extravéhiculaire" },
+  { img: aCave, alt: "Peinture rupestre préhistorique" },
 ];
 
 const collections = [
@@ -114,7 +114,12 @@ function Hero() {
       >
         <img
           src="https://wjexjgjyfglvrpktbpvz.supabase.co/storage/v1/object/sign/media/articles/f872825c-8b53-4376-bd2b-71af751cfbf3.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9lOWU2ZGQxYS00ODJjLTQ3NTQtOTdkNi1iMGU5YTQ3MWJlMGQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJtZWRpYS9hcnRpY2xlcy9mODcyODI1Yy04YjUzLTQzNzYtYmQyYi03MWFmNzUxY2ZiZjMuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc4MjgzMzM3MCwiZXhwIjoyMDk4MTkzMzcwfQ.NTJt1qXL4b4RPPsMOojSSocQpxy9auuSXHq0n0GGGqM"
-          alt="Versailles ou la mise en scène du pouvoir absolu"
+          alt="Le château de Versailles, symbole du pouvoir absolu de Louis XIV"
+          width={1920}
+          height={1080}
+          fetchPriority="high"
+          loading="eager"
+          decoding="async"
           className="absolute inset-0 h-full w-full object-cover object-[65%_center] md:object-center transition-transform duration-700 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30" />

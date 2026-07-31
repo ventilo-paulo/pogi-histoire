@@ -24,7 +24,7 @@ export function Footer() {
           {/* Brand */}
           <div className="flex flex-col gap-3">
             <Link to="/" aria-label="POGI — Accueil" className="inline-flex">
-              <img src={pogiLogo.url} alt="POGI" className="h-16 w-auto object-contain" />
+              <img src={pogiLogo.url} alt="POGI Histoire — média indépendant d'histoire" className="h-16 w-auto object-contain" />
             </Link>
             <p className="text-sm text-white/60 leading-relaxed">
               Média indépendant d'histoire — récits documentés, sourcés, vérifiés.
@@ -33,7 +33,7 @@ export function Footer() {
 
           {/* Navigation */}
           <nav aria-label="Navigation">
-            <h3 className="text-xs uppercase tracking-widest text-white/50 font-semibold mb-3">Navigation</h3>
+            <h3 className="text-xs uppercase tracking-widest text-white/80 font-semibold mb-3">Navigation</h3>
             <ul className="space-y-2">
               {navLinks.map((l) => (
                 <li key={l.to}>
@@ -47,7 +47,7 @@ export function Footer() {
 
           {/* À propos */}
           <nav aria-label="À propos">
-            <h3 className="text-xs uppercase tracking-widest text-white/50 font-semibold mb-3">À propos</h3>
+            <h3 className="text-xs uppercase tracking-widest text-white/80 font-semibold mb-3">À propos</h3>
             <ul className="space-y-2">
               {aboutLinks.map((l) =>
                 "to" in l ? (
@@ -69,7 +69,7 @@ export function Footer() {
 
           {/* Suivre */}
           <div>
-            <h3 className="text-xs uppercase tracking-widest text-white/50 font-semibold mb-3">Suivre</h3>
+            <h3 className="text-xs uppercase tracking-widest text-white/80 font-semibold mb-3">Suivre</h3>
             <a
               href={YOUTUBE}
               target="_blank"
@@ -82,7 +82,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 pt-6 border-t border-white/10 text-xs text-white/40">
+        <div className="mt-10 pt-6 border-t border-white/10 text-xs text-white/70">
           © {new Date().getFullYear()} POGI Histoire — Tous droits réservés.
         </div>
       </div>

@@ -104,7 +104,7 @@ function CollectionTile({ c }: { c: Collection }) {
       )}
 
       <div className="absolute inset-x-0 bottom-0 p-4 text-white">
-        <h3 className="font-display uppercase text-lg md:text-xl leading-tight">{c.title}</h3>
+        <h2 className="font-display uppercase text-lg md:text-xl leading-tight">{c.title}</h2>
         <p className="text-white/75 text-sm mt-1 italic line-clamp-2">{c.subtitle}</p>
       </div>
     </article>

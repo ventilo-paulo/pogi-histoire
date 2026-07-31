@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 
-const BASE_URL = "https://pogi-histoire.com";
+const BASE_URL = "https://pogi-histoire.lovable.app";
 
 interface SitemapEntry {
   path: string;
@@ -20,6 +20,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/videos", changefreq: "weekly", priority: "0.8" },
           { path: "/interviews", changefreq: "weekly", priority: "0.8" },
           { path: "/collections", changefreq: "monthly", priority: "0.7" },
+          { path: "/a-propos", changefreq: "yearly", priority: "0.5" },
         ];
 
         try {
