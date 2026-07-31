@@ -48,10 +48,24 @@ export const healthRunNow = createServerFn({ method: "POST" })
     return runSiteHealthCheck("manual");
   });
 
+/** Send the daily digest email on demand. */
+export const healthSendDigest = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await requireAdmin(context as any);
+    const { runDailyHealthSummary } = await import("@/lib/health-check.server");
+    return runDailyHealthSummary();
+  });
+
 /** Update monitoring settings (recipient, email on/off, monitoring on/off). */
 export const healthSaveSettings = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { enabled?: boolean; email_enabled?: boolean; notify_email?: string }) => {
+  .inputValidator((input: {
+      enabled?: boolean;
+      email_enabled?: boolean;
+      daily_summary_enabled?: boolean;
+      notify_email?: string;
+    }) => {
     if (input.notify_email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(input.notify_email)) {
       throw new Error("Adresse email invalide");
     }

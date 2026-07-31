@@ -4,6 +4,13 @@ export const Route = createFileRoute("/api/public/hooks/health-check")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        let mode = "check";
+        try {
+          const body = (await request.clone().json()) as { mode?: string };
+          if (body?.mode) mode = body.mode;
+        } catch {
+          /* empty body */
+        }
         const provided =
           request.headers.get("x-webhook-secret") ??
           request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ??
@@ -48,6 +55,10 @@ export const Route = createFileRoute("/api/public/hooks/health-check")({
             .maybeSingle();
           if ((settings as any) && (settings as any).enabled === false) {
             return Response.json({ ok: true, skipped: "disabled" });
+          }
+          if (mode === "daily-summary") {
+            const { runDailyHealthSummary } = await import("@/lib/health-check.server");
+            return Response.json(await runDailyHealthSummary(), { status: 200 });
           }
           const { runSiteHealthCheck } = await import("@/lib/health-check.server");
           const result = await runSiteHealthCheck("cron");

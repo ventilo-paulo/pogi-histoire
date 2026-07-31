@@ -6,6 +6,7 @@ import {
   healthRunNow,
   healthSaveSettings,
   healthMarkAlertsRead,
+  healthSendDigest,
 } from "@/lib/health.functions";
 import {
   Activity,
@@ -37,10 +38,21 @@ type Check = {
   http_status: number | null;
   response_ms: number | null;
   detail: string | null;
+  redirect_chain?: string | null;
+  response_bytes?: number | null;
+  snapshot_url?: string | null;
   checked_at: string;
   last_ok_at: string | null;
   failing_since: string | null;
 };
+
+function fmtBytes(n?: number | null) {
+  if (n == null) return null;
+  if (n < 1024) return `${n} o`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} Ko`;
+  return `${(n / 1024 / 1024).toFixed(2)} Mo`;
+}
+
 type Run = {
   id: string;
   started_at: string;
@@ -65,6 +77,7 @@ type Alert = {
 type Settings = {
   enabled: boolean;
   email_enabled: boolean;
+  daily_summary_enabled?: boolean;
   notify_email: string | null;
 } | null;
 
@@ -89,6 +102,7 @@ function AdminHealth() {
   const runNow = useServerFn(healthRunNow);
   const saveSettings = useServerFn(healthSaveSettings);
   const markRead = useServerFn(healthMarkAlertsRead);
+  const sendDigest = useServerFn(healthSendDigest);
 
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -120,6 +134,24 @@ function AdminHealth() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  const onSendDigest = async () => {
+    setBusy(true);
+    setError(null);
+    setNotice(null);
+    try {
+      const r: any = await sendDigest({ data: {} as any });
+      setNotice(
+        r?.skipped
+          ? "Récapitulatif désactivé ou adresse email manquante."
+          : `Récapitulatif envoyé : ${r.checks} vérifications, ${r.errors} erreur(s), ${r.recovered} rétablissement(s).`,
+      );
+    } catch (e: any) {
+      setError(e?.message ?? "Envoi impossible");
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const onRun = async () => {
     setBusy(true);
@@ -316,12 +348,32 @@ function AdminHealth() {
                         </td>
                         <td className="py-2 text-white/60">
                           {c.detail ?? "—"}
+                          <span className="block text-xs text-white/40">
+                            HTTP {c.http_status ?? "aucune réponse"}
+                            {fmtBytes(c.response_bytes) ? ` · ${fmtBytes(c.response_bytes)}` : ""}
+                          </span>
+                          {c.redirect_chain && (
+                            <span className="block text-xs text-amber-200/70 whitespace-pre-line break-all">
+                              {c.redirect_chain}
+                            </span>
+                          )}
                           {c.status === "fail" && c.failing_since && (
                             <span className="block text-xs text-white/40">
                               depuis {fmt(c.failing_since)}
                             </span>
                           )}
+                          {c.status === "fail" && c.snapshot_url && (
+                            <a href={c.target} target="_blank" rel="noreferrer">
+                              <img
+                                src={c.snapshot_url}
+                                alt={`Aperçu de ${c.label}`}
+                                loading="lazy"
+                                className="mt-2 w-40 rounded-md border border-white/15 bg-black/40"
+                              />
+                            </a>
+                          )}
                         </td>
+
                       </tr>
                     ))}
                   </tbody>
@@ -353,6 +405,23 @@ function AdminHealth() {
               />
               M'envoyer un email dès qu'un problème est détecté (ou rétabli)
             </label>
+            <label className="flex items-center gap-3 text-sm text-white/80">
+              <input
+                type="checkbox"
+                checked={settings?.daily_summary_enabled ?? true}
+                onChange={(e) => void onSave({ daily_summary_enabled: e.target.checked })}
+                className="size-4 accent-[var(--color-pogi-yellow,#f5c518)]"
+              />
+              Récapitulatif quotidien par email (7h00) : nombre de contrôles, erreurs et éléments rétablis
+            </label>
+            <button
+              onClick={() => void onSendDigest()}
+              disabled={busy}
+              className="rounded-md border border-white/15 px-3 py-2 text-sm text-white/80 hover:bg-white/5 disabled:opacity-50"
+            >
+              Envoyer le récapitulatif maintenant
+            </button>
+
             <div className="flex flex-wrap items-center gap-2">
               <input
                 type="email"

@@ -11,7 +11,16 @@ export type HealthCheck = {
   http_status: number | null;
   response_ms: number | null;
   detail: string | null;
+  redirect_chain?: string | null;
+  response_bytes?: number | null;
+  snapshot_url?: string | null;
 };
+
+/** Free, no-key thumbnail service used to illustrate a failing page. */
+function snapshotUrl(url: string) {
+  return `https://s.wordpress.com/mshots/v1/${encodeURIComponent(url)}?w=480&h=320`;
+}
+
 
 const TIMEOUT_MS = 15000;
 
@@ -75,47 +84,79 @@ function extractImages(html: string, max = 8) {
 }
 
 async function checkPage(url: string, label: string): Promise<{ check: HealthCheck; html?: string }> {
+  const hops: string[] = [];
+  let current = url;
+  let totalMs = 0;
+
   try {
-    const { res, ms } = await timedFetch(url);
-    if (res.status >= 300 && res.status < 400) {
+    for (let i = 0; i < 5; i++) {
+      const { res, ms } = await timedFetch(current);
+      totalMs += ms;
+
+      if (res.status >= 300 && res.status < 400) {
+        const location = res.headers.get("location");
+        hops.push(`${res.status} ${current} → ${location ?? "?"}`);
+        if (!location) break;
+        current = new URL(location, current).href;
+        continue;
+      }
+
+      const chain = hops.length ? hops.join("\n") : null;
+
+      if (!res.ok) {
+        return {
+          check: {
+            target: url,
+            kind: "page",
+            label,
+            status: "fail",
+            http_status: res.status,
+            response_ms: totalMs,
+            detail: `Le serveur répond ${res.status} (${res.statusText || "erreur"})`,
+            redirect_chain: chain,
+            response_bytes: null,
+            snapshot_url: snapshotUrl(url),
+          },
+        };
+      }
+
+      const html = await res.text();
+      const bytes = new TextEncoder().encode(html).length;
+      const problems = inspectHtml(html);
+      // A redirected canonical URL is itself a problem for SEO/monitoring.
+      if (hops.length) problems.unshift(`redirection ${hops.length > 1 ? "en chaîne " : ""}avant réponse`);
+      const failed = problems.length > 0;
+
       return {
         check: {
           target: url,
           kind: "page",
           label,
-          status: "fail",
+          status: failed ? "fail" : "ok",
           http_status: res.status,
-          response_ms: ms,
-          detail: `Redirection inattendue vers ${res.headers.get("location") ?? "?"}`,
+          response_ms: totalMs,
+          detail: failed ? problems.join(", ") : null,
+          redirect_chain: chain,
+          response_bytes: bytes,
+          snapshot_url: failed ? snapshotUrl(url) : null,
         },
+        html: hops.length ? undefined : html,
       };
     }
-    if (!res.ok) {
-      return {
-        check: {
-          target: url,
-          kind: "page",
-          label,
-          status: "fail",
-          http_status: res.status,
-          response_ms: ms,
-          detail: `Le serveur répond ${res.status}`,
-        },
-      };
-    }
-    const html = await res.text();
-    const problems = inspectHtml(html);
+
     return {
       check: {
         target: url,
         kind: "page",
         label,
-        status: problems.length ? "fail" : "ok",
-        http_status: res.status,
-        response_ms: ms,
-        detail: problems.length ? problems.join(", ") : null,
+        status: "fail",
+        http_status: null,
+        response_ms: totalMs,
+        detail: "Boucle de redirection (plus de 5 sauts)",
+        redirect_chain: hops.join("\n"),
+        response_bytes: null,
+        snapshot_url: snapshotUrl(url),
       },
-      html,
     };
   } catch (e) {
     return {
@@ -125,12 +166,16 @@ async function checkPage(url: string, label: string): Promise<{ check: HealthChe
         label,
         status: "fail",
         http_status: null,
-        response_ms: null,
+        response_ms: totalMs || null,
         detail: e instanceof Error ? `Page injoignable : ${e.message}` : "Page injoignable",
+        redirect_chain: hops.length ? hops.join("\n") : null,
+        response_bytes: null,
+        snapshot_url: snapshotUrl(url),
       },
     };
   }
 }
+
 
 async function checkAsset(
   url: string,
@@ -160,6 +205,7 @@ async function checkAsset(
       http_status: res.status,
       response_ms: ms,
       detail: problem,
+      response_bytes: new TextEncoder().encode(body).length,
     };
   } catch (e) {
     return {
@@ -178,6 +224,7 @@ async function checkImage(url: string): Promise<HealthCheck> {
   try {
     const { res, ms } = await timedFetch(url, { method: "GET", headers: { Range: "bytes=0-1024" } });
     const ok = res.status >= 200 && res.status < 400;
+    const len = res.headers.get("content-range")?.split("/")[1] ?? res.headers.get("content-length");
     return {
       target: url,
       kind: "image",
@@ -186,7 +233,9 @@ async function checkImage(url: string): Promise<HealthCheck> {
       http_status: res.status,
       response_ms: ms,
       detail: ok ? null : `Image cassée (${res.status})`,
+      response_bytes: len && /^\d+$/.test(len) ? Number(len) : null,
     };
+
   } catch (e) {
     return {
       target: url,
@@ -230,7 +279,40 @@ async function checkDatabase(): Promise<HealthCheck> {
   }
 }
 
-async function notifyByEmail(subject: string, lines: string[]) {
+function formatBytes(n?: number | null) {
+  if (!n && n !== 0) return null;
+  if (n < 1024) return `${n} o`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} Ko`;
+  return `${(n / 1024 / 1024).toFixed(2)} Mo`;
+}
+
+/** Human diagnosis: cause + HTTP code + redirect chain + response size. */
+export function describeCheck(c: HealthCheck) {
+  const parts: string[] = [c.detail ?? "Indisponible"];
+  parts.push(`HTTP ${c.http_status ?? "aucune réponse"}`);
+  if (c.response_ms != null) parts.push(`${c.response_ms} ms`);
+  const size = formatBytes(c.response_bytes);
+  if (size) parts.push(`${size} reçus`);
+  if (c.redirect_chain) parts.push(`redirections : ${c.redirect_chain.replace(/\n/g, " | ")}`);
+  return parts.join(" · ");
+}
+
+function checkEmailBlock(c: HealthCheck) {
+  const thumb = c.snapshot_url
+    ? `<div style="margin:8px 0"><img src="${c.snapshot_url}" alt="Aperçu de ${c.label}" width="240" style="border-radius:8px;border:1px solid #ddd"/></div>`
+    : "";
+  return `<li style="margin-bottom:14px">
+      <strong>${c.label}</strong> — ${c.detail ?? "indisponible"}<br/>
+      <span style="color:#555;font-size:13px">
+        HTTP ${c.http_status ?? "aucune réponse"}${c.response_ms != null ? ` · ${c.response_ms} ms` : ""}${formatBytes(c.response_bytes) ? ` · ${formatBytes(c.response_bytes)}` : ""}
+      </span><br/>
+      ${c.redirect_chain ? `<span style="color:#555;font-size:13px">Redirections : ${c.redirect_chain.replace(/\n/g, "<br/>")}</span><br/>` : ""}
+      <a href="${c.target}" style="font-size:13px">${c.target}</a>
+      ${thumb}
+    </li>`;
+}
+
+async function notifyByEmail(subject: string, lines: string[], label = "site-health-alert") {
   const { data: settings } = await supabaseAdmin
     .from("site_health_settings" as any)
     .select("email_enabled,notify_email")
@@ -239,8 +321,8 @@ async function notifyByEmail(subject: string, lines: string[]) {
   if (!s?.email_enabled || !s?.notify_email) return;
 
   const html = `<div style="font-family:system-ui,Arial,sans-serif;font-size:15px;line-height:1.6">
-    <h2 style="margin:0 0 12px">Alerte site POGI Histoire</h2>
-    <ul>${lines.map((l) => `<li>${l}</li>`).join("")}</ul>
+    <h2 style="margin:0 0 12px">${subject}</h2>
+    <ul style="padding-left:18px">${lines.join("")}</ul>
     <p style="margin-top:16px"><a href="${SITE_URL}">${SITE_URL}</a> — détail dans Admin &gt; Santé du site.</p>
   </div>`;
 
@@ -253,9 +335,9 @@ async function notifyByEmail(subject: string, lines: string[]) {
         sender_domain: "notify.pogi-histoire.com",
         subject,
         html,
-        text: lines.join("\n"),
+        text: lines.join("\n").replace(/<[^>]+>/g, " "),
         purpose: "transactional",
-        label: "site-health-alert",
+        label,
         message_id: crypto.randomUUID(),
         queued_at: new Date().toISOString(),
       },
@@ -264,6 +346,7 @@ async function notifyByEmail(subject: string, lines: string[]) {
     console.error("Health alert email could not be queued", e);
   }
 }
+
 
 /** Crawl the live site, detect breakage, persist state, raise alerts + email. */
 export async function runSiteHealthCheck(trigger: "cron" | "manual" = "cron") {
@@ -333,6 +416,9 @@ export async function runSiteHealthCheck(trigger: "cron" | "manual" = "cron") {
         http_status: c.http_status,
         response_ms: c.response_ms,
         detail: c.detail,
+        redirect_chain: c.redirect_chain ?? null,
+        response_bytes: c.response_bytes ?? null,
+        snapshot_url: c.status === "fail" ? (c.snapshot_url ?? null) : null,
         checked_at: now,
         last_ok_at: c.status === "ok" ? now : (before?.last_ok_at ?? null),
 
@@ -349,14 +435,14 @@ export async function runSiteHealthCheck(trigger: "cron" | "manual" = "cron") {
         kind: "health",
         target: c.target,
         title: `Cassé : ${c.label}`,
-        detail: c.detail ?? "Ressource indisponible",
+        detail: describeCheck(c),
       })),
       ...recovered.map((c) => ({
         level: "info",
         kind: "health",
         target: c.target,
         title: `Rétabli : ${c.label}`,
-        detail: "La ressource répond de nouveau normalement.",
+        detail: `La ressource répond de nouveau normalement · HTTP ${c.http_status ?? "OK"}${c.response_ms != null ? ` · ${c.response_ms} ms` : ""}`,
       })),
     ];
     if (alerts.length) {
@@ -366,14 +452,17 @@ export async function runSiteHealthCheck(trigger: "cron" | "manual" = "cron") {
     if (broke.length) {
       await notifyByEmail(
         `🚨 ${broke.length} problème(s) détecté(s) sur pogi-histoire`,
-        broke.map((c) => `<strong>${c.label}</strong> — ${c.detail ?? "indisponible"} (${c.target})`),
+        broke.map(checkEmailBlock),
       );
     } else if (recovered.length) {
       await notifyByEmail(
         `✅ Site rétabli (${recovered.length} élément(s))`,
-        recovered.map((c) => `<strong>${c.label}</strong> répond de nouveau (${c.target})`),
+        recovered.map(
+          (c) => `<li><strong>${c.label}</strong> répond de nouveau (HTTP ${c.http_status ?? "OK"}) — ${c.target}</li>`,
+        ),
       );
     }
+
 
     const failed = checks.filter((c) => c.status === "fail").length;
     if (runId) {
@@ -421,4 +510,83 @@ export async function runSiteHealthCheck(trigger: "cron" | "manual" = "cron") {
     });
     return { ok: false, runId, error: message };
   }
+}
+
+/** Daily digest: number of checks, errors detected and items recovered over 24h. */
+export async function runDailyHealthSummary() {
+  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+  const { data: settings } = await supabaseAdmin
+    .from("site_health_settings" as any)
+    .select("daily_summary_enabled,email_enabled,notify_email")
+    .maybeSingle();
+  const s = settings as any;
+  if (!s?.daily_summary_enabled || !s?.email_enabled || !s?.notify_email) {
+    return { ok: true, skipped: "daily summary disabled" };
+  }
+
+  const [{ data: runs }, { data: alerts }, { data: current }] = await Promise.all([
+    supabaseAdmin.from("site_health_runs" as any).select("*").gte("started_at", since),
+    supabaseAdmin
+      .from("seo_alerts" as any)
+      .select("*")
+      .eq("kind", "health")
+      .gte("created_at", since)
+      .order("created_at", { ascending: false }),
+    supabaseAdmin.from("site_health_checks" as any).select("*"),
+  ]);
+
+  const runList = ((runs as any[]) ?? []).filter((r) => r.finished_at);
+  const checksTotal = runList.reduce((n, r) => n + (r.checks_total ?? 0), 0);
+  const alertList = (alerts as any[]) ?? [];
+  const errors = alertList.filter((a) => a.level === "error");
+  const recovered = alertList.filter((a) => a.level === "info");
+  const failing = ((current as any[]) ?? []).filter((c) => c.status === "fail");
+
+  const lines: string[] = [
+    `<li><strong>${runList.length}</strong> contrôle(s) automatique(s) exécuté(s), <strong>${checksTotal}</strong> vérification(s) au total</li>`,
+    `<li><strong>${errors.length}</strong> problème(s) détecté(s) sur 24 h</li>`,
+    `<li><strong>${recovered.length}</strong> élément(s) rétabli(s)</li>`,
+    `<li><strong>${failing.length}</strong> élément(s) actuellement en échec</li>`,
+  ];
+
+  for (const c of failing) {
+    lines.push(
+      checkEmailBlock({
+        target: c.target,
+        kind: c.kind,
+        label: c.label,
+        status: "fail",
+        http_status: c.http_status,
+        response_ms: c.response_ms,
+        detail: c.detail,
+        redirect_chain: c.redirect_chain,
+        response_bytes: c.response_bytes,
+        snapshot_url: c.snapshot_url,
+      }),
+    );
+  }
+  for (const a of recovered) {
+    lines.push(`<li>✅ ${a.title} — ${a.detail ?? ""}</li>`);
+  }
+
+  const subject = failing.length
+    ? `📋 Récapitulatif quotidien — ${failing.length} problème(s) en cours`
+    : `📋 Récapitulatif quotidien — tout fonctionne`;
+
+  await notifyByEmail(subject, lines, "site-health-daily-summary");
+
+  await supabaseAdmin
+    .from("site_health_settings" as any)
+    .update({ last_daily_summary_at: new Date().toISOString() })
+    .eq("id", true);
+
+  return {
+    ok: true,
+    runs: runList.length,
+    checks: checksTotal,
+    errors: errors.length,
+    recovered: recovered.length,
+    failing: failing.length,
+  };
 }
