@@ -37,10 +37,11 @@ function inspectHtml(html: string) {
   const problems: string[] = [];
   const lower = html.toLowerCase();
   if (!/<title[^>]*>[^<]{3,}<\/title>/i.test(html)) problems.push("titre de page manquant");
-  // The app streams/hydrates content, so accept any real content container.
-  if (!/<main|<article|<h1|<section/i.test(html)) problems.push("contenu principal absent");
-
+  // Pages are hydrated client-side, so only flag a truly empty document
+  // (no app shell script/root at all) rather than missing content tags.
+  if (!/<script|id=["']root["']/i.test(html)) problems.push("page vide (application non chargée)");
   if (html.length < 1500) problems.push("page quasiment vide");
+
   if (lower.includes("article introuvable") || lower.includes("page introuvable"))
     problems.push("page d'erreur 404 affichée");
   if (lower.includes("application error") || lower.includes("internal server error"))
