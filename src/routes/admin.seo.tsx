@@ -287,12 +287,20 @@ function AdminSeo() {
             <RefreshCw size={16} /> Actualiser
           </button>
           <button
+            onClick={onRunCheckNow}
+            disabled={busy}
+            className="inline-flex items-center gap-2 rounded-md border border-white/15 px-4 py-2 text-sm text-white/80 hover:bg-white/5 disabled:opacity-50"
+          >
+            <Play size={16} /> Lancer la vérification
+          </button>
+          <button
             onClick={onSubmitSitemap}
             disabled={busy || !siteUrl}
             className="inline-flex items-center gap-2 rounded-md bg-pogi-yellow px-4 py-2 text-sm font-bold uppercase text-pogi-dark disabled:opacity-50"
           >
             <Upload size={16} /> Soumettre le sitemap
           </button>
+
         </div>
       </div>
 
