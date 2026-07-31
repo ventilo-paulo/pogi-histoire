@@ -78,6 +78,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      {
+        name: "google-site-verification",
+        content: "xw8vmqswLrApsyD7fSPSslfAEWjEL2aHBIQBRWyYqu4",
+      },
       { title: "POGI Histoire — Récits d'histoire documentés" },
       { name: "description", content: "POGI Histoire, média indépendant : des récits d'histoire documentés, sourcés et vérifiés, en articles et en vidéo." },
       { property: "og:title", content: "POGI Histoire — Récits d'histoire documentés" },
