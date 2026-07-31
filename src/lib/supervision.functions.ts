@@ -83,8 +83,8 @@ export const supervisionRunStep = createServerFn({ method: "POST" })
     return {
       step: "seo" as const,
       ok: !!r?.ok,
-      total: r?.urlsTotal ?? r?.urls_total ?? r?.total ?? 0,
-      failed: r?.urlsError ?? r?.urls_error ?? 0,
-      recovered: r?.urlsIndexed ?? r?.urls_indexed ?? 0,
+      total: r?.total ?? 0,
+      failed: r?.counts?.error ?? 0,
+      recovered: r?.counts?.indexed ?? 0,
     };
   });
