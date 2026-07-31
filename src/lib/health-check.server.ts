@@ -279,7 +279,40 @@ async function checkDatabase(): Promise<HealthCheck> {
   }
 }
 
-async function notifyByEmail(subject: string, lines: string[]) {
+function formatBytes(n?: number | null) {
+  if (!n && n !== 0) return null;
+  if (n < 1024) return `${n} o`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} Ko`;
+  return `${(n / 1024 / 1024).toFixed(2)} Mo`;
+}
+
+/** Human diagnosis: cause + HTTP code + redirect chain + response size. */
+export function describeCheck(c: HealthCheck) {
+  const parts: string[] = [c.detail ?? "Indisponible"];
+  parts.push(`HTTP ${c.http_status ?? "aucune réponse"}`);
+  if (c.response_ms != null) parts.push(`${c.response_ms} ms`);
+  const size = formatBytes(c.response_bytes);
+  if (size) parts.push(`${size} reçus`);
+  if (c.redirect_chain) parts.push(`redirections : ${c.redirect_chain.replace(/\n/g, " | ")}`);
+  return parts.join(" · ");
+}
+
+function checkEmailBlock(c: HealthCheck) {
+  const thumb = c.snapshot_url
+    ? `<div style="margin:8px 0"><img src="${c.snapshot_url}" alt="Aperçu de ${c.label}" width="240" style="border-radius:8px;border:1px solid #ddd"/></div>`
+    : "";
+  return `<li style="margin-bottom:14px">
+      <strong>${c.label}</strong> — ${c.detail ?? "indisponible"}<br/>
+      <span style="color:#555;font-size:13px">
+        HTTP ${c.http_status ?? "aucune réponse"}${c.response_ms != null ? ` · ${c.response_ms} ms` : ""}${formatBytes(c.response_bytes) ? ` · ${formatBytes(c.response_bytes)}` : ""}
+      </span><br/>
+      ${c.redirect_chain ? `<span style="color:#555;font-size:13px">Redirections : ${c.redirect_chain.replace(/\n/g, "<br/>")}</span><br/>` : ""}
+      <a href="${c.target}" style="font-size:13px">${c.target}</a>
+      ${thumb}
+    </li>`;
+}
+
+async function notifyByEmail(subject: string, lines: string[], label = "site-health-alert") {
   const { data: settings } = await supabaseAdmin
     .from("site_health_settings" as any)
     .select("email_enabled,notify_email")
@@ -288,8 +321,8 @@ async function notifyByEmail(subject: string, lines: string[]) {
   if (!s?.email_enabled || !s?.notify_email) return;
 
   const html = `<div style="font-family:system-ui,Arial,sans-serif;font-size:15px;line-height:1.6">
-    <h2 style="margin:0 0 12px">Alerte site POGI Histoire</h2>
-    <ul>${lines.map((l) => `<li>${l}</li>`).join("")}</ul>
+    <h2 style="margin:0 0 12px">${subject}</h2>
+    <ul style="padding-left:18px">${lines.join("")}</ul>
     <p style="margin-top:16px"><a href="${SITE_URL}">${SITE_URL}</a> — détail dans Admin &gt; Santé du site.</p>
   </div>`;
 
@@ -302,9 +335,9 @@ async function notifyByEmail(subject: string, lines: string[]) {
         sender_domain: "notify.pogi-histoire.com",
         subject,
         html,
-        text: lines.join("\n"),
+        text: lines.join("\n").replace(/<[^>]+>/g, " "),
         purpose: "transactional",
-        label: "site-health-alert",
+        label,
         message_id: crypto.randomUUID(),
         queued_at: new Date().toISOString(),
       },
@@ -313,6 +346,7 @@ async function notifyByEmail(subject: string, lines: string[]) {
     console.error("Health alert email could not be queued", e);
   }
 }
+
 
 /** Crawl the live site, detect breakage, persist state, raise alerts + email. */
 export async function runSiteHealthCheck(trigger: "cron" | "manual" = "cron") {
