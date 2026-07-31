@@ -7,7 +7,12 @@ import {
   gscListSiteUrls,
   gscInspectUrls,
 } from "@/lib/gsc.functions";
-import { RefreshCw, Upload, CheckCircle2, AlertTriangle, XCircle, Clock, Search } from "lucide-react";
+import {
+  seoMonitorState,
+  seoRunCheckNow,
+  seoMarkAlertsRead,
+} from "@/lib/seo-monitor.functions";
+import { RefreshCw, Upload, CheckCircle2, AlertTriangle, XCircle, Clock, Search, Bell, BellOff, Play, CalendarClock } from "lucide-react";
 
 export const Route = createFileRoute("/admin/seo")({
   head: () => ({ meta: [{ title: "Indexation — Admin POGI", name: "robots", content: "noindex" }] }),
