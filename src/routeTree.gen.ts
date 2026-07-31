@@ -35,6 +35,7 @@ import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
 import { Route as VideosSlugRouteImport } from './routes/videos.$slug'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as ApiPublicHooksHealthCheckRouteImport } from './routes/api/public/hooks/health-check'
 import { Route as ApiPublicHooksNotionSyncRouteImport } from './routes/api/public/hooks/notion-sync'
 import { Route as ApiPublicHooksSeoCheckRouteImport } from './routes/api/public/hooks/seo-check'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -172,6 +173,12 @@ const Char91DotmcpChar93InvokeToolToolRoute =
     path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksHealthCheckRoute =
+  ApiPublicHooksHealthCheckRouteImport.update({
+    id: '/api/public/hooks/health-check',
+    path: '/api/public/hooks/health-check',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksNotionSyncRoute =
   ApiPublicHooksNotionSyncRouteImport.update({
     id: '/api/public/hooks/notion-sync',
@@ -217,6 +224,7 @@ export interface FileRoutesByFullPath {
   '/articles/': typeof ArticlesIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/api/public/hooks/health-check': typeof ApiPublicHooksHealthCheckRoute
   '/api/public/hooks/notion-sync': typeof ApiPublicHooksNotionSyncRoute
   '/api/public/hooks/seo-check': typeof ApiPublicHooksSeoCheckRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -247,6 +255,7 @@ export interface FileRoutesByTo {
   '/articles': typeof ArticlesIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/api/public/hooks/health-check': typeof ApiPublicHooksHealthCheckRoute
   '/api/public/hooks/notion-sync': typeof ApiPublicHooksNotionSyncRoute
   '/api/public/hooks/seo-check': typeof ApiPublicHooksSeoCheckRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -279,6 +288,7 @@ export interface FileRoutesById {
   '/articles/': typeof ArticlesIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/api/public/hooks/health-check': typeof ApiPublicHooksHealthCheckRoute
   '/api/public/hooks/notion-sync': typeof ApiPublicHooksNotionSyncRoute
   '/api/public/hooks/seo-check': typeof ApiPublicHooksSeoCheckRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -312,6 +322,7 @@ export interface FileRouteTypes {
     | '/articles/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/api/public/hooks/health-check'
     | '/api/public/hooks/notion-sync'
     | '/api/public/hooks/seo-check'
     | '/lovable/email/queue/process'
@@ -342,6 +353,7 @@ export interface FileRouteTypes {
     | '/articles'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/api/public/hooks/health-check'
     | '/api/public/hooks/notion-sync'
     | '/api/public/hooks/seo-check'
     | '/lovable/email/queue/process'
@@ -373,6 +385,7 @@ export interface FileRouteTypes {
     | '/articles/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/api/public/hooks/health-check'
     | '/api/public/hooks/notion-sync'
     | '/api/public/hooks/seo-check'
     | '/lovable/email/queue/process'
@@ -395,6 +408,7 @@ export interface RootRouteChildren {
   ArticlesIndexRoute: typeof ArticlesIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
+  ApiPublicHooksHealthCheckRoute: typeof ApiPublicHooksHealthCheckRoute
   ApiPublicHooksNotionSyncRoute: typeof ApiPublicHooksNotionSyncRoute
   ApiPublicHooksSeoCheckRoute: typeof ApiPublicHooksSeoCheckRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
@@ -584,6 +598,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/health-check': {
+      id: '/api/public/hooks/health-check'
+      path: '/api/public/hooks/health-check'
+      fullPath: '/api/public/hooks/health-check'
+      preLoaderRoute: typeof ApiPublicHooksHealthCheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/notion-sync': {
       id: '/api/public/hooks/notion-sync'
       path: '/api/public/hooks/notion-sync'
@@ -663,6 +684,7 @@ const rootRouteChildren: RootRouteChildren = {
   ArticlesIndexRoute: ArticlesIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
+  ApiPublicHooksHealthCheckRoute: ApiPublicHooksHealthCheckRoute,
   ApiPublicHooksNotionSyncRoute: ApiPublicHooksNotionSyncRoute,
   ApiPublicHooksSeoCheckRoute: ApiPublicHooksSeoCheckRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
