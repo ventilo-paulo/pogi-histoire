@@ -21,7 +21,10 @@ export const Route = createFileRoute("/videos")({
       { property: "og:description", content: "Vidéos d'histoire, longs formats et recommandations." },
       { property: "og:image", content: absUrl(vOradour) },
       { name: "twitter:image", content: absUrl(vOradour) },
+      { property: "og:url", content: "https://pogi-histoire.lovable.app/videos" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://pogi-histoire.lovable.app/videos" }],
   }),
   component: VideosPage,
 });
@@ -71,6 +74,7 @@ function VideosPage() {
   return (
     <div className="min-h-screen bg-pogi-dark text-white">
       <Navbar />
+      <main>
       <div className="mx-auto max-w-[1400px] px-6 pt-10 pb-20">
         <Reveal>
           <p className="text-pogi-yellow uppercase tracking-widest text-xs font-bold mb-3">Chaîne POGI</p>
@@ -104,6 +108,7 @@ function VideosPage() {
           </>
         )}
       </div>
+      </main>
       <Footer />
     </div>
   );

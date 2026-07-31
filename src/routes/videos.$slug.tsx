@@ -5,6 +5,18 @@ import { Footer } from "@/components/Footer";
 import { Skeleton } from "@/components/Skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, ExternalLink } from "lucide-react";
+import { SITE_URL, absUrl } from "@/lib/site";
+
+type VideoMeta = {
+  title: string;
+  slug: string;
+  subtitle: string | null;
+  description: string | null;
+  thumbnail_url: string | null;
+  video_url: string;
+  category: string | null;
+  published_at: string | null;
+};
 
 type Video = {
   id: string;
@@ -19,17 +31,74 @@ type Video = {
   published_at: string | null;
 };
 
+function clip(text: string | null | undefined, max: number, fallback: string) {
+  const t = (text ?? "").replace(/\s+/g, " ").trim();
+  if (!t) return fallback;
+  return t.length <= max ? t : `${t.slice(0, max - 1).trimEnd()}…`;
+}
+
 export const Route = createFileRoute("/videos/$slug")({
-  head: ({ params }) => ({
-    meta: [
-      { title: `Vidéo — ${params.slug} — POGI Histoire` },
-      { name: "description", content: "Vidéo POGI Histoire." },
-    ],
-  }),
+  loader: async ({ params }) => {
+    const { data } = await supabase
+      .from("videos")
+      .select("title,slug,subtitle,description,thumbnail_url,video_url,category,published_at")
+      .eq("slug", params.slug)
+      .eq("published", true)
+      .maybeSingle();
+    return { meta: (data as VideoMeta | null) ?? null };
+  },
+  head: ({ params, loaderData }) => {
+    const v = loaderData?.meta ?? null;
+    const url = `${SITE_URL}/videos/${params.slug}`;
+    const title = clip(v?.title, 60, "Vidéo — POGI Histoire");
+    const description = clip(
+      v?.description ?? v?.subtitle ?? v?.title,
+      158,
+      "Une vidéo d'histoire documentée et sourcée, publiée par POGI Histoire.",
+    );
+    const image = v?.thumbnail_url ? absUrl(v.thumbnail_url) : undefined;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "video.other" },
+        { property: "og:url", content: url },
+        { name: "twitter:card", content: "summary_large_image" },
+        ...(image
+          ? [
+              { property: "og:image", content: image },
+              { name: "twitter:image", content: image },
+            ]
+          : []),
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: v
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "VideoObject",
+                name: v.title,
+                description,
+                url,
+                ...(image ? { thumbnailUrl: [image] } : {}),
+                ...(v.published_at ? { uploadDate: v.published_at } : {}),
+                contentUrl: v.video_url,
+                publisher: { "@type": "Organization", name: "POGI Histoire" },
+              }),
+            },
+          ]
+        : [],
+    };
+  },
   component: VideoBySlug,
   notFoundComponent: () => (
     <div className="min-h-screen bg-pogi-dark text-white">
       <Navbar />
+      <main>
       <div className="max-w-[820px] mx-auto px-6 py-24 text-center">
         <p className="text-pogi-yellow uppercase tracking-widest text-xs mb-3">404</p>
         <h1 className="font-display text-4xl uppercase">Vidéo introuvable</h1>
@@ -38,12 +107,14 @@ export const Route = createFileRoute("/videos/$slug")({
           Retour aux vidéos
         </Link>
       </div>
+      </main>
       <Footer />
     </div>
   ),
   errorComponent: ({ error }) => (
     <div className="min-h-screen bg-pogi-dark text-white">
       <Navbar />
+      <main>
       <div className="max-w-[820px] mx-auto px-6 py-24 text-center">
         <h1 className="font-display text-3xl uppercase">Erreur</h1>
         <p className="text-white/70 mt-3 text-sm">{error.message}</p>
@@ -51,6 +122,7 @@ export const Route = createFileRoute("/videos/$slug")({
           Retour aux vidéos
         </Link>
       </div>
+      </main>
       <Footer />
     </div>
   ),
@@ -107,12 +179,14 @@ function VideoBySlug() {
     return (
       <div className="min-h-screen bg-pogi-dark text-white">
         <Navbar />
+      <main>
         <div className="mx-auto max-w-[1100px] px-6 py-10 space-y-6">
           <Skeleton className="aspect-video w-full rounded-xl" />
           <Skeleton className="h-8 w-2/3" />
           <Skeleton className="h-4 w-full" />
         </div>
-        <Footer />
+        </main>
+      <Footer />
       </div>
     );
   }
@@ -126,6 +200,7 @@ function VideoBySlug() {
   return (
     <div className="min-h-screen bg-pogi-dark text-white">
       <Navbar />
+      <main>
       <div className="mx-auto max-w-[1100px] px-6 pt-8 pb-16">
         <Link to="/videos" className="inline-flex items-center gap-2 text-white/60 hover:text-pogi-yellow text-sm uppercase tracking-wider mb-6">
           <ArrowLeft size={16} /> Toutes les vidéos
@@ -175,6 +250,7 @@ function VideoBySlug() {
           </div>
         )}
       </div>
+      </main>
       <Footer />
     </div>
   );

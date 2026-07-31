@@ -22,6 +22,23 @@ export const Route = createFileRoute("/collections")({
       { property: "og:description", content: "Toutes les collections d'histoire de POGI." },
       { property: "og:image", content: absUrl(cWWII) },
       { name: "twitter:image", content: absUrl(cWWII) },
+      { property: "og:url", content: "https://pogi-histoire.lovable.app/collections" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+    links: [{ rel: "canonical", href: "https://pogi-histoire.lovable.app/collections" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "Collections — POGI Histoire",
+          description:
+            "Les collections thématiques de POGI Histoire : Seconde Guerre Mondiale, Antiquité, Moyen-Âge, Les Amériques, Les illustres et L'Afrique.",
+          url: "https://pogi-histoire.lovable.app/collections",
+          isPartOf: { "@id": "https://pogi-histoire.lovable.app/#website" },
+        }),
+      },
     ],
   }),
   component: CollectionsPage,
@@ -104,7 +121,7 @@ function CollectionTile({ c }: { c: Collection }) {
       )}
 
       <div className="absolute inset-x-0 bottom-0 p-4 text-white">
-        <h3 className="font-display uppercase text-lg md:text-xl leading-tight">{c.title}</h3>
+        <h2 className="font-display uppercase text-lg md:text-xl leading-tight">{c.title}</h2>
         <p className="text-white/75 text-sm mt-1 italic line-clamp-2">{c.subtitle}</p>
       </div>
     </article>
@@ -115,6 +132,7 @@ function CollectionsPage() {
   return (
     <div className="min-h-screen bg-pogi-light">
       <Navbar />
+      <main>
       <div className="mx-auto max-w-[1400px] px-6 pt-10 pb-20">
         <Reveal>
           <h1 className="font-display text-[32px] md:text-[40px] text-pogi-dark uppercase mb-3">
@@ -146,6 +164,7 @@ function CollectionsPage() {
           </div>
         </Reveal>
       </div>
+      </main>
       <Footer />
     </div>
   );

@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 
-const BASE_URL = "https://pogi-histoire.com";
+const BASE_URL = "https://pogi-histoire.lovable.app";
 
 interface SitemapEntry {
   path: string;
@@ -20,6 +20,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/videos", changefreq: "weekly", priority: "0.8" },
           { path: "/interviews", changefreq: "weekly", priority: "0.8" },
           { path: "/collections", changefreq: "monthly", priority: "0.7" },
+          { path: "/a-propos", changefreq: "yearly", priority: "0.5" },
         ];
 
         try {
@@ -41,6 +42,27 @@ export const Route = createFileRoute("/sitemap.xml")({
           }
         } catch (e) {
           console.error("sitemap: failed to load articles", e);
+        }
+
+        try {
+          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+          const { data } = await supabaseAdmin
+            .from("videos")
+            .select("slug,published_at")
+            .eq("published", true)
+            .order("published_at", { ascending: false });
+
+          for (const v of data ?? []) {
+            if (!v.slug) continue;
+            entries.push({
+              path: `/videos/${v.slug}`,
+              lastmod: v.published_at?.slice(0, 10),
+              changefreq: "monthly",
+              priority: "0.6",
+            });
+          }
+        } catch (e) {
+          console.error("sitemap: failed to load videos", e);
         }
 
         const urls = entries.map((e) =>

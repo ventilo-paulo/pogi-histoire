@@ -15,6 +15,8 @@ const ALL_LINKS = [
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const { location } = useRouterState();
   const articles = useSyncExternalStore(
     publishedArticlesStore.subscribe,
@@ -52,7 +54,7 @@ export function Navbar() {
     <header className="sticky top-0 z-50 h-[76px] bg-pogi-darker/95 backdrop-blur-md border-b border-white/10 shadow-[0_6px_24px_rgba(0,0,0,0.45)]">
       <div className="mx-auto h-full max-w-[1400px] px-4 sm:px-6 flex items-center justify-between">
         <Link to="/" className="flex items-center shrink-0" aria-label="POGI — Accueil">
-          <img src={pogiLogo.url} alt="POGI" className="h-14 w-auto object-contain" />
+          <img src={pogiLogo.url} alt="POGI Histoire — média indépendant d'histoire" className="h-14 w-auto object-contain" />
         </Link>
 
         <nav className="hidden md:flex items-center gap-8">
@@ -90,7 +92,7 @@ export function Navbar() {
       </div>
 
       {/* Mobile menu — portaled to body to escape header's backdrop-filter containing block */}
-      {typeof document !== "undefined" &&
+      {mounted &&
         createPortal(
           <div
             className="md:hidden fixed inset-0 z-[100] bg-pogi-darker overflow-y-auto"
