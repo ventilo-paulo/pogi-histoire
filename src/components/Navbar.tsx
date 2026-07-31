@@ -15,6 +15,8 @@ const ALL_LINKS = [
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const { location } = useRouterState();
   const articles = useSyncExternalStore(
     publishedArticlesStore.subscribe,
@@ -90,7 +92,7 @@ export function Navbar() {
       </div>
 
       {/* Mobile menu — portaled to body to escape header's backdrop-filter containing block */}
-      {typeof document !== "undefined" &&
+      {mounted &&
         createPortal(
           <div
             className="md:hidden fixed inset-0 z-[100] bg-pogi-darker overflow-y-auto"
