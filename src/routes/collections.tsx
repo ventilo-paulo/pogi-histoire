@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { InternalLinks } from "@/components/InternalLinks";
 import { Reveal } from "@/components/Reveal";
 import { absUrl } from "@/lib/site";
 
@@ -164,6 +165,7 @@ function CollectionsPage() {
           </div>
         </Reveal>
       </div>
+      <InternalLinks variant="light" />
       </main>
       <Footer />
     </div>

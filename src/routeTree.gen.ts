@@ -28,6 +28,7 @@ import { Route as AdminCharteRouteImport } from './routes/admin.charte'
 import { Route as AdminInterviewsRouteImport } from './routes/admin.interviews'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as AdminNotionRouteImport } from './routes/admin.notion'
+import { Route as AdminSeoRouteImport } from './routes/admin.seo'
 import { Route as AdminVideosRouteImport } from './routes/admin.videos'
 import { Route as ArticlesIndexRouteImport } from './routes/articles.index'
 import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
@@ -133,6 +134,11 @@ const AdminNotionRoute = AdminNotionRouteImport.update({
   path: '/notion',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminSeoRoute = AdminSeoRouteImport.update({
+  id: '/seo',
+  path: '/seo',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminVideosRoute = AdminVideosRouteImport.update({
   id: '/videos',
   path: '/videos',
@@ -190,6 +196,7 @@ export interface FileRoutesByFullPath {
   '/admin/interviews': typeof AdminInterviewsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/notion': typeof AdminNotionRoute
+  '/admin/seo': typeof AdminSeoRoute
   '/admin/videos': typeof AdminVideosRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/videos/$slug': typeof VideosSlugRoute
@@ -217,6 +224,7 @@ export interface FileRoutesByTo {
   '/admin/interviews': typeof AdminInterviewsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/notion': typeof AdminNotionRoute
+  '/admin/seo': typeof AdminSeoRoute
   '/admin/videos': typeof AdminVideosRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/videos/$slug': typeof VideosSlugRoute
@@ -246,6 +254,7 @@ export interface FileRoutesById {
   '/admin/interviews': typeof AdminInterviewsRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/notion': typeof AdminNotionRoute
+  '/admin/seo': typeof AdminSeoRoute
   '/admin/videos': typeof AdminVideosRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/videos/$slug': typeof VideosSlugRoute
@@ -276,6 +285,7 @@ export interface FileRouteTypes {
     | '/admin/interviews'
     | '/admin/media'
     | '/admin/notion'
+    | '/admin/seo'
     | '/admin/videos'
     | '/articles/$slug'
     | '/videos/$slug'
@@ -303,6 +313,7 @@ export interface FileRouteTypes {
     | '/admin/interviews'
     | '/admin/media'
     | '/admin/notion'
+    | '/admin/seo'
     | '/admin/videos'
     | '/articles/$slug'
     | '/videos/$slug'
@@ -331,6 +342,7 @@ export interface FileRouteTypes {
     | '/admin/interviews'
     | '/admin/media'
     | '/admin/notion'
+    | '/admin/seo'
     | '/admin/videos'
     | '/articles/$slug'
     | '/videos/$slug'
@@ -496,6 +508,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminNotionRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/seo': {
+      id: '/admin/seo'
+      path: '/seo'
+      fullPath: '/admin/seo'
+      preLoaderRoute: typeof AdminSeoRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/videos': {
       id: '/admin/videos'
       path: '/videos'
@@ -555,6 +574,7 @@ interface AdminRouteChildren {
   AdminInterviewsRoute: typeof AdminInterviewsRoute
   AdminMediaRoute: typeof AdminMediaRoute
   AdminNotionRoute: typeof AdminNotionRoute
+  AdminSeoRoute: typeof AdminSeoRoute
   AdminVideosRoute: typeof AdminVideosRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
@@ -566,6 +586,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminInterviewsRoute: AdminInterviewsRoute,
   AdminMediaRoute: AdminMediaRoute,
   AdminNotionRoute: AdminNotionRoute,
+  AdminSeoRoute: AdminSeoRoute,
   AdminVideosRoute: AdminVideosRoute,
   AdminIndexRoute: AdminIndexRoute,
 }

@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Youtube } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { InternalLinks } from "@/components/InternalLinks";
 import { Reveal } from "@/components/Reveal";
 
 export const Route = createFileRoute("/a-propos")({
@@ -82,6 +83,7 @@ function AboutPage() {
             </a>
           </div>
         </Reveal>
+      <InternalLinks variant="light" />
       </main>
       <Footer />
     </div>
