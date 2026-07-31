@@ -36,6 +36,7 @@ import { Route as VideosSlugRouteImport } from './routes/videos.$slug'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as ApiPublicHooksNotionSyncRouteImport } from './routes/api/public/hooks/notion-sync'
+import { Route as ApiPublicHooksSeoCheckRouteImport } from './routes/api/public/hooks/seo-check'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -176,6 +177,11 @@ const ApiPublicHooksNotionSyncRoute =
     path: '/api/public/hooks/notion-sync',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksSeoCheckRoute = ApiPublicHooksSeoCheckRouteImport.update({
+  id: '/api/public/hooks/seo-check',
+  path: '/api/public/hooks/seo-check',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -205,6 +211,7 @@ export interface FileRoutesByFullPath {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/hooks/notion-sync': typeof ApiPublicHooksNotionSyncRoute
+  '/api/public/hooks/seo-check': typeof ApiPublicHooksSeoCheckRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -233,6 +240,7 @@ export interface FileRoutesByTo {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/hooks/notion-sync': typeof ApiPublicHooksNotionSyncRoute
+  '/api/public/hooks/seo-check': typeof ApiPublicHooksSeoCheckRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -263,6 +271,7 @@ export interface FileRoutesById {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/hooks/notion-sync': typeof ApiPublicHooksNotionSyncRoute
+  '/api/public/hooks/seo-check': typeof ApiPublicHooksSeoCheckRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -294,6 +303,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/hooks/notion-sync'
+    | '/api/public/hooks/seo-check'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -322,6 +332,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/hooks/notion-sync'
+    | '/api/public/hooks/seo-check'
   id:
     | '__root__'
     | '/'
@@ -351,6 +362,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/hooks/notion-sync'
+    | '/api/public/hooks/seo-check'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -371,6 +383,7 @@ export interface RootRouteChildren {
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicHooksNotionSyncRoute: typeof ApiPublicHooksNotionSyncRoute
+  ApiPublicHooksSeoCheckRoute: typeof ApiPublicHooksSeoCheckRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -564,6 +577,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksNotionSyncRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/seo-check': {
+      id: '/api/public/hooks/seo-check'
+      path: '/api/public/hooks/seo-check'
+      fullPath: '/api/public/hooks/seo-check'
+      preLoaderRoute: typeof ApiPublicHooksSeoCheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -623,6 +643,7 @@ const rootRouteChildren: RootRouteChildren = {
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicHooksNotionSyncRoute: ApiPublicHooksNotionSyncRoute,
+  ApiPublicHooksSeoCheckRoute: ApiPublicHooksSeoCheckRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
