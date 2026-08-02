@@ -189,8 +189,8 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
                     </div>
                     <div className="min-w-0 flex-1">
                       <span className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-pogi-yellow">
-                        {r.kind === "video" ? <PlayCircle size={12} /> : <FileText size={12} />}
-                        {r.kind === "video" ? "Vidéo" : "Article"}
+                        {r.kind === "video" ? <PlayCircle size={12} /> : r.kind === "collection" ? <Layers size={12} /> : <FileText size={12} />}
+                        {r.kind === "video" ? "Vidéo" : r.kind === "collection" ? "Collection" : "Article"}
                         {r.category ? ` · ${r.category}` : ""}
                       </span>
                       <p className="truncate text-white font-semibold">{r.title}</p>
@@ -205,6 +205,10 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
                       <Link to="/articles/$slug" params={{ slug: r.slug }} onClick={onClose} className={cls}>
                         {inner}
                       </Link>
+                    ) : r.kind === "collection" ? (
+                      <Link to="/collections" hash={r.id} onClick={onClose} className={cls}>
+                        {inner}
+                      </Link>
                     ) : r.slug ? (
                       <Link to="/videos/$slug" params={{ slug: r.slug }} onClick={onClose} className={cls}>
                         {inner}
@@ -217,6 +221,7 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
                   </li>
                 );
               })}
+
             </ul>
           )}
         </div>
