@@ -4,6 +4,8 @@ import { Footer } from "@/components/Footer";
 import { InternalLinks } from "@/components/InternalLinks";
 import { Reveal } from "@/components/Reveal";
 import { absUrl } from "@/lib/site";
+import { COLLECTIONS } from "@/lib/collections";
+
 
 import cWWII from "@/assets/coll-wwii.jpg";
 import cAntiquity from "@/assets/coll-antiquity.jpg";
