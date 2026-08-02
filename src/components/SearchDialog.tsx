@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { createPortal } from "react-dom";
-import { Search, X, PlayCircle, FileText, Loader2 } from "lucide-react";
+import { Search, X, PlayCircle, FileText, Layers, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { COLLECTIONS } from "@/lib/collections";
 
 type ResultArticle = {
   kind: "article";
@@ -25,7 +26,22 @@ type ResultVideo = {
   video_url: string;
 };
 
-type Result = ResultArticle | ResultVideo;
+type ResultCollection = {
+  kind: "collection";
+  id: string;
+  title: string;
+  subtitle: string | null;
+  category: null;
+  image_url: null;
+};
+
+type Result = ResultArticle | ResultVideo | ResultCollection;
+
+/** Accent/case-insensitive normalization for local (collections) matching. */
+function normalize(s: string) {
+  return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
 
 /** Escape PostgREST filter metacharacters so user input can't break out of the filter. */
 function sanitize(q: string) {
@@ -105,7 +121,19 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
         image_url: r.thumbnail_url,
         video_url: r.video_url,
       }));
-      setResults([...articles, ...videos]);
+      const n = normalize(term);
+      const collections: Result[] = COLLECTIONS.filter(
+        (c) => normalize(c.title).includes(n) || normalize(c.subtitle).includes(n),
+      ).map((c) => ({
+        kind: "collection" as const,
+        id: c.id,
+        title: c.title,
+        subtitle: c.subtitle,
+        category: null,
+        image_url: null,
+      }));
+      setResults([...articles, ...videos, ...collections]);
+
       setLoading(false);
     }, 220);
     return () => {
@@ -161,8 +189,8 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
                     </div>
                     <div className="min-w-0 flex-1">
                       <span className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-pogi-yellow">
-                        {r.kind === "video" ? <PlayCircle size={12} /> : <FileText size={12} />}
-                        {r.kind === "video" ? "Vidéo" : "Article"}
+                        {r.kind === "video" ? <PlayCircle size={12} /> : r.kind === "collection" ? <Layers size={12} /> : <FileText size={12} />}
+                        {r.kind === "video" ? "Vidéo" : r.kind === "collection" ? "Collection" : "Article"}
                         {r.category ? ` · ${r.category}` : ""}
                       </span>
                       <p className="truncate text-white font-semibold">{r.title}</p>
@@ -177,6 +205,10 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
                       <Link to="/articles/$slug" params={{ slug: r.slug }} onClick={onClose} className={cls}>
                         {inner}
                       </Link>
+                    ) : r.kind === "collection" ? (
+                      <Link to="/collections" hash={r.id} onClick={onClose} className={cls}>
+                        {inner}
+                      </Link>
                     ) : r.slug ? (
                       <Link to="/videos/$slug" params={{ slug: r.slug }} onClick={onClose} className={cls}>
                         {inner}
@@ -189,6 +221,7 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
                   </li>
                 );
               })}
+
             </ul>
           )}
         </div>
