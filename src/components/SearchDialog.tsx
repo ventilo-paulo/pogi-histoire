@@ -121,7 +121,19 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
         image_url: r.thumbnail_url,
         video_url: r.video_url,
       }));
-      setResults([...articles, ...videos]);
+      const n = normalize(term);
+      const collections: Result[] = COLLECTIONS.filter(
+        (c) => normalize(c.title).includes(n) || normalize(c.subtitle).includes(n),
+      ).map((c) => ({
+        kind: "collection" as const,
+        id: c.id,
+        title: c.title,
+        subtitle: c.subtitle,
+        category: null,
+        image_url: null,
+      }));
+      setResults([...articles, ...videos, ...collections]);
+
       setLoading(false);
     }, 220);
     return () => {
