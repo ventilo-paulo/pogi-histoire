@@ -52,10 +52,11 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 h-[76px] bg-pogi-darker/95 backdrop-blur-md border-b border-white/10 shadow-[0_6px_24px_rgba(0,0,0,0.45)]">
-      <div className="mx-auto h-full max-w-[1400px] px-4 sm:px-6 flex items-center justify-between">
+      <div className="w-full h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
         <Link to="/" className="flex items-center shrink-0" aria-label="POGI — Accueil">
           <img src={pogiLogo.url} alt="POGI Histoire — média indépendant d'histoire" className="h-14 w-auto object-contain" />
         </Link>
+
 
         <nav className="hidden md:flex items-center gap-8">
           {links.map((l) => (
