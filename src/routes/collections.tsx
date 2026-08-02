@@ -54,45 +54,17 @@ type Collection = {
   available?: boolean;
 };
 
-const collections: Collection[] = [
-  {
-    id: "wwii",
-    title: "Seconde Guerre Mondiale",
-    subtitle: "Fronts, résistances, mémoire",
-    img: cWWII,
-  },
-  {
-    id: "antiquite",
-    title: "Antiquité",
-    subtitle: "Rome, Grèce, Égypte",
-    img: cAntiquity,
-  },
-  {
-    id: "moyen-age",
-    title: "Moyen-Âge",
-    subtitle: "Chevalerie, féodalité, croisades",
-  },
-  {
-    id: "ameriques",
-    title: "Les Amériques",
-    subtitle: "Découvertes, révolutions, cultures",
-    img: cAmericas,
-  },
-  {
-    id: "illustres",
-    title: "Les illustres",
-    subtitle: "Portraits marquants",
-    img: "/assets/coll-illustres.jpg",
-    objectPosition: "center 22%",
-    available: true,
-  },
-  {
-    id: "afrique",
-    title: "L'Afrique",
-    subtitle: "Empires, décolonisation, héritages",
-    img: cAfrica,
-  },
-];
+// Titles/subtitles come from the shared index (also used by the search dialog).
+const EXTRAS: Record<string, { img?: string; objectPosition?: string }> = {
+  wwii: { img: cWWII },
+  antiquite: { img: cAntiquity },
+  ameriques: { img: cAmericas },
+  illustres: { img: "/assets/coll-illustres.jpg", objectPosition: "center 22%" },
+  afrique: { img: cAfrica },
+};
+
+const collections: Collection[] = COLLECTIONS.map((c) => ({ ...c, ...(EXTRAS[c.id] ?? {}) }));
+
 
 function CollectionTile({ c }: { c: Collection }) {
   return (
