@@ -71,15 +71,16 @@ export function Navbar() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-3 text-white">
-          <Link
-            to="/articles"
-            aria-label="Rechercher un article"
+        <div className="flex items-center gap-3 text-white shrink-0">
+          <button
+            type="button"
+            onClick={() => setSearchOpen(true)}
+            aria-label="Rechercher sur le site"
             title="Rechercher"
-            className="hidden sm:inline-flex hover:text-pogi-yellow transition-colors p-2"
+            className="inline-flex items-center justify-center h-10 w-10 rounded-full hover:bg-white/10 hover:text-pogi-yellow transition-colors"
           >
             <Search size={20} />
-          </Link>
+          </button>
 
           <button
             aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
@@ -90,6 +91,7 @@ export function Navbar() {
             {open ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
+
       </div>
 
       {/* Mobile menu — portaled to body to escape header's backdrop-filter containing block */}
