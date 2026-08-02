@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import pogiLogo from "@/assets/pogi-logo.png.asset.json";
 import { publishedArticlesStore, INTERVIEWS_CATEGORY } from "@/lib/realtime-stores";
+import { SearchDialog } from "@/components/SearchDialog";
 
 const ALL_LINKS = [
   { to: "/videos", label: "Vidéos" },
@@ -15,6 +16,7 @@ const ALL_LINKS = [
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const { location } = useRouterState();
@@ -126,6 +128,8 @@ export function Navbar() {
           </div>,
           document.body,
         )}
+
+      <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} />
     </header>
   );
 }
