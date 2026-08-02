@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Youtube, Mail } from "lucide-react";
+import { Youtube } from "lucide-react";
 import pogiLogo from "@/assets/pogi-logo.png.asset.json";
 
 const navLinks = [
@@ -11,7 +11,7 @@ const navLinks = [
 
 const aboutLinks = [
   { to: "/a-propos", label: "À propos" },
-  { href: "mailto:paul.lesaulnier27@gmail.com", label: "Contact" },
+  { href: "mailto:pogi.videos@gmail.com", label: "Contact" },
 ] as const;
 
 
@@ -29,7 +29,7 @@ export function Footer() {
               <img src={pogiLogo.url} alt="POGI Histoire — média indépendant d'histoire" className="h-16 w-auto object-contain" />
             </Link>
             <p className="text-sm text-white/60 leading-relaxed">
-              Média indépendant d'histoire — récits documentés, sourcés, vérifiés.
+              POGI est un média indépendant d'histoire qui raconte des récits documentés, sourcés et vérifiés.
             </p>
           </div>
 
@@ -60,8 +60,8 @@ export function Footer() {
                   </li>
                 ) : (
                   <li key={l.label}>
-                    <a href={l.href} className="text-sm hover:text-pogi-yellow transition-colors inline-flex items-center gap-1.5">
-                      <Mail size={14} /> {l.label}
+                    <a href={l.href} className="text-sm hover:text-pogi-yellow transition-colors">
+                      {l.label}
                     </a>
                   </li>
                 ),

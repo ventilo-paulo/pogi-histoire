@@ -251,7 +251,7 @@ function VideoBySlug() {
           </div>
         )}
       </div>
-      <InternalLinks variant="dark" category={video.category} excludeVideoSlug={video.slug} />
+      <InternalLinks variant="dark" showArticles={false} category={video.category} excludeVideoSlug={video.slug} />
       </main>
       <Footer />
     </div>

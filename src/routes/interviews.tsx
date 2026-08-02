@@ -77,7 +77,7 @@ function InterviewsPage() {
         )}
       </section>
 
-      <InternalLinks variant="dark" />
+      <InternalLinks variant="dark" showArticles={false} videosTitle="Vidéos recommandées" />
       </main>
       <Footer />
     </div>
