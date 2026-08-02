@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { createPortal } from "react-dom";
-import { Search, X, PlayCircle, FileText, Loader2 } from "lucide-react";
+import { Search, X, PlayCircle, FileText, Layers, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { COLLECTIONS } from "@/lib/collections";
 
 type ResultArticle = {
   kind: "article";
@@ -25,7 +26,22 @@ type ResultVideo = {
   video_url: string;
 };
 
-type Result = ResultArticle | ResultVideo;
+type ResultCollection = {
+  kind: "collection";
+  id: string;
+  title: string;
+  subtitle: string | null;
+  category: null;
+  image_url: null;
+};
+
+type Result = ResultArticle | ResultVideo | ResultCollection;
+
+/** Accent/case-insensitive normalization for local (collections) matching. */
+function normalize(s: string) {
+  return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
 
 /** Escape PostgREST filter metacharacters so user input can't break out of the filter. */
 function sanitize(q: string) {
