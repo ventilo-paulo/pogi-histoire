@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { InternalLinks } from "@/components/InternalLinks";
 import { HScroll } from "@/components/HScroll";
 import { Reveal } from "@/components/Reveal";
 import { Skeleton } from "@/components/Skeleton";
