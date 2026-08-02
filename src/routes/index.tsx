@@ -196,7 +196,7 @@ function Home() {
       </section>
 
 
-      <InternalLinks variant="dark" articlesTitle="Articles connexes" videosTitle="Vidéos recommandées" />
+      <InternalLinks variant="dark" showArticles={false} videosTitle="Vidéos recommandées" />
       </main>
       <Footer />
     </div>

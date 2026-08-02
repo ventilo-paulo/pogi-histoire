@@ -165,7 +165,7 @@ function CollectionsPage() {
           </div>
         </Reveal>
       </div>
-      <InternalLinks variant="light" />
+      <InternalLinks variant="light" showArticles={false} videosTitle="Vidéos recommandées" />
       </main>
       <Footer />
     </div>

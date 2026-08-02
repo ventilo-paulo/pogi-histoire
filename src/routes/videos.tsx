@@ -109,7 +109,7 @@ function VideosPage() {
           </>
         )}
       </div>
-      <InternalLinks variant="dark" showVideos={false} articlesTitle="Articles connexes" />
+      
       </main>
       <Footer />
     </div>
