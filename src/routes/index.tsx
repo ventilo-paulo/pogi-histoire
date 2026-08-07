@@ -47,7 +47,7 @@ const fallbackArticles = [
 
 const collections = [
   { img: cAntiquity, label: "L'Antiquité", hash: "antiquite", objectPosition: "center" },
-  { img: cAmericas, label: "Les Amériques", hash: "ameriques", objectPosition: "center" },
+  { img: cAmericas, label: "Les Amériques", hash: "ameriques", objectPosition: "30% center" },
   { img: cWWII, label: "Seconde Guerre Mondiale", hash: "wwii", objectPosition: "center" },
   { img: "/assets/coll-illustres.jpg", label: "Les illustres", hash: "illustres", objectPosition: "center 22%" },
   { img: cAfrica, label: "L'Afrique", hash: "afrique", objectPosition: "center" },
