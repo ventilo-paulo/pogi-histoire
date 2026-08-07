@@ -60,7 +60,7 @@ type Collection = {
 const EXTRAS: Record<string, { img?: string; objectPosition?: string }> = {
   wwii: { img: cWWII },
   antiquite: { img: cAntiquity },
-  ameriques: { img: cAmericas },
+  ameriques: { img: cAmericas, objectPosition: "30% center" },
   illustres: { img: "/assets/coll-illustres.jpg", objectPosition: "center 22%" },
   afrique: { img: cAfrica },
 };

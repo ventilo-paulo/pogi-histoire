@@ -11,6 +11,7 @@ export const COLLECTIONS: CollectionMeta[] = [
   { id: "antiquite", title: "Antiquité", subtitle: "Rome, Grèce, Égypte" },
   { id: "moyen-age", title: "Moyen-Âge", subtitle: "Chevalerie, féodalité, croisades" },
   { id: "ameriques", title: "Les Amériques", subtitle: "Découvertes, révolutions, cultures" },
+
   { id: "illustres", title: "Les illustres", subtitle: "Portraits marquants", available: true },
   { id: "afrique", title: "L'Afrique", subtitle: "Empires, décolonisation, héritages" },
 ];
