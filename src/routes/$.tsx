@@ -1,19 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
 import { NotFound } from "@/components/NotFound";
 
 /** Ensures unknown URLs answer with a real HTTP 404 (crawlers, monitoring). */
-async function flag404() {
-  if (!import.meta.env.SSR) return null;
-  try {
-    const { setResponseStatus } = await import("@tanstack/react-start/server");
-    setResponseStatus(404);
-    console.log("[404] status set for unknown route");
-  } catch (e) {
-    console.log("[404] setResponseStatus failed", e);
-    /* status best-effort: the branded 404 page still renders */
-  }
+const flag404 = createServerFn({ method: "GET" }).handler(async () => {
+  const { setResponseStatus } = await import("@tanstack/react-start/server");
+  setResponseStatus(404);
   return null;
-}
+});
 
 export const Route = createFileRoute("/$")({
   loader: () => flag404(),
