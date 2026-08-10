@@ -19,7 +19,7 @@ function AdminLayout() {
     (async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        navigate({ to: "/auth" });
+        navigate({ to: "/auth", search: { next: "" } });
         return;
       }
       setEmail(session.user.email ?? "");
@@ -30,14 +30,14 @@ function AdminLayout() {
       else setStatus("ok");
     })();
     const { data: sub } = supabase.auth.onAuthStateChange((e) => {
-      if (e === "SIGNED_OUT") navigate({ to: "/auth" });
+      if (e === "SIGNED_OUT") navigate({ to: "/auth", search: { next: "" } });
     });
     return () => { cancelled = true; sub.subscription.unsubscribe(); };
   }, [navigate]);
 
   async function signOut() {
     await supabase.auth.signOut();
-    navigate({ to: "/auth" });
+    navigate({ to: "/auth", search: { next: "" } });
   }
 
   if (status === "loading") {

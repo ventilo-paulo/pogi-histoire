@@ -200,7 +200,7 @@ function useCategories() {
 
 function ArticlesFilterBar() {
   const { cat = "", q = "" } = Route.useSearch();
-  const navigate = useNavigate({ from: "/articles" });
+  const navigate = useNavigate({ from: "/articles/" });
   const cats = useCategories();
   const items = usePublishedArticles();
   const [text, setText] = useState(q);
@@ -219,15 +219,15 @@ function ArticlesFilterBar() {
   );
 
   function setCat(next: string) {
-    navigate({ search: (prev: { cat: string; q: string }) => ({ ...prev, cat: next }) });
+    navigate({ search: (prev: any) => ({ ...(prev as any), cat: next }) as any });
   }
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    navigate({ search: (prev: { cat: string; q: string }) => ({ ...prev, q: text.trim() }) });
+    navigate({ search: (prev: any) => ({ ...(prev as any), q: text.trim() }) as any });
   }
   function clearAll() {
     setText("");
-    navigate({ search: () => ({ cat: "", q: "" }) });
+    navigate({ search: (() => ({})) as any });
   }
 
   const active = !!(cat || q);
