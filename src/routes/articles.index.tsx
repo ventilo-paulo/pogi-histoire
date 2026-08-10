@@ -21,10 +21,10 @@ export const Route = createFileRoute("/articles/")({
       { property: "og:description", content: "Articles d'histoire, récits et accompagnements de visite." },
       { property: "og:image", content: absUrl(heroRenaissance) },
       { name: "twitter:image", content: absUrl(heroRenaissance) },
-      { property: "og:url", content: "https://pogi-histoire.lovable.app/articles" },
+      { property: "og:url", content: "https://pogi-histoire.com/articles" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://pogi-histoire.lovable.app/articles" }],
+    links: [{ rel: "canonical", href: "https://pogi-histoire.com/articles" }],
   }),
   validateSearch: (s: Record<string, unknown>) => {
     const out: { cat?: string; q?: string } = {};
