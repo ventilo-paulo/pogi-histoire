@@ -32,7 +32,18 @@ export const Route = createFileRoute("/")({
       { property: "og:url", content: "https://pogi-histoire.lovable.app/" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://pogi-histoire.lovable.app/" }],
+    links: [
+      { rel: "canonical", href: "https://pogi-histoire.lovable.app/" },
+      {
+        rel: "preload",
+        as: "image",
+        href: "/assets/hero-versailles-1920.webp",
+        imagesrcset:
+          "/assets/hero-versailles-960.webp 960w, /assets/hero-versailles-1440.webp 1440w, /assets/hero-versailles-1920.webp 1920w",
+        imagesizes: "100vw",
+        fetchpriority: "high",
+      } as any,
+    ],
   }),
   component: Home,
 });
@@ -117,10 +128,12 @@ function Hero() {
         className="group relative block h-[70vh] min-h-[520px] md:h-[calc(100vh-76px)] md:min-h-[640px] w-full outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
       >
         <img
-          src="https://wjexjgjyfglvrpktbpvz.supabase.co/storage/v1/object/sign/media/articles/f872825c-8b53-4376-bd2b-71af751cfbf3.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9lOWU2ZGQxYS00ODJjLTQ3NTQtOTdkNi1iMGU5YTQ3MWJlMGQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJtZWRpYS9hcnRpY2xlcy9mODcyODI1Yy04YjUzLTQzNzYtYmQyYi03MWFmNzUxY2ZiZjMuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc4MjgzMzM3MCwiZXhwIjoyMDk4MTkzMzcwfQ.NTJt1qXL4b4RPPsMOojSSocQpxy9auuSXHq0n0GGGqM"
+          src="/assets/hero-versailles-1920.webp"
+          srcSet="/assets/hero-versailles-960.webp 960w, /assets/hero-versailles-1440.webp 1440w, /assets/hero-versailles-1920.webp 1920w"
+          sizes="100vw"
           alt="Le château de Versailles, symbole du pouvoir absolu de Louis XIV"
           width={1920}
-          height={1080}
+          height={1203}
           fetchPriority="high"
           loading="eager"
           decoding="async"
