@@ -1,8 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 
+/** Ensures unknown URLs answer with a real HTTP 404 (crawlers, monitoring). */
+const flag404 = createServerFn({ method: "GET" }).handler(async () => {
+  const { setResponseStatus } = await import("@tanstack/react-start/server");
+  setResponseStatus(404);
+  return null;
+});
+
 export const Route = createFileRoute("/$")({
+  loader: () => flag404(),
   head: () => ({
     meta: [
       { title: "Page introuvable — POGI Histoire" },
@@ -12,6 +21,7 @@ export const Route = createFileRoute("/$")({
   }),
   component: NotFoundPage,
 });
+
 
 function NotFoundPage() {
   return (
