@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const GATEWAY = "https://connector-gateway.lovable.dev/google_search_console";
-const SITE_URL = "https://pogi-histoire.lovable.app";
+const SITE_URL = "https://pogi-histoire.com";
 
 type SiteEntry = { siteUrl: string; permissionLevel?: string };
 

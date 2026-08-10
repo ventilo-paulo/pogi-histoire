@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin
 
-Sitemap: https://pogi-histoire.lovable.app/sitemap.xml
+Sitemap: https://pogi-histoire.com/sitemap.xml

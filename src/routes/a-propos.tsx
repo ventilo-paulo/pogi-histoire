@@ -20,10 +20,10 @@ export const Route = createFileRoute("/a-propos")({
         content:
           "POGI Histoire, média indépendant consacré à l'histoire, porté par Guillaume Guest et Paul Lesaulnier. Des récits documentés, sourcés et vérifiés, en articles et bientôt en vidéo.",
       },
-      { property: "og:url", content: "https://pogi-histoire.lovable.app/a-propos" },
+      { property: "og:url", content: "https://pogi-histoire.com/a-propos" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://pogi-histoire.lovable.app/a-propos" }],
+    links: [{ rel: "canonical", href: "https://pogi-histoire.com/a-propos" }],
   }),
   component: AboutPage,
 });

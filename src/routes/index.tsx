@@ -29,11 +29,11 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: "POGI Histoire : récits d'histoire documentés et sourcés, articles, collections thématiques et vidéos." },
       { property: "og:image", content: absUrl(heroConcert) },
       { name: "twitter:image", content: absUrl(heroConcert) },
-      { property: "og:url", content: "https://pogi-histoire.lovable.app/" },
+      { property: "og:url", content: "https://pogi-histoire.com/" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
-      { rel: "canonical", href: "https://pogi-histoire.lovable.app/" },
+      { rel: "canonical", href: "https://pogi-histoire.com/" },
       {
         rel: "preload",
         as: "image",

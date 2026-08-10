@@ -93,21 +93,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@graph": [
             {
               "@type": "Organization",
-              "@id": "https://pogi-histoire.lovable.app/#organization",
+              "@id": "https://pogi-histoire.com/#organization",
               name: "POGI Histoire",
-              url: "https://pogi-histoire.lovable.app",
-              logo: "https://pogi-histoire.lovable.app/assets/pogi-logo.png",
+              url: "https://pogi-histoire.com",
+              logo: "https://pogi-histoire.com/assets/pogi-logo.png",
               description:
                 "Média indépendant consacré à l'histoire, porté par Guillaume Guest et Paul Lesaulnier.",
               sameAs: ["https://www.youtube.com/@PogiHistoire"],
             },
             {
               "@type": "WebSite",
-              "@id": "https://pogi-histoire.lovable.app/#website",
+              "@id": "https://pogi-histoire.com/#website",
               name: "POGI Histoire",
-              url: "https://pogi-histoire.lovable.app",
+              url: "https://pogi-histoire.com",
               inLanguage: "fr-FR",
-              publisher: { "@id": "https://pogi-histoire.lovable.app/#organization" },
+              publisher: { "@id": "https://pogi-histoire.com/#organization" },
             },
           ],
         }),

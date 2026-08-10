@@ -1,7 +1,7 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 const GATEWAY = "https://connector-gateway.lovable.dev/google_search_console";
-export const SITE_URL = "https://pogi-histoire.lovable.app";
+export const SITE_URL = "https://pogi-histoire.com";
 
 type SiteEntry = { siteUrl: string; permissionLevel?: string };
 
