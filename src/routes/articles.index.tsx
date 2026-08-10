@@ -219,11 +219,11 @@ function ArticlesFilterBar() {
   );
 
   function setCat(next: string) {
-    navigate({ search: (prev) => ({ ...(prev as any), cat: next }) as any });
+    navigate({ search: (prev: any) => ({ ...(prev as any), cat: next }) as any });
   }
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    navigate({ search: (prev) => ({ ...(prev as any), q: text.trim() }) as any });
+    navigate({ search: (prev: any) => ({ ...(prev as any), q: text.trim() }) as any });
   }
   function clearAll() {
     setText("");
