@@ -32,7 +32,18 @@ export const Route = createFileRoute("/")({
       { property: "og:url", content: "https://pogi-histoire.lovable.app/" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://pogi-histoire.lovable.app/" }],
+    links: [
+      { rel: "canonical", href: "https://pogi-histoire.lovable.app/" },
+      {
+        rel: "preload",
+        as: "image",
+        href: "/assets/hero-versailles-1920.webp",
+        imagesrcset:
+          "/assets/hero-versailles-960.webp 960w, /assets/hero-versailles-1440.webp 1440w, /assets/hero-versailles-1920.webp 1920w",
+        imagesizes: "100vw",
+        fetchpriority: "high",
+      } as any,
+    ],
   }),
   component: Home,
 });
