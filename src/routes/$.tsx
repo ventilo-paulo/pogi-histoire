@@ -7,7 +7,9 @@ async function flag404() {
   try {
     const { setResponseStatus } = await import("@tanstack/react-start/server");
     setResponseStatus(404);
-  } catch {
+    console.log("[404] status set for unknown route");
+  } catch (e) {
+    console.log("[404] setResponseStatus failed", e);
     /* status best-effort: the branded 404 page still renders */
   }
   return null;
