@@ -230,7 +230,12 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
                   </>
                 );
                 const onPick = () => {
-                  track("search_result_click", { label: r.title, slug: "slug" in r ? r.slug : r.id, meta: { kind: r.kind, term } });
+                  clickedRef.current = true;
+                  track("search_result_click", {
+                    label: r.title,
+                    slug: "slug" in r ? r.slug : r.id,
+                    meta: { kind: r.kind, term, source: "dialog", position: index + 1, results: results.length },
+                  });
                   onClose();
                 };
                 const cls = "flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors";
