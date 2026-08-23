@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { absUrl } from "@/lib/site";
 
 
-import vOradour from "@/assets/video-oradour.jpg";
+import vOradour from "@/assets/video-oradour.webp";
 
 export const Route = createFileRoute("/videos")({
   head: () => ({

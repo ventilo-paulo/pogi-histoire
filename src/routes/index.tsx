@@ -9,16 +9,16 @@ import { ArticleCardSkeleton } from "@/components/Skeleton";
 import { absUrl } from "@/lib/site";
 import { publishedArticlesStore, type ArticleLite } from "@/lib/realtime-stores";
 
-import heroConcert from "@/assets/hero-concert.jpg";
-import aNapoleon from "@/assets/article-napoleon.jpg";
-import aWoman from "@/assets/article-woman.jpg";
-import aNazca from "@/assets/article-nazca.jpg";
-import aAstro from "@/assets/article-astronaut.jpg";
-import aCave from "@/assets/article-cave.jpg";
-import cAntiquity from "@/assets/coll-antiquity.jpg";
-import cAmericas from "@/assets/coll-americas.jpg";
-import cWWII from "@/assets/coll-wwii.jpg";
-import cAfrica from "@/assets/coll-africa.jpg";
+import heroConcert from "@/assets/hero-concert.webp";
+import aNapoleon from "@/assets/article-napoleon.webp";
+import aWoman from "@/assets/article-woman.webp";
+import aNazca from "@/assets/article-nazca.webp";
+import aAstro from "@/assets/article-astronaut.webp";
+import aCave from "@/assets/article-cave.webp";
+import cAntiquity from "@/assets/coll-antiquity.webp";
+import cAmericas from "@/assets/coll-americas.webp";
+import cWWII from "@/assets/coll-wwii.webp";
+import cAfrica from "@/assets/coll-africa.webp";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -60,7 +60,7 @@ const collections = [
   { img: cAntiquity, label: "L'Antiquité", hash: "antiquite", objectPosition: "center" },
   { img: cAmericas, label: "Les Amériques", hash: "ameriques", objectPosition: "30% center" },
   { img: cWWII, label: "Seconde Guerre Mondiale", hash: "wwii", objectPosition: "center" },
-  { img: "/assets/coll-illustres.jpg", label: "Les illustres", hash: "illustres", objectPosition: "center 22%" },
+  { img: "/assets/coll-illustres.webp", label: "Les illustres", hash: "illustres", objectPosition: "center 22%" },
   { img: cAfrica, label: "L'Afrique", hash: "afrique", objectPosition: "center" },
 ];
 

@@ -10,7 +10,7 @@ import { ArrowRight, Loader2, Search, SearchX, X } from "lucide-react";
 import { absUrl } from "@/lib/site";
 import { categoriesStore, publishedArticlesStore, type ArticleLite } from "@/lib/realtime-stores";
 
-import heroRenaissance from "@/assets/hero-renaissance.jpg";
+import heroRenaissance from "@/assets/hero-renaissance.webp";
 
 export const Route = createFileRoute("/articles/")({
   head: () => ({

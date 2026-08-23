@@ -104,7 +104,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               "@id": "https://pogi-histoire.com/#organization",
               name: "POGI Histoire",
               url: "https://pogi-histoire.com",
-              logo: "https://pogi-histoire.com/assets/pogi-logo.png",
+              logo: "https://pogi-histoire.com/assets/pogi-logo.webp",
               description:
                 "Média indépendant consacré à l'histoire, porté par Guillaume Guest et Paul Lesaulnier.",
               sameAs: ["https://www.youtube.com/@PogiHistoire"],

@@ -7,10 +7,10 @@ import { absUrl } from "@/lib/site";
 import { COLLECTIONS } from "@/lib/collections";
 
 
-import cWWII from "@/assets/coll-wwii.jpg";
-import cAntiquity from "@/assets/coll-antiquity.jpg";
-import cAmericas from "@/assets/coll-americas.jpg";
-import cAfrica from "@/assets/coll-africa.jpg";
+import cWWII from "@/assets/coll-wwii.webp";
+import cAntiquity from "@/assets/coll-antiquity.webp";
+import cAmericas from "@/assets/coll-americas.webp";
+import cAfrica from "@/assets/coll-africa.webp";
 
 export const Route = createFileRoute("/collections")({
   head: () => ({
@@ -61,7 +61,7 @@ const EXTRAS: Record<string, { img?: string; objectPosition?: string }> = {
   wwii: { img: cWWII },
   antiquite: { img: cAntiquity },
   ameriques: { img: cAmericas, objectPosition: "30% center" },
-  illustres: { img: "/assets/coll-illustres.jpg", objectPosition: "center 22%" },
+  illustres: { img: "/assets/coll-illustres.webp", objectPosition: "center 22%" },
   afrique: { img: cAfrica },
 };
 
