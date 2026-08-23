@@ -33,12 +33,13 @@ export default function ImageUpload({ value, onChange, folder = "uploads", maxPr
     }
     setUploading(true);
     try {
-      const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+      const converted = await toWebp(file);
+      const ext = converted.type === "image/webp" ? "webp" : (file.name.split(".").pop() || "jpg").toLowerCase();
       const path = `${folder}/${crypto.randomUUID()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from("media").upload(path, file, {
+      const { error: upErr } = await supabase.storage.from("media").upload(path, converted, {
         cacheControl: "31536000",
         upsert: false,
-        contentType: file.type,
+        contentType: converted.type,
       });
       if (upErr) throw upErr;
       const { data, error: signErr } = await supabase.storage.from("media").createSignedUrl(path, SIGNED_URL_TTL);
