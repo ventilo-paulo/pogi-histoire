@@ -143,14 +143,47 @@ function LatestArticleHero() {
 
 /* -------- Card -------- */
 
-function ArticleCard({ a, fluid = false }: { a: ArticleLite; fluid?: boolean }) {
+function ArticleCard({
+  a,
+  fluid = false,
+  placement = "articles_list",
+  searchTerm,
+  searchCat,
+  position,
+  resultsCount,
+}: {
+  a: ArticleLite;
+  fluid?: boolean;
+  placement?: string;
+  searchTerm?: string;
+  searchCat?: string;
+  position?: number;
+  resultsCount?: number;
+}) {
   const [loading, setLoading] = useState(false);
   return (
     <Link
       to="/articles/$slug"
       params={{ slug: a.slug }}
       preload="intent"
-      onClick={() => { track("article_click", { label: a.title, slug: a.slug, meta: { placement: "articles_list" } }); setLoading(true); }}
+      onClick={() => {
+        track("article_click", { label: a.title, slug: a.slug, meta: { placement } });
+        if (placement === "search_results") {
+          track("search_result_click", {
+            label: a.title,
+            slug: a.slug,
+            meta: {
+              kind: "article",
+              source: "results_page",
+              term: searchTerm ?? "",
+              category: searchCat ?? "",
+              position,
+              results: resultsCount,
+            },
+          });
+        }
+        setLoading(true);
+      }}
       aria-busy={loading}
       className={`group relative ${fluid ? "w-full" : "shrink-0 w-[260px] sm:w-[280px]"} h-[340px] sm:h-[360px] rounded-[16px] overflow-hidden bg-pogi-dark block outline-none
         transition-all duration-300 ease-out
