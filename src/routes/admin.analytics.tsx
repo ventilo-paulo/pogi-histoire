@@ -166,6 +166,8 @@ function AdminAnalytics() {
             <TopList title="Vidéos les plus cliquées" data={stats.topVideos} />
             <TopList title="Pages les plus vues" data={stats.topPages} />
             <TopList title="Recherches les plus fréquentes" data={stats.topSearches} />
+            <TopList title="Recherches sans résultat" data={stats.topNoResults} />
+            <TopList title="Résultats les plus cliqués" data={stats.topSearchClicks} />
             <TopList title="Navigation (menu)" data={stats.topNav} />
             <TopList title="Sites référents" data={stats.topReferrers} />
           </div>
