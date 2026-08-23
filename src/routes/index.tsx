@@ -127,7 +127,6 @@ function Hero() {
         params={{ slug: HERO_SLUG }}
         preload="intent"
         onClick={() => track("article_click", { label: "Versailles", slug: HERO_SLUG, meta: { placement: "home_hero" } })}
-        aria-label="Versailles ou la mise en scène du pouvoir absolu — lire l'article"
         className="group relative block h-[70vh] min-h-[520px] md:h-[calc(100vh-76px)] md:min-h-[640px] w-full outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
       >
         <img
@@ -201,7 +200,7 @@ function Home() {
                   onClick={() => track("collection_click", { label: c.label, slug: c.hash, meta: { placement: "home" } })}
                   className="relative shrink-0 w-[180px] h-[180px] rounded-[16px] overflow-hidden card-hover block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
                 >
-                  <img src={c.img} alt={c.label} loading="lazy" style={{ objectPosition: c.objectPosition }} className="absolute inset-0 h-full w-full object-cover" />
+                  <img src={c.img} alt="" loading="lazy" decoding="async" style={{ objectPosition: c.objectPosition }} className="absolute inset-0 h-full w-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/30" />
                   <span className="absolute inset-0 grid place-items-center text-center text-white font-bold text-base px-3">
                     {c.label}

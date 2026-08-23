@@ -77,7 +77,7 @@ function CollectionTile({ c }: { c: Collection }) {
       {c.img ? (
         <img
           src={c.img}
-          alt={c.title}
+          alt=""
           loading="eager"
           decoding="async"
           fetchPriority="high"
