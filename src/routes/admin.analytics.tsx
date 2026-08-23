@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { BarChart3, Eye, MousePointerClick, Search, Users } from "lucide-react";
+import { BarChart3, Eye, MousePointerClick, Search, SearchX, Users } from "lucide-react";
 
 export const Route = createFileRoute("/admin/analytics")({
   head: () => ({ meta: [{ title: "Audience — Admin POGI" }, { name: "robots", content: "noindex" }] }),
@@ -67,15 +67,25 @@ function AdminAnalytics() {
     const sessions = new Set(list.map((r) => r.session_id).filter(Boolean)).size;
     const searches = list.filter((r) => r.event === "search_query");
     const clicks = list.filter((r) => r.event.endsWith("_click"));
+    const noResults = list.filter((r) => r.event === "search_no_results");
+    const emptySearches = list.filter((r) => r.event === "search_empty");
+    const resultClicks = list.filter((r) => r.event === "search_result_click");
     return {
       views: views.length,
       sessions,
       searches: searches.length,
       clicks: clicks.length,
+      noResults: noResults.length,
+      emptySearches: emptySearches.length,
+      resultClicks: resultClicks.length,
+      noResultsRate: searches.length ? Math.round((noResults.length / searches.length) * 100) : 0,
+      searchCtr: searches.length ? Math.round((resultClicks.length / searches.length) * 100) : 0,
       topPages: topOf(views, (r) => r.path),
       topArticles: topOf(list.filter((r) => r.event === "article_click"), (r) => r.label),
       topVideos: topOf(list.filter((r) => r.event === "video_click" || r.event === "outbound_click"), (r) => r.label),
       topSearches: topOf(searches, (r) => r.label),
+      topNoResults: topOf(noResults, (r) => r.label),
+      topSearchClicks: topOf(resultClicks, (r) => r.label),
       topNav: topOf(list.filter((r) => r.event === "nav_click"), (r) => r.label),
       topReferrers: topOf(list, (r) => r.referrer),
       perDay: (() => {
@@ -123,6 +133,13 @@ function AdminAnalytics() {
             <Kpi icon={<Search size={18} />} label="Recherches" value={stats.searches} />
           </div>
 
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <Kpi icon={<SearchX size={18} />} label="Sans résultat" value={stats.noResults} />
+            <Kpi icon={<SearchX size={18} />} label="% sans résultat" value={stats.noResultsRate} suffix="%" />
+            <Kpi icon={<Search size={18} />} label="Recherches vides / abandons" value={stats.emptySearches} />
+            <Kpi icon={<MousePointerClick size={18} />} label="Clics résultats (CTR)" value={stats.resultClicks} suffix={` · ${stats.searchCtr}%`} />
+          </div>
+
           <Panel title="Pages vues par jour" icon={<BarChart3 size={16} />}>
             {stats.perDay.length === 0 ? (
               <Empty />
@@ -149,6 +166,8 @@ function AdminAnalytics() {
             <TopList title="Vidéos les plus cliquées" data={stats.topVideos} />
             <TopList title="Pages les plus vues" data={stats.topPages} />
             <TopList title="Recherches les plus fréquentes" data={stats.topSearches} />
+            <TopList title="Recherches sans résultat" data={stats.topNoResults} />
+            <TopList title="Résultats les plus cliqués" data={stats.topSearchClicks} />
             <TopList title="Navigation (menu)" data={stats.topNav} />
             <TopList title="Sites référents" data={stats.topReferrers} />
           </div>
@@ -158,14 +177,27 @@ function AdminAnalytics() {
   );
 }
 
-function Kpi({ icon, label, value }: { icon: React.ReactNode; label: string; value: number }) {
+function Kpi({
+  icon,
+  label,
+  value,
+  suffix,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: number;
+  suffix?: string;
+}) {
   return (
     <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
       <div className="flex items-center gap-2 text-white/50 text-xs uppercase tracking-wider">
         {icon}
         {label}
       </div>
-      <div className="mt-2 font-display text-3xl text-pogi-yellow">{value.toLocaleString("fr-FR")}</div>
+      <div className="mt-2 font-display text-3xl text-pogi-yellow">
+        {value.toLocaleString("fr-FR")}
+        {suffix && <span className="text-xl">{suffix}</span>}
+      </div>
     </div>
   );
 }

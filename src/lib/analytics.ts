@@ -7,6 +7,8 @@ export type AnalyticsEvent =
   | "collection_click"
   | "search_open"
   | "search_query"
+  | "search_empty"
+  | "search_no_results"
   | "search_result_click"
   | "nav_click"
   | "outbound_click"

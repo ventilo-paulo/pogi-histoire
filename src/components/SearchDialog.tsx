@@ -55,11 +55,17 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<Result[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+  const resultCountRef = useRef(0);
+  const clickedRef = useRef(false);
+  const lastTermRef = useRef("");
 
   useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (!open) return;
+    resultCountRef.current = 0;
+    clickedRef.current = false;
+    lastTermRef.current = "";
     const t = setTimeout(() => inputRef.current?.focus(), 30);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -70,6 +76,16 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
       clearTimeout(t);
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
+      // Session de recherche terminée : rien tapé = recherche vide,
+      // résultats affichés sans clic = recherche abandonnée.
+      if (!lastTermRef.current) {
+        track("search_empty", { meta: { source: "dialog", reason: "no_query" } });
+      } else if (!clickedRef.current) {
+        track("search_empty", {
+          label: lastTermRef.current,
+          meta: { source: "dialog", reason: "no_click", results: resultCountRef.current },
+        });
+      }
     };
   }, [open, onClose]);
 
@@ -134,10 +150,20 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
         image_url: null,
       }));
       setResults([...articles, ...videos, ...collections]);
+      const total = articles.length + videos.length + collections.length;
       track("search_query", {
         label: term,
-        meta: { results: articles.length + videos.length + collections.length },
+        meta: { results: total, source: "dialog" },
       });
+      if (total === 0) {
+        track("search_no_results", {
+          label: term,
+          meta: { source: "dialog" },
+        });
+      }
+      resultCountRef.current = total;
+      clickedRef.current = false;
+      lastTermRef.current = term;
 
       setLoading(false);
     }, 220);
@@ -184,7 +210,7 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
             <p className="px-5 py-8 text-sm text-white/50">Aucun résultat pour « {term} ».</p>
           ) : (
             <ul className="divide-y divide-white/5">
-              {results.map((r) => {
+              {results.map((r, index) => {
                 const inner = (
                   <>
                     <div className="relative h-14 w-20 shrink-0 rounded-lg overflow-hidden bg-white/10">
@@ -204,7 +230,12 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
                   </>
                 );
                 const onPick = () => {
-                  track("search_result_click", { label: r.title, slug: "slug" in r ? r.slug : r.id, meta: { kind: r.kind, term } });
+                  clickedRef.current = true;
+                  track("search_result_click", {
+                    label: r.title,
+                    slug: "slug" in r ? r.slug : r.id,
+                    meta: { kind: r.kind, term, source: "dialog", position: index + 1, results: results.length },
+                  });
                   onClose();
                 };
                 const cls = "flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors";

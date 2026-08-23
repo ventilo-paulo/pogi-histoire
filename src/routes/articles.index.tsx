@@ -143,14 +143,47 @@ function LatestArticleHero() {
 
 /* -------- Card -------- */
 
-function ArticleCard({ a, fluid = false }: { a: ArticleLite; fluid?: boolean }) {
+function ArticleCard({
+  a,
+  fluid = false,
+  placement = "articles_list",
+  searchTerm,
+  searchCat,
+  position,
+  resultsCount,
+}: {
+  a: ArticleLite;
+  fluid?: boolean;
+  placement?: string;
+  searchTerm?: string;
+  searchCat?: string;
+  position?: number;
+  resultsCount?: number;
+}) {
   const [loading, setLoading] = useState(false);
   return (
     <Link
       to="/articles/$slug"
       params={{ slug: a.slug }}
       preload="intent"
-      onClick={() => { track("article_click", { label: a.title, slug: a.slug, meta: { placement: "articles_list" } }); setLoading(true); }}
+      onClick={() => {
+        track("article_click", { label: a.title, slug: a.slug, meta: { placement } });
+        if (placement === "search_results") {
+          track("search_result_click", {
+            label: a.title,
+            slug: a.slug,
+            meta: {
+              kind: "article",
+              source: "results_page",
+              term: searchTerm ?? "",
+              category: searchCat ?? "",
+              position,
+              results: resultsCount,
+            },
+          });
+        }
+        setLoading(true);
+      }}
       aria-busy={loading}
       className={`group relative ${fluid ? "w-full" : "shrink-0 w-[260px] sm:w-[280px]"} h-[340px] sm:h-[360px] rounded-[16px] overflow-hidden bg-pogi-dark block outline-none
         transition-all duration-300 ease-out
@@ -225,7 +258,13 @@ function ArticlesFilterBar() {
   }
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    navigate({ search: (prev: any) => ({ ...(prev as any), q: text.trim() }) as any });
+    const value = text.trim();
+    if (!value) {
+      track("search_empty", { meta: { source: "results_page", reason: "no_query", category: cat } });
+    } else {
+      track("search_query", { label: value, meta: { source: "results_page", category: cat } });
+    }
+    navigate({ search: (prev: any) => ({ ...(prev as any), q: value }) as any });
   }
   function clearAll() {
     setText("");
@@ -316,6 +355,15 @@ function FilteredArticles({ cat, q }: { cat: string; q: string }) {
     });
   }, [items, cat, q]);
 
+  useEffect(() => {
+    if (filtered && filtered.length === 0) {
+      track("search_no_results", {
+        label: q.trim() || null,
+        meta: { source: "results_page", category: cat },
+      });
+    }
+  }, [filtered, q, cat]);
+
   return (
     <section className="section-pad">
       <div className="mx-auto max-w-[1400px] px-6">
@@ -340,7 +388,15 @@ function FilteredArticles({ cat, q }: { cat: string; q: string }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
             {filtered.map((a, i) => (
               <Reveal key={a.id} delay={Math.min(i * 40, 240)} className="w-full">
-                <ArticleCard a={a} fluid />
+                <ArticleCard
+                  a={a}
+                  fluid
+                  placement="search_results"
+                  searchTerm={q}
+                  searchCat={cat}
+                  position={i + 1}
+                  resultsCount={filtered.length}
+                />
               </Reveal>
             ))}
           </div>
