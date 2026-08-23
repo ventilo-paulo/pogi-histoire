@@ -355,6 +355,15 @@ function FilteredArticles({ cat, q }: { cat: string; q: string }) {
     });
   }, [items, cat, q]);
 
+  useEffect(() => {
+    if (filtered && filtered.length === 0) {
+      track("search_no_results", {
+        label: q.trim() || null,
+        meta: { source: "results_page", category: cat },
+      });
+    }
+  }, [filtered, q, cat]);
+
   return (
     <section className="section-pad">
       <div className="mx-auto max-w-[1400px] px-6">
@@ -379,7 +388,15 @@ function FilteredArticles({ cat, q }: { cat: string; q: string }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
             {filtered.map((a, i) => (
               <Reveal key={a.id} delay={Math.min(i * 40, 240)} className="w-full">
-                <ArticleCard a={a} fluid />
+                <ArticleCard
+                  a={a}
+                  fluid
+                  placement="search_results"
+                  searchTerm={q}
+                  searchCat={cat}
+                  position={i + 1}
+                  resultsCount={filtered.length}
+                />
               </Reveal>
             ))}
           </div>
