@@ -75,11 +75,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap",
+        rel: "preload",
+        as: "font",
+        type: "font/woff2",
+        href: "/fonts/inter-latin.woff2",
+        crossOrigin: "anonymous",
+      },
+      {
+        rel: "preload",
+        as: "font",
+        type: "font/woff2",
+        href: "/fonts/bebas-neue-400-latin.woff2",
+        crossOrigin: "anonymous",
       },
       { rel: "preconnect", href: "https://wjexjgjyfglvrpktbpvz.supabase.co", crossOrigin: "anonymous" },
       { rel: "dns-prefetch", href: "https://wjexjgjyfglvrpktbpvz.supabase.co" },
