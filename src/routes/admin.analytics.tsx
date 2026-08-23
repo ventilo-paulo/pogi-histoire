@@ -175,14 +175,27 @@ function AdminAnalytics() {
   );
 }
 
-function Kpi({ icon, label, value }: { icon: React.ReactNode; label: string; value: number }) {
+function Kpi({
+  icon,
+  label,
+  value,
+  suffix,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: number;
+  suffix?: string;
+}) {
   return (
     <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
       <div className="flex items-center gap-2 text-white/50 text-xs uppercase tracking-wider">
         {icon}
         {label}
       </div>
-      <div className="mt-2 font-display text-3xl text-pogi-yellow">{value.toLocaleString("fr-FR")}</div>
+      <div className="mt-2 font-display text-3xl text-pogi-yellow">
+        {value.toLocaleString("fr-FR")}
+        {suffix && <span className="text-xl">{suffix}</span>}
+      </div>
     </div>
   );
 }
