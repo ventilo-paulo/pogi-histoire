@@ -133,6 +133,13 @@ function AdminAnalytics() {
             <Kpi icon={<Search size={18} />} label="Recherches" value={stats.searches} />
           </div>
 
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <Kpi icon={<SearchX size={18} />} label="Sans résultat" value={stats.noResults} />
+            <Kpi icon={<SearchX size={18} />} label="% sans résultat" value={stats.noResultsRate} suffix="%" />
+            <Kpi icon={<Search size={18} />} label="Recherches vides / abandons" value={stats.emptySearches} />
+            <Kpi icon={<MousePointerClick size={18} />} label="Clics résultats (CTR)" value={stats.resultClicks} suffix={` · ${stats.searchCtr}%`} />
+          </div>
+
           <Panel title="Pages vues par jour" icon={<BarChart3 size={16} />}>
             {stats.perDay.length === 0 ? (
               <Empty />
