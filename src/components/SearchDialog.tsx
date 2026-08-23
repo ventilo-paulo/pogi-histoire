@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import { Search, X, PlayCircle, FileText, Layers, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { COLLECTIONS } from "@/lib/collections";
+import { track } from "@/lib/analytics";
 
 type ResultArticle = {
   kind: "article";
@@ -133,6 +134,10 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
         image_url: null,
       }));
       setResults([...articles, ...videos, ...collections]);
+      track("search_query", {
+        label: term,
+        meta: { results: articles.length + videos.length + collections.length },
+      });
 
       setLoading(false);
     }, 220);
@@ -198,23 +203,27 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
                     </div>
                   </>
                 );
+                const onPick = () => {
+                  track("search_result_click", { label: r.title, slug: "slug" in r ? r.slug : r.id, meta: { kind: r.kind, term } });
+                  onClose();
+                };
                 const cls = "flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors";
                 return (
                   <li key={`${r.kind}-${r.id}`}>
                     {r.kind === "article" ? (
-                      <Link to="/articles/$slug" params={{ slug: r.slug }} onClick={onClose} className={cls}>
+                      <Link to="/articles/$slug" params={{ slug: r.slug }} onClick={onPick} className={cls}>
                         {inner}
                       </Link>
                     ) : r.kind === "collection" ? (
-                      <Link to="/collections" hash={r.id} onClick={onClose} className={cls}>
+                      <Link to="/collections" hash={r.id} onClick={onPick} className={cls}>
                         {inner}
                       </Link>
                     ) : r.slug ? (
-                      <Link to="/videos/$slug" params={{ slug: r.slug }} onClick={onClose} className={cls}>
+                      <Link to="/videos/$slug" params={{ slug: r.slug }} onClick={onPick} className={cls}>
                         {inner}
                       </Link>
                     ) : (
-                      <a href={r.video_url} target="_blank" rel="noreferrer" onClick={onClose} className={cls}>
+                      <a href={r.video_url} target="_blank" rel="noreferrer" onClick={onPick} className={cls}>
                         {inner}
                       </a>
                     )}
