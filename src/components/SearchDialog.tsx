@@ -210,7 +210,7 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
             <p className="px-5 py-8 text-sm text-white/50">Aucun résultat pour « {term} ».</p>
           ) : (
             <ul className="divide-y divide-white/5">
-              {results.map((r) => {
+              {results.map((r, index) => {
                 const inner = (
                   <>
                     <div className="relative h-14 w-20 shrink-0 rounded-lg overflow-hidden bg-white/10">
