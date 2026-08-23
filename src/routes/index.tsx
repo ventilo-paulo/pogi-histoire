@@ -37,9 +37,9 @@ export const Route = createFileRoute("/")({
       {
         rel: "preload",
         as: "image",
-        href: "/assets/hero-versailles-1920.webp",
+        href: "/assets/hero-versailles-1440.webp",
         imagesrcset:
-          "/assets/hero-versailles-960.webp 960w, /assets/hero-versailles-1440.webp 1440w, /assets/hero-versailles-1920.webp 1920w",
+          "/assets/hero-versailles-640.webp 640w, /assets/hero-versailles-960.webp 960w, /assets/hero-versailles-1440.webp 1440w, /assets/hero-versailles-1920.webp 1920w",
         imagesizes: "100vw",
         fetchpriority: "high",
       } as any,
@@ -124,12 +124,12 @@ function Hero() {
         to="/articles/$slug"
         params={{ slug: HERO_SLUG }}
         preload="intent"
-        aria-label="Lire l'article : Versailles ou la mise en scène du pouvoir absolu"
+        aria-label="Versailles ou la mise en scène du pouvoir absolu — lire l'article"
         className="group relative block h-[70vh] min-h-[520px] md:h-[calc(100vh-76px)] md:min-h-[640px] w-full outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
       >
         <img
-          src="/assets/hero-versailles-1920.webp"
-          srcSet="/assets/hero-versailles-960.webp 960w, /assets/hero-versailles-1440.webp 1440w, /assets/hero-versailles-1920.webp 1920w"
+          src="/assets/hero-versailles-1440.webp"
+          srcSet="/assets/hero-versailles-640.webp 640w, /assets/hero-versailles-960.webp 960w, /assets/hero-versailles-1440.webp 1440w, /assets/hero-versailles-1920.webp 1920w"
           sizes="100vw"
           alt="Le château de Versailles, symbole du pouvoir absolu de Louis XIV"
           width={1920}
@@ -139,6 +139,7 @@ function Hero() {
           decoding="async"
           className="absolute inset-0 h-full w-full object-cover object-[65%_center] md:object-center transition-transform duration-700 group-hover:scale-105"
         />
+
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30" />
 
         <div className="relative z-10 mx-auto max-w-[1400px] h-full px-6 flex flex-col justify-end pb-20">
