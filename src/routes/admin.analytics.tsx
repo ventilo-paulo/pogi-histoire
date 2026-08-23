@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { BarChart3, Eye, MousePointerClick, Search, Users } from "lucide-react";
+import { BarChart3, Eye, MousePointerClick, Search, SearchX, Users } from "lucide-react";
 
 export const Route = createFileRoute("/admin/analytics")({
   head: () => ({ meta: [{ title: "Audience — Admin POGI" }, { name: "robots", content: "noindex" }] }),
