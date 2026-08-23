@@ -45,7 +45,7 @@ export function track(event: AnalyticsEvent, payload: Payload = {}) {
     path: window.location.pathname,
     label: payload.label ? String(payload.label).slice(0, 256) : null,
     slug: payload.slug ?? null,
-    meta: payload.meta ?? {},
+    meta: (payload.meta ?? {}) as never,
     session_id: sessionId(),
     referrer: document.referrer ? new URL(document.referrer).hostname : null,
   };
