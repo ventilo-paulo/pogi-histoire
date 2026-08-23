@@ -134,10 +134,19 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
         image_url: null,
       }));
       setResults([...articles, ...videos, ...collections]);
+      const total = articles.length + videos.length + collections.length;
       track("search_query", {
         label: term,
-        meta: { results: articles.length + videos.length + collections.length },
+        meta: { results: total, source: "dialog" },
       });
+      if (total === 0) {
+        track("search_no_results", {
+          label: term,
+          meta: { source: "dialog" },
+        });
+      }
+      resultCountRef.current = total;
+      clickedRef.current = false;
 
       setLoading(false);
     }, 220);
