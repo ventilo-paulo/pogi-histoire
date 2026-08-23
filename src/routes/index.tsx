@@ -37,9 +37,9 @@ export const Route = createFileRoute("/")({
       {
         rel: "preload",
         as: "image",
-        href: "/assets/hero-versailles-1920.webp",
+        href: "/assets/hero-versailles-1440.webp",
         imagesrcset:
-          "/assets/hero-versailles-960.webp 960w, /assets/hero-versailles-1440.webp 1440w, /assets/hero-versailles-1920.webp 1920w",
+          "/assets/hero-versailles-640.webp 640w, /assets/hero-versailles-960.webp 960w, /assets/hero-versailles-1440.webp 1440w, /assets/hero-versailles-1920.webp 1920w",
         imagesizes: "100vw",
         fetchpriority: "high",
       } as any,
