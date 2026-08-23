@@ -13,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { NotFound as NotFoundComponent } from "@/components/NotFound";
+import { track } from "@/lib/analytics";
 
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
@@ -145,6 +146,10 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const { location } = useRouterState();
+
+  useEffect(() => {
+    track("page_view", { label: document.title });
+  }, [location.pathname]);
 
   return (
     <QueryClientProvider client={queryClient}>
