@@ -67,15 +67,25 @@ function AdminAnalytics() {
     const sessions = new Set(list.map((r) => r.session_id).filter(Boolean)).size;
     const searches = list.filter((r) => r.event === "search_query");
     const clicks = list.filter((r) => r.event.endsWith("_click"));
+    const noResults = list.filter((r) => r.event === "search_no_results");
+    const emptySearches = list.filter((r) => r.event === "search_empty");
+    const resultClicks = list.filter((r) => r.event === "search_result_click");
     return {
       views: views.length,
       sessions,
       searches: searches.length,
       clicks: clicks.length,
+      noResults: noResults.length,
+      emptySearches: emptySearches.length,
+      resultClicks: resultClicks.length,
+      noResultsRate: searches.length ? Math.round((noResults.length / searches.length) * 100) : 0,
+      searchCtr: searches.length ? Math.round((resultClicks.length / searches.length) * 100) : 0,
       topPages: topOf(views, (r) => r.path),
       topArticles: topOf(list.filter((r) => r.event === "article_click"), (r) => r.label),
       topVideos: topOf(list.filter((r) => r.event === "video_click" || r.event === "outbound_click"), (r) => r.label),
       topSearches: topOf(searches, (r) => r.label),
+      topNoResults: topOf(noResults, (r) => r.label),
+      topSearchClicks: topOf(resultClicks, (r) => r.label),
       topNav: topOf(list.filter((r) => r.event === "nav_click"), (r) => r.label),
       topReferrers: topOf(list, (r) => r.referrer),
       perDay: (() => {
