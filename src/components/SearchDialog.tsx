@@ -163,6 +163,7 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
       }
       resultCountRef.current = total;
       clickedRef.current = false;
+      lastTermRef.current = term;
 
       setLoading(false);
     }, 220);
