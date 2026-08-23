@@ -11,6 +11,7 @@ import { absUrl } from "@/lib/site";
 
 
 import vOradour from "@/assets/video-oradour.webp";
+import { track } from "@/lib/analytics";
 
 export const Route = createFileRoute("/videos")({
   head: () => ({
@@ -149,13 +150,13 @@ function VCard({ v }: { v: Video }) {
 
   if (v.slug) {
     return (
-      <Link to="/videos/$slug" params={{ slug: v.slug }} preload="intent" aria-label={v.title} className={cls}>
+      <Link to="/videos/$slug" params={{ slug: v.slug }} preload="intent" aria-label={v.title} className={cls} onClick={() => track("video_click", { label: v.title, slug: v.slug, meta: { placement: "videos_list" } })}>
         {inner}
       </Link>
     );
   }
   return (
-    <a href={v.video_url} target="_blank" rel="noreferrer" aria-label={v.title} className={cls}>
+    <a href={v.video_url} target="_blank" rel="noreferrer" aria-label={v.title} className={cls} onClick={() => track("outbound_click", { label: v.title, meta: { kind: "video", url: v.video_url } })}>
       {inner}
     </a>
   );

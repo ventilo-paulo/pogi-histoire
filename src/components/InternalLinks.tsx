@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { PlayCircle } from "lucide-react";
+import { track } from "@/lib/analytics";
 
 type LinkArticle = {
   id: string;
@@ -168,6 +169,7 @@ export function InternalLinks({
                   to="/articles/$slug"
                   params={{ slug: a.slug }}
                   preload="intent"
+                  onClick={() => track("article_click", { label: a.title, slug: a.slug, meta: { placement: "internal_links" } })}
                   className={cardCls}
                 >
                   <div className={`relative aspect-[16/10] overflow-hidden ${dark ? "bg-white/10" : "bg-black/5"}`}>
@@ -227,11 +229,11 @@ export function InternalLinks({
                   </>
                 );
                 return v.slug ? (
-                  <Link key={v.id} to="/videos/$slug" params={{ slug: v.slug }} preload="intent" className={cardCls}>
+                  <Link key={v.id} to="/videos/$slug" params={{ slug: v.slug }} preload="intent" className={cardCls} onClick={() => track("video_click", { label: v.title, slug: v.slug, meta: { placement: "internal_links" } })}>
                     {inner}
                   </Link>
                 ) : (
-                  <a key={v.id} href={v.video_url} target="_blank" rel="noreferrer" className={cardCls}>
+                  <a key={v.id} href={v.video_url} target="_blank" rel="noreferrer" className={cardCls} onClick={() => track("outbound_click", { label: v.title, meta: { kind: "video", url: v.video_url } })}>
                     {inner}
                   </a>
                 );

@@ -19,6 +19,7 @@ import cAntiquity from "@/assets/coll-antiquity.webp";
 import cAmericas from "@/assets/coll-americas.webp";
 import cWWII from "@/assets/coll-wwii.webp";
 import cAfrica from "@/assets/coll-africa.webp";
+import { track } from "@/lib/analytics";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -91,6 +92,7 @@ function FeaturedArticleCard({ a }: { a: ArticleLite }) {
       to="/articles/$slug"
       params={{ slug: a.slug }}
       preload="intent"
+      onClick={() => track("article_click", { label: a.title, slug: a.slug, meta: { placement: "home_featured" } })}
       className="group relative shrink-0 w-[200px] h-[280px] rounded-[16px] overflow-hidden card-hover block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
     >
       {a.image_url ? (
@@ -124,6 +126,7 @@ function Hero() {
         to="/articles/$slug"
         params={{ slug: HERO_SLUG }}
         preload="intent"
+        onClick={() => track("article_click", { label: "Versailles", slug: HERO_SLUG, meta: { placement: "home_hero" } })}
         aria-label="Versailles ou la mise en scène du pouvoir absolu — lire l'article"
         className="group relative block h-[70vh] min-h-[520px] md:h-[calc(100vh-76px)] md:min-h-[640px] w-full outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
       >
@@ -195,6 +198,7 @@ function Home() {
                   to="/collections"
                   hash={c.hash}
                   key={c.label}
+                  onClick={() => track("collection_click", { label: c.label, slug: c.hash, meta: { placement: "home" } })}
                   className="relative shrink-0 w-[180px] h-[180px] rounded-[16px] overflow-hidden card-hover block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
                 >
                   <img src={c.img} alt={c.label} loading="lazy" style={{ objectPosition: c.objectPosition }} className="absolute inset-0 h-full w-full object-cover" />
