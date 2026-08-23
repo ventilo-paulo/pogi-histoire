@@ -258,7 +258,13 @@ function ArticlesFilterBar() {
   }
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    navigate({ search: (prev: any) => ({ ...(prev as any), q: text.trim() }) as any });
+    const value = text.trim();
+    if (!value) {
+      track("search_empty", { meta: { source: "results_page", reason: "no_query", category: cat } });
+    } else {
+      track("search_query", { label: value, meta: { source: "results_page", category: cat } });
+    }
+    navigate({ search: (prev: any) => ({ ...(prev as any), q: value }) as any });
   }
   function clearAll() {
     setText("");
