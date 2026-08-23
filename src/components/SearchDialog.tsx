@@ -55,11 +55,17 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<Result[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+  const resultCountRef = useRef(0);
+  const clickedRef = useRef(false);
+  const lastTermRef = useRef("");
 
   useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (!open) return;
+    resultCountRef.current = 0;
+    clickedRef.current = false;
+    lastTermRef.current = "";
     const t = setTimeout(() => inputRef.current?.focus(), 30);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -70,6 +76,16 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
       clearTimeout(t);
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
+      // Session de recherche terminée : rien tapé = recherche vide,
+      // résultats affichés sans clic = recherche abandonnée.
+      if (!lastTermRef.current) {
+        track("search_empty", { meta: { source: "dialog", reason: "no_query" } });
+      } else if (!clickedRef.current) {
+        track("search_empty", {
+          label: lastTermRef.current,
+          meta: { source: "dialog", reason: "no_click", results: resultCountRef.current },
+        });
+      }
     };
   }, [open, onClose]);
 
