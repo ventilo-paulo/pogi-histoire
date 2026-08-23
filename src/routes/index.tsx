@@ -9,16 +9,17 @@ import { ArticleCardSkeleton } from "@/components/Skeleton";
 import { absUrl } from "@/lib/site";
 import { publishedArticlesStore, type ArticleLite } from "@/lib/realtime-stores";
 
-import heroConcert from "@/assets/hero-concert.jpg";
-import aNapoleon from "@/assets/article-napoleon.jpg";
-import aWoman from "@/assets/article-woman.jpg";
-import aNazca from "@/assets/article-nazca.jpg";
-import aAstro from "@/assets/article-astronaut.jpg";
-import aCave from "@/assets/article-cave.jpg";
-import cAntiquity from "@/assets/coll-antiquity.jpg";
-import cAmericas from "@/assets/coll-americas.jpg";
-import cWWII from "@/assets/coll-wwii.jpg";
-import cAfrica from "@/assets/coll-africa.jpg";
+import heroConcert from "@/assets/hero-concert.webp";
+import aNapoleon from "@/assets/article-napoleon.webp";
+import aWoman from "@/assets/article-woman.webp";
+import aNazca from "@/assets/article-nazca.webp";
+import aAstro from "@/assets/article-astronaut.webp";
+import aCave from "@/assets/article-cave.webp";
+import cAntiquity from "@/assets/coll-antiquity.webp";
+import cAmericas from "@/assets/coll-americas.webp";
+import cWWII from "@/assets/coll-wwii.webp";
+import cAfrica from "@/assets/coll-africa.webp";
+import { track } from "@/lib/analytics";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -60,7 +61,7 @@ const collections = [
   { img: cAntiquity, label: "L'Antiquité", hash: "antiquite", objectPosition: "center" },
   { img: cAmericas, label: "Les Amériques", hash: "ameriques", objectPosition: "30% center" },
   { img: cWWII, label: "Seconde Guerre Mondiale", hash: "wwii", objectPosition: "center" },
-  { img: "/assets/coll-illustres.jpg", label: "Les illustres", hash: "illustres", objectPosition: "center 22%" },
+  { img: "/assets/coll-illustres.webp", label: "Les illustres", hash: "illustres", objectPosition: "center 22%" },
   { img: cAfrica, label: "L'Afrique", hash: "afrique", objectPosition: "center" },
 ];
 
@@ -91,6 +92,7 @@ function FeaturedArticleCard({ a }: { a: ArticleLite }) {
       to="/articles/$slug"
       params={{ slug: a.slug }}
       preload="intent"
+      onClick={() => track("article_click", { label: a.title, slug: a.slug, meta: { placement: "home_featured" } })}
       className="group relative shrink-0 w-[200px] h-[280px] rounded-[16px] overflow-hidden card-hover block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
     >
       {a.image_url ? (
@@ -124,7 +126,7 @@ function Hero() {
         to="/articles/$slug"
         params={{ slug: HERO_SLUG }}
         preload="intent"
-        aria-label="Versailles ou la mise en scène du pouvoir absolu — lire l'article"
+        onClick={() => track("article_click", { label: "Versailles", slug: HERO_SLUG, meta: { placement: "home_hero" } })}
         className="group relative block h-[70vh] min-h-[520px] md:h-[calc(100vh-76px)] md:min-h-[640px] w-full outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
       >
         <img
@@ -195,9 +197,10 @@ function Home() {
                   to="/collections"
                   hash={c.hash}
                   key={c.label}
+                  onClick={() => track("collection_click", { label: c.label, slug: c.hash, meta: { placement: "home" } })}
                   className="relative shrink-0 w-[180px] h-[180px] rounded-[16px] overflow-hidden card-hover block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
                 >
-                  <img src={c.img} alt={c.label} loading="lazy" style={{ objectPosition: c.objectPosition }} className="absolute inset-0 h-full w-full object-cover" />
+                  <img src={c.img} alt="" loading="lazy" decoding="async" style={{ objectPosition: c.objectPosition }} className="absolute inset-0 h-full w-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/30" />
                   <span className="absolute inset-0 grid place-items-center text-center text-white font-bold text-base px-3">
                     {c.label}

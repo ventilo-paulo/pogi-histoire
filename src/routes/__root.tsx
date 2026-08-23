@@ -13,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { NotFound as NotFoundComponent } from "@/components/NotFound";
+import { track } from "@/lib/analytics";
 
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
@@ -75,11 +76,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap",
+        rel: "preload",
+        as: "font",
+        type: "font/woff2",
+        href: "/fonts/inter-latin.woff2",
+        crossOrigin: "anonymous",
+      },
+      {
+        rel: "preload",
+        as: "font",
+        type: "font/woff2",
+        href: "/fonts/bebas-neue-400-latin.woff2",
+        crossOrigin: "anonymous",
       },
       { rel: "preconnect", href: "https://wjexjgjyfglvrpktbpvz.supabase.co", crossOrigin: "anonymous" },
       { rel: "dns-prefetch", href: "https://wjexjgjyfglvrpktbpvz.supabase.co" },
@@ -96,7 +105,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               "@id": "https://pogi-histoire.com/#organization",
               name: "POGI Histoire",
               url: "https://pogi-histoire.com",
-              logo: "https://pogi-histoire.com/assets/pogi-logo.png",
+              logo: "https://pogi-histoire.com/assets/pogi-logo.webp",
               description:
                 "Média indépendant consacré à l'histoire, porté par Guillaume Guest et Paul Lesaulnier.",
               sameAs: ["https://www.youtube.com/@PogiHistoire"],
@@ -137,6 +146,10 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const { location } = useRouterState();
+
+  useEffect(() => {
+    track("page_view", { label: document.title });
+  }, [location.pathname]);
 
   return (
     <QueryClientProvider client={queryClient}>

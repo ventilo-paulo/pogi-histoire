@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import pogiLogo from "@/assets/pogi-logo.png.asset.json";
 import { publishedArticlesStore, INTERVIEWS_CATEGORY } from "@/lib/realtime-stores";
 import { SearchDialog } from "@/components/SearchDialog";
+import { track } from "@/lib/analytics";
 
 const ALL_LINKS = [
   { to: "/videos", label: "Vidéos" },
@@ -56,7 +57,7 @@ export function Navbar() {
     <header className="sticky top-0 z-50 h-[76px] bg-pogi-darker/95 backdrop-blur-md border-b border-white/10 shadow-[0_6px_24px_rgba(0,0,0,0.45)]">
       <div className="w-full h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
         <Link to="/" className="flex items-center shrink-0" aria-label="POGI — Accueil">
-          <img src={pogiLogo.url} alt="POGI Histoire — média indépendant d'histoire" className="h-14 w-auto object-contain" />
+          <img src={pogiLogo.url} alt="POGI Histoire — média indépendant d'histoire" width={500} height={500} decoding="async" className="h-14 w-auto object-contain" />
         </Link>
 
 
@@ -65,6 +66,7 @@ export function Navbar() {
             <Link
               key={l.to}
               to={l.to}
+              onClick={() => track("nav_click", { label: l.label, meta: { placement: "desktop" } })}
               className={linkBase}
               activeProps={{ className: "text-pogi-yellow" }}
             >
@@ -76,7 +78,7 @@ export function Navbar() {
         <div className="flex items-center gap-3 text-white shrink-0">
           <button
             type="button"
-            onClick={() => setSearchOpen(true)}
+            onClick={() => { track("search_open"); setSearchOpen(true); }}
             aria-label="Rechercher sur le site"
             title="Rechercher"
             className="inline-flex items-center justify-center h-10 w-10 rounded-full hover:bg-white/10 hover:text-pogi-yellow transition-colors"
@@ -112,7 +114,7 @@ export function Navbar() {
                 <Link
                   key={l.to}
                   to={l.to}
-                  onClick={() => setOpen(false)}
+                  onClick={() => { track("nav_click", { label: l.label, meta: { placement: "mobile" } }); setOpen(false); }}
                   className="text-white text-2xl font-display uppercase tracking-wider py-4 border-b border-white/10 hover:text-pogi-yellow transition-colors active:bg-white/5 -mx-6 px-6"
                   activeProps={{ className: "text-pogi-yellow" }}
                   style={{

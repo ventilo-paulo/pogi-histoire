@@ -10,7 +10,8 @@ import { ArrowRight, Loader2, Search, SearchX, X } from "lucide-react";
 import { absUrl } from "@/lib/site";
 import { categoriesStore, publishedArticlesStore, type ArticleLite } from "@/lib/realtime-stores";
 
-import heroRenaissance from "@/assets/hero-renaissance.jpg";
+import heroRenaissance from "@/assets/hero-renaissance.webp";
+import { track } from "@/lib/analytics";
 
 export const Route = createFileRoute("/articles/")({
   head: () => ({
@@ -99,6 +100,7 @@ function LatestArticleHero() {
         to="/articles/$slug"
         params={{ slug: latest.slug }}
         preload="intent"
+        onClick={() => track("article_click", { label: latest.title, slug: latest.slug, meta: { placement: "articles_hero" } })}
         aria-label={`Lire l'article : ${latest.title}`}
         className="group relative block h-[60vh] min-h-[440px] md:h-[70vh] md:min-h-[560px] w-full outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
       >
@@ -148,7 +150,7 @@ function ArticleCard({ a, fluid = false }: { a: ArticleLite; fluid?: boolean }) 
       to="/articles/$slug"
       params={{ slug: a.slug }}
       preload="intent"
-      onClick={() => setLoading(true)}
+      onClick={() => { track("article_click", { label: a.title, slug: a.slug, meta: { placement: "articles_list" } }); setLoading(true); }}
       aria-busy={loading}
       className={`group relative ${fluid ? "w-full" : "shrink-0 w-[260px] sm:w-[280px]"} h-[340px] sm:h-[360px] rounded-[16px] overflow-hidden bg-pogi-dark block outline-none
         transition-all duration-300 ease-out

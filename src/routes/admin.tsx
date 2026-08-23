@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, Link, useNavigate } from "@tanstack/react-rout
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import pogiLogo from "@/assets/pogi-logo.png.asset.json";
-import { LogOut, FileText, Video, LayoutDashboard, Database, Tag, Mic, Image as ImageIcon, Type, Gauge, HeartPulse, ShieldCheck } from "lucide-react";
+import { LogOut, FileText, Video, LayoutDashboard, Database, Tag, Mic, Image as ImageIcon, Type, Gauge, HeartPulse, ShieldCheck, BarChart3 } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin — POGI", name: "robots", content: "noindex" }] }),
@@ -59,7 +59,7 @@ function AdminLayout() {
     <div className="min-h-screen bg-pogi-darker text-white">
       <header className="h-[60px] border-b border-white/10 flex items-center justify-between px-6 sticky top-0 bg-pogi-darker/95 backdrop-blur z-40">
         <Link to="/admin" className="flex items-center gap-3">
-          <img src={pogiLogo.url} alt="POGI" className="h-8 w-auto" />
+          <img src={pogiLogo.url} alt="POGI" width={500} height={500} decoding="async" className="h-8 w-auto" />
           <span className="font-display uppercase tracking-wider text-pogi-yellow">Back office</span>
         </Link>
         <div className="flex items-center gap-4">
@@ -83,6 +83,7 @@ function AdminLayout() {
           <p className="hidden md:block px-3 pt-4 pb-1 text-[11px] uppercase tracking-widest text-white/35">
             Supervision
           </p>
+          <NavItem to="/admin/analytics" icon={<BarChart3 size={18} />} label="Audience" />
           <NavItem to="/admin/statut" icon={<ShieldCheck size={18} />} label="Statut du site" />
           <NavItem to="/admin/health" icon={<HeartPulse size={18} />} label="Santé du site" />
           <NavItem to="/admin/seo" icon={<Gauge size={18} />} label="Indexation" />

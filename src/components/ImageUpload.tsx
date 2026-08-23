@@ -14,6 +14,37 @@ type Props = {
 // 10 ans en secondes — quasi permanent pour l'affichage public
 const SIGNED_URL_TTL = 60 * 60 * 24 * 365 * 10;
 
+/** Max width for uploaded images — keeps pages light without visible quality loss. */
+const MAX_WIDTH = 1920;
+
+/**
+ * Converts an uploaded image to WebP (resized to MAX_WIDTH) in the browser.
+ * Falls back to the original file when conversion isn't possible (SVG, GIF animé…).
+ */
+async function toWebp(file: File): Promise<File> {
+  if (file.type === "image/svg+xml" || file.type === "image/gif") return file;
+  try {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, MAX_WIDTH / bitmap.width);
+    const w = Math.round(bitmap.width * scale);
+    const h = Math.round(bitmap.height * scale);
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return file;
+    ctx.drawImage(bitmap, 0, 0, w, h);
+    bitmap.close?.();
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, "image/webp", 0.82),
+    );
+    if (!blob || blob.size >= file.size) return file;
+    return new File([blob], file.name.replace(/\.[^.]+$/, "") + ".webp", { type: "image/webp" });
+  } catch {
+    return file;
+  }
+}
+
 export default function ImageUpload({ value, onChange, folder = "uploads", maxPreviewHeight = 420 }: Props) {
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
@@ -33,12 +64,13 @@ export default function ImageUpload({ value, onChange, folder = "uploads", maxPr
     }
     setUploading(true);
     try {
-      const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+      const converted = await toWebp(file);
+      const ext = converted.type === "image/webp" ? "webp" : (file.name.split(".").pop() || "jpg").toLowerCase();
       const path = `${folder}/${crypto.randomUUID()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from("media").upload(path, file, {
+      const { error: upErr } = await supabase.storage.from("media").upload(path, converted, {
         cacheControl: "31536000",
         upsert: false,
-        contentType: file.type,
+        contentType: converted.type,
       });
       if (upErr) throw upErr;
       const { data, error: signErr } = await supabase.storage.from("media").createSignedUrl(path, SIGNED_URL_TTL);

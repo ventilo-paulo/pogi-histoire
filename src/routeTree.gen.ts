@@ -22,6 +22,7 @@ import { Route as VideosRouteImport } from './routes/videos'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as AdminArticlesRouteImport } from './routes/admin.articles'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 import { Route as AdminCharteRouteImport } from './routes/admin.charte'
@@ -107,6 +108,11 @@ const Char91DotwellKnownChar93OauthProtectedResourceRoute =
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminArticlesRoute = AdminArticlesRouteImport.update({
@@ -222,6 +228,7 @@ export interface FileRoutesByFullPath {
   '/videos': typeof VideosRouteWithChildren
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/charte': typeof AdminCharteRoute
@@ -255,6 +262,7 @@ export interface FileRoutesByTo {
   '/videos': typeof VideosRouteWithChildren
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/charte': typeof AdminCharteRoute
@@ -290,6 +298,7 @@ export interface FileRoutesById {
   '/videos': typeof VideosRouteWithChildren
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/charte': typeof AdminCharteRoute
@@ -326,6 +335,7 @@ export interface FileRouteTypes {
     | '/videos'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/admin/analytics'
     | '/admin/articles'
     | '/admin/categories'
     | '/admin/charte'
@@ -359,6 +369,7 @@ export interface FileRouteTypes {
     | '/videos'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/admin/analytics'
     | '/admin/articles'
     | '/admin/categories'
     | '/admin/charte'
@@ -393,6 +404,7 @@ export interface FileRouteTypes {
     | '/videos'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/admin/analytics'
     | '/admin/articles'
     | '/admin/categories'
     | '/admin/charte'
@@ -529,6 +541,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/analytics': {
+      id: '/admin/analytics'
+      path: '/analytics'
+      fullPath: '/admin/analytics'
+      preLoaderRoute: typeof AdminAnalyticsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/articles': {
@@ -668,6 +687,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminArticlesRoute: typeof AdminArticlesRoute
   AdminCategoriesRoute: typeof AdminCategoriesRoute
   AdminCharteRoute: typeof AdminCharteRoute
@@ -682,6 +702,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminArticlesRoute: AdminArticlesRoute,
   AdminCategoriesRoute: AdminCategoriesRoute,
   AdminCharteRoute: AdminCharteRoute,
