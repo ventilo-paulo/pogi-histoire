@@ -59,7 +59,7 @@ function AdminLayout() {
     <div className="min-h-screen bg-pogi-darker text-white">
       <header className="h-[60px] border-b border-white/10 flex items-center justify-between px-6 sticky top-0 bg-pogi-darker/95 backdrop-blur z-40">
         <Link to="/admin" className="flex items-center gap-3">
-          <img src={pogiLogo.url} alt="POGI" className="h-8 w-auto" />
+          <img src={pogiLogo.url} alt="POGI" width={500} height={500} decoding="async" className="h-8 w-auto" />
           <span className="font-display uppercase tracking-wider text-pogi-yellow">Back office</span>
         </Link>
         <div className="flex items-center gap-4">

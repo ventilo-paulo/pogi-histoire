@@ -68,7 +68,7 @@ function AuthPage() {
     <div className="min-h-screen bg-pogi-darker flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-black/40 border border-white/10 rounded-2xl p-8">
         <div className="flex justify-center mb-6">
-          <img src={pogiLogo.url} alt="POGI" className="h-14 w-auto" />
+          <img src={pogiLogo.url} alt="POGI" width={500} height={500} decoding="async" className="h-14 w-auto" />
         </div>
         <h1 className="font-display text-3xl text-white text-center uppercase mb-1">Back office</h1>
         <p className="text-white/60 text-center text-sm mb-6">Accès réservé à l'équipe POGI</p>
