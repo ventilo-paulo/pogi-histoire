@@ -200,6 +200,14 @@ function AdminAnalytics() {
               {r.label}
             </button>
           ))}
+          <button
+            onClick={() => rows && exportSearchCsv(rows, days)}
+            disabled={!rows}
+            className="px-3 py-1.5 rounded-md text-sm font-semibold bg-white/5 text-white/80 hover:bg-white/10 disabled:opacity-40 flex items-center gap-2"
+          >
+            <Download size={15} />
+            Export CSV recherches{rows ? ` (${stats.searchEventCount})` : ""}
+          </button>
         </div>
       </div>
 
