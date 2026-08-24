@@ -1,7 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { BarChart3, Eye, MousePointerClick, Search, SearchX, Users } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import {
+  getSearchAlertSettings,
+  saveSearchAlertSettings,
+  runSearchAlertCheckNow,
+} from "@/lib/search-alerts.functions";
+import { BarChart3, BellRing, Download, Eye, MousePointerClick, Search, SearchX, Users } from "lucide-react";
 
 export const Route = createFileRoute("/admin/analytics")({
   head: () => ({ meta: [{ title: "Audience — Admin POGI" }, { name: "robots", content: "noindex" }] }),
