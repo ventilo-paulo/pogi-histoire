@@ -154,6 +154,20 @@ function AdminAnalytics() {
       topSearches: topOf(searches, (r) => r.label),
       topNoResults: topOf(noResults, (r) => r.label),
       topSearchClicks: topOf(resultClicks, (r) => r.label),
+      noResultsByCategory: topOf(noResults, (r) => metaStr(r, "category")),
+      clicksByCategory: topOf(resultClicks, (r) => metaStr(r, "category")),
+      clicksByKind: topOf(resultClicks, (r) => {
+        const k = metaStr(r, "kind");
+        return k ? (KIND_LABEL[k] ?? k) : null;
+      }),
+      clicksArticles: topOf(resultClicks.filter((r) => metaStr(r, "kind") === "article"), (r) => r.label),
+      clicksCollections: topOf(resultClicks.filter((r) => metaStr(r, "kind") === "collection"), (r) => r.label),
+      clicksVideos: topOf(resultClicks.filter((r) => metaStr(r, "kind") === "video"), (r) => r.label),
+      noResultsDetailed: topOf(noResults, (r) => {
+        const cat = metaStr(r, "category");
+        return r.label ? `${r.label}${cat ? ` · ${cat}` : ""}` : null;
+      }),
+      searchEventCount: list.filter((r) => SEARCH_EVENTS.includes(r.event)).length,
       topNav: topOf(list.filter((r) => r.event === "nav_click"), (r) => r.label),
       topReferrers: topOf(list, (r) => r.referrer),
       perDay: (() => {
