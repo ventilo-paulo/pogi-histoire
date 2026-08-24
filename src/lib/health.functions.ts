@@ -84,13 +84,31 @@ export const healthSaveSettings = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await requireAdmin(context as any);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const patch: Record<string, unknown> = { ...data, updated_at: new Date().toISOString() };
+
+    // Changing the monitored address schedules an automatic re-test 30 minutes later.
+    let retestAt: string | null = null;
+    if (data.monitor_base_url !== undefined) {
+      const { data: current } = await supabaseAdmin
+        .from("site_health_settings" as any)
+        .select("monitor_base_url")
+        .maybeSingle();
+      const before = (current as any)?.monitor_base_url ?? null;
+      if (before !== (data.monitor_base_url ?? null)) {
+        retestAt = new Date(Date.now() + 30 * 60 * 1000).toISOString();
+        patch.retest_at = retestAt;
+        patch.retest_reason = `Changement d'adresse surveillée (${before ?? "défaut"} → ${data.monitor_base_url ?? "défaut"})`;
+      }
+    }
+
     const { error } = await supabaseAdmin
       .from("site_health_settings" as any)
-      .update({ ...data, updated_at: new Date().toISOString() })
+      .update(patch)
       .eq("id", true);
     if (error) throw new Error(error.message);
-    return { ok: true };
+    return { ok: true, retestAt };
   });
+
 
 /** Mark health alerts as read. */
 export const healthMarkAlertsRead = createServerFn({ method: "POST" })
