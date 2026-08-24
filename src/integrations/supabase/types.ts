@@ -332,6 +332,45 @@ export type Database = {
         }
         Relationships: []
       }
+      search_alert_settings: {
+        Row: {
+          email_enabled: boolean
+          empty_threshold_pct: number
+          enabled: boolean
+          id: boolean
+          last_alert_at: string | null
+          min_searches: number
+          no_results_threshold_pct: number
+          notify_email: string | null
+          updated_at: string
+          window_days: number
+        }
+        Insert: {
+          email_enabled?: boolean
+          empty_threshold_pct?: number
+          enabled?: boolean
+          id?: boolean
+          last_alert_at?: string | null
+          min_searches?: number
+          no_results_threshold_pct?: number
+          notify_email?: string | null
+          updated_at?: string
+          window_days?: number
+        }
+        Update: {
+          email_enabled?: boolean
+          empty_threshold_pct?: number
+          enabled?: boolean
+          id?: boolean
+          last_alert_at?: string | null
+          min_searches?: number
+          no_results_threshold_pct?: number
+          notify_email?: string | null
+          updated_at?: string
+          window_days?: number
+        }
+        Relationships: []
+      }
       seo_alerts: {
         Row: {
           created_at: string
