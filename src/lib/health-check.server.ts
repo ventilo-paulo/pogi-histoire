@@ -348,6 +348,32 @@ async function notifyByEmail(subject: string, lines: string[], label = "site-hea
 }
 
 
+/** Origin actually crawled: configurable in Admin > Santé, defaults to SITE_URL. */
+async function resolveMonitorBase() {
+  const { data } = await supabaseAdmin
+    .from("site_health_settings" as any)
+    .select("monitor_base_url")
+    .maybeSingle();
+  const raw = (data as any)?.monitor_base_url as string | null | undefined;
+  if (!raw) return SITE_URL.replace(/\/$/, "");
+  try {
+    return new URL(raw).origin;
+  } catch {
+    return SITE_URL.replace(/\/$/, "");
+  }
+}
+
+/** Move a canonical site URL onto the monitored origin. */
+function rebase(url: string, base: string) {
+  try {
+    const u = new URL(url);
+    return `${base}${u.pathname}${u.search}`;
+  } catch {
+    return url;
+  }
+}
+
+
 /** Crawl the live site, detect breakage, persist state, raise alerts + email. */
 export async function runSiteHealthCheck(trigger: "cron" | "manual" = "cron") {
   const startedAt = Date.now();
