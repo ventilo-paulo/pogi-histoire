@@ -79,6 +79,7 @@ type Settings = {
   email_enabled: boolean;
   daily_summary_enabled?: boolean;
   notify_email: string | null;
+  monitor_base_url?: string | null;
 } | null;
 
 function fmt(d?: string | null) {
