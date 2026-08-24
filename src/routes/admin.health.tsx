@@ -114,6 +114,7 @@ function AdminHealth() {
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [settings, setSettings] = useState<Settings>(null);
   const [email, setEmail] = useState("");
+  const [baseUrl, setBaseUrl] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
