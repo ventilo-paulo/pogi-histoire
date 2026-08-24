@@ -23,7 +23,69 @@ type Row = {
   session_id: string | null;
   referrer: string | null;
   created_at: string;
+  meta: Record<string, unknown> | null;
 };
+
+const SEARCH_EVENTS = ["search_empty", "search_no_results", "search_result_click"];
+
+const metaStr = (r: Row, key: string) => {
+  const v = r.meta?.[key];
+  return v === null || v === undefined || v === "" ? null : String(v);
+};
+
+const KIND_LABEL: Record<string, string> = {
+  article: "Articles",
+  collection: "Collections",
+  video: "Vidéos",
+  interview: "Interviews",
+};
+
+function csvEscape(v: unknown) {
+  const s = v === null || v === undefined ? "" : String(v);
+  return /[";\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
+function exportSearchCsv(rows: Row[], days: number) {
+  const list = rows.filter((r) => SEARCH_EVENTS.includes(r.event));
+  const head = [
+    "Date",
+    "Événement",
+    "Requête",
+    "Page",
+    "Type",
+    "Catégorie",
+    "Source",
+    "Position",
+    "Résultats",
+    "Slug",
+    "Session",
+    "Référent",
+  ];
+  const body = list.map((r) => [
+    new Date(r.created_at).toISOString(),
+    r.event,
+    r.label ?? "",
+    r.path ?? "",
+    metaStr(r, "kind") ?? "",
+    metaStr(r, "category") ?? "",
+    metaStr(r, "source") ?? "",
+    metaStr(r, "position") ?? "",
+    metaStr(r, "results") ?? "",
+    r.slug ?? "",
+    r.session_id ?? "",
+    r.referrer ?? "",
+  ]);
+  const csv = "\uFEFF" + [head, ...body].map((r) => r.map(csvEscape).join(";")).join("\r\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `pogi-recherches_${days}j_${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
 
 const RANGES = [
   { days: 7, label: "7 jours" },
