@@ -59,27 +59,28 @@ function inspectHtml(html: string) {
   return problems;
 }
 
-function extractImages(html: string, max = 8) {
+function extractImages(html: string, base: string = SITE_URL, max = 8) {
+  const canonicalHost = new URL(SITE_URL).host;
+  const add = (raw: string, set: Set<string>) => {
+    try {
+      const u = new URL(raw, base);
+      // Canonical-domain assets are the same files as on the monitored origin.
+      if (u.host === canonicalHost) set.add(`${base}${u.pathname}${u.search}`);
+      else set.add(u.href);
+    } catch {
+      /* ignore malformed src */
+    }
+  };
   const urls = new Set<string>();
   const re = /<img[^>]+src=["']([^"']+)["']/gi;
   let m: RegExpExecArray | null;
   while ((m = re.exec(html)) && urls.size < max) {
     const raw = m[1];
     if (raw.startsWith("data:")) continue;
-    try {
-      urls.add(new URL(raw, SITE_URL).href);
-    } catch {
-      /* ignore malformed src */
-    }
+    add(raw, urls);
   }
   const og = /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i.exec(html);
-  if (og) {
-    try {
-      urls.add(new URL(og[1], SITE_URL).href);
-    } catch {
-      /* ignore */
-    }
-  }
+  if (og) add(og[1], urls);
   return [...urls];
 }
 
