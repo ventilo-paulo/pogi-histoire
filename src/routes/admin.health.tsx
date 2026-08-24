@@ -413,7 +413,26 @@ function AdminHealth() {
                 Enregistrer l'adresse surveillée
               </button>
             </div>
+            <p className="text-xs text-white/50">
+              Après tout changement d'adresse, un contrôle de santé est relancé automatiquement 30
+              minutes plus tard.
+            </p>
+            {settings?.retest_at && (
+              <p className="text-xs text-pogi-yellow">
+                Re-test automatique programmé le {fmt(settings.retest_at)}
+                {settings.retest_reason ? ` — ${settings.retest_reason}` : ""}
+              </p>
+            )}
+            <a
+              href="/statut"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-block text-xs text-pogi-yellow hover:underline"
+            >
+              Voir la page publique de statut
+            </a>
           </section>
+
 
           {/* Notifications */}
           <section className="rounded-xl border border-white/10 bg-white/5 p-5 space-y-4">
