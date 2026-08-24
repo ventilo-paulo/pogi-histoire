@@ -116,7 +116,7 @@ function AdminAnalytics() {
     (async () => {
       const { data, error } = await supabase
         .from("analytics_events")
-        .select("id,event,path,label,slug,session_id,referrer,created_at")
+        .select("id,event,path,label,slug,session_id,referrer,created_at,meta")
         .gte("created_at", since)
         .order("created_at", { ascending: false })
         .limit(20000);
