@@ -409,7 +409,7 @@ export async function runSiteHealthCheck(trigger: "cron" | "manual" = "cron") {
     );
 
     if (homeHtml) {
-      for (const img of extractImages(homeHtml)) checks.push(await checkImage(img));
+      for (const img of extractImages(homeHtml, base)) checks.push(await checkImage(img));
     }
 
     checks.push(await checkDatabase());
