@@ -126,6 +126,7 @@ function AdminHealth() {
       setAlerts(res.alerts);
       setSettings(res.settings);
       setEmail(res.settings?.notify_email ?? "");
+      setBaseUrl(res.settings?.monitor_base_url ?? "");
     } catch (e: any) {
       setError(e?.message ?? "Erreur de chargement");
     } finally {
