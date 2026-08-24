@@ -359,23 +359,24 @@ export async function runSiteHealthCheck(trigger: "cron" | "manual" = "cron") {
   const runId = (run as any)?.id as string | undefined;
 
   try {
-    const pages = await listSiteUrls();
+    const base = await resolveMonitorBase();
+    const pages = (await listSiteUrls()).map((p) => ({ ...p, url: rebase(p.url, base) }));
     const checks: HealthCheck[] = [];
     let homeHtml: string | undefined;
 
     for (const p of pages) {
       const { check, html } = await checkPage(p.url, p.label);
       checks.push(check);
-      if (p.url === `${SITE_URL}/`) homeHtml = html;
+      if (p.url === `${base}/`) homeHtml = html;
     }
 
     checks.push(
-      await checkAsset(`${SITE_URL}/sitemap.xml`, "Sitemap", (b) =>
+      await checkAsset(`${base}/sitemap.xml`, "Sitemap", (b) =>
         b.includes("<urlset") || b.includes("<sitemapindex") ? null : "Sitemap invalide",
       ),
     );
     checks.push(
-      await checkAsset(`${SITE_URL}/robots.txt`, "robots.txt", (b) =>
+      await checkAsset(`${base}/robots.txt`, "robots.txt", (b) =>
         b.toLowerCase().includes("user-agent") ? null : "robots.txt invalide",
       ),
     );
@@ -385,6 +386,19 @@ export async function runSiteHealthCheck(trigger: "cron" | "manual" = "cron") {
     }
 
     checks.push(await checkDatabase());
+
+    // Drop stale rows pointing at a previously monitored origin so the
+    // dashboard only reflects the site currently being watched.
+    const keep = new Set(checks.map((c) => c.target));
+    const { data: staleRows } = await supabaseAdmin
+      .from("site_health_checks" as any)
+      .select("target");
+    const stale = ((staleRows as any[]) ?? [])
+      .map((r) => r.target as string)
+      .filter((t) => !keep.has(t) && /^https?:\/\//i.test(t));
+    if (stale.length) {
+      await supabaseAdmin.from("site_health_checks" as any).delete().in("target", stale);
+    }
 
     // --- Compare with previous state ---
     const { data: previousRows } = await supabaseAdmin
