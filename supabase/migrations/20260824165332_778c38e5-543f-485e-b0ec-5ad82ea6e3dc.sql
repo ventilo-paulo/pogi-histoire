@@ -1,0 +1,2 @@
+alter table public.site_health_settings add column if not exists monitor_base_url text;
+update public.site_health_settings set monitor_base_url = 'https://pogi-histoire.lovable.app' where monitor_base_url is null;

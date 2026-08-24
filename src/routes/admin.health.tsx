@@ -79,6 +79,7 @@ type Settings = {
   email_enabled: boolean;
   daily_summary_enabled?: boolean;
   notify_email: string | null;
+  monitor_base_url?: string | null;
 } | null;
 
 function fmt(d?: string | null) {
@@ -113,6 +114,7 @@ function AdminHealth() {
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [settings, setSettings] = useState<Settings>(null);
   const [email, setEmail] = useState("");
+  const [baseUrl, setBaseUrl] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -124,6 +126,7 @@ function AdminHealth() {
       setAlerts(res.alerts);
       setSettings(res.settings);
       setEmail(res.settings?.notify_email ?? "");
+      setBaseUrl(res.settings?.monitor_base_url ?? "");
     } catch (e: any) {
       setError(e?.message ?? "Erreur de chargement");
     } finally {
@@ -380,6 +383,33 @@ function AdminHealth() {
                 </table>
               </div>
             )}
+          </section>
+
+          {/* Adresse surveillée */}
+          <section className="rounded-xl border border-white/10 bg-white/5 p-5 space-y-3">
+            <h2 className="font-display uppercase text-white text-lg flex items-center gap-2">
+              <Globe size={18} /> Adresse surveillée
+            </h2>
+            <p className="text-xs text-white/50">
+              Version du site réellement contrôlée par la surveillance. Utile lorsque le nom de
+              domaine n'est pas encore branché sur la version en ligne.
+            </p>
+            <div className="flex flex-wrap items-center gap-2">
+              <input
+                type="url"
+                value={baseUrl}
+                onChange={(e) => setBaseUrl(e.target.value)}
+                placeholder="https://pogi-histoire.com"
+                className="min-w-[18rem] rounded-md border border-white/15 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-white/30"
+              />
+              <button
+                onClick={() => void onSave({ monitor_base_url: baseUrl.trim() || null })}
+                disabled={busy}
+                className="rounded-md border border-white/15 px-3 py-2 text-sm text-white/80 hover:bg-white/5 disabled:opacity-50"
+              >
+                Enregistrer l'adresse surveillée
+              </button>
+            </div>
           </section>
 
           {/* Notifications */}

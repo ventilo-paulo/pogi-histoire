@@ -599,6 +599,7 @@ export type Database = {
           enabled: boolean
           id: boolean
           last_daily_summary_at: string | null
+          monitor_base_url: string | null
           notify_email: string | null
           updated_at: string
         }
@@ -608,6 +609,7 @@ export type Database = {
           enabled?: boolean
           id?: boolean
           last_daily_summary_at?: string | null
+          monitor_base_url?: string | null
           notify_email?: string | null
           updated_at?: string
         }
@@ -617,6 +619,7 @@ export type Database = {
           enabled?: boolean
           id?: boolean
           last_daily_summary_at?: string | null
+          monitor_base_url?: string | null
           notify_email?: string | null
           updated_at?: string
         }

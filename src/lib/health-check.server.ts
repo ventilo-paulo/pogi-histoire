@@ -59,27 +59,28 @@ function inspectHtml(html: string) {
   return problems;
 }
 
-function extractImages(html: string, max = 8) {
+function extractImages(html: string, base: string = SITE_URL, max = 8) {
+  const canonicalHost = new URL(SITE_URL).host;
+  const add = (raw: string, set: Set<string>) => {
+    try {
+      const u = new URL(raw, base);
+      // Canonical-domain assets are the same files as on the monitored origin.
+      if (u.host === canonicalHost) set.add(`${base}${u.pathname}${u.search}`);
+      else set.add(u.href);
+    } catch {
+      /* ignore malformed src */
+    }
+  };
   const urls = new Set<string>();
   const re = /<img[^>]+src=["']([^"']+)["']/gi;
   let m: RegExpExecArray | null;
   while ((m = re.exec(html)) && urls.size < max) {
     const raw = m[1];
     if (raw.startsWith("data:")) continue;
-    try {
-      urls.add(new URL(raw, SITE_URL).href);
-    } catch {
-      /* ignore malformed src */
-    }
+    add(raw, urls);
   }
   const og = /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i.exec(html);
-  if (og) {
-    try {
-      urls.add(new URL(og[1], SITE_URL).href);
-    } catch {
-      /* ignore */
-    }
-  }
+  if (og) add(og[1], urls);
   return [...urls];
 }
 
@@ -348,6 +349,32 @@ async function notifyByEmail(subject: string, lines: string[], label = "site-hea
 }
 
 
+/** Origin actually crawled: configurable in Admin > Santé, defaults to SITE_URL. */
+async function resolveMonitorBase() {
+  const { data } = await supabaseAdmin
+    .from("site_health_settings" as any)
+    .select("monitor_base_url")
+    .maybeSingle();
+  const raw = (data as any)?.monitor_base_url as string | null | undefined;
+  if (!raw) return SITE_URL.replace(/\/$/, "");
+  try {
+    return new URL(raw).origin;
+  } catch {
+    return SITE_URL.replace(/\/$/, "");
+  }
+}
+
+/** Move a canonical site URL onto the monitored origin. */
+function rebase(url: string, base: string) {
+  try {
+    const u = new URL(url);
+    return `${base}${u.pathname}${u.search}`;
+  } catch {
+    return url;
+  }
+}
+
+
 /** Crawl the live site, detect breakage, persist state, raise alerts + email. */
 export async function runSiteHealthCheck(trigger: "cron" | "manual" = "cron") {
   const startedAt = Date.now();
@@ -359,32 +386,46 @@ export async function runSiteHealthCheck(trigger: "cron" | "manual" = "cron") {
   const runId = (run as any)?.id as string | undefined;
 
   try {
-    const pages = await listSiteUrls();
+    const base = await resolveMonitorBase();
+    const pages = (await listSiteUrls()).map((p) => ({ ...p, url: rebase(p.url, base) }));
     const checks: HealthCheck[] = [];
     let homeHtml: string | undefined;
 
     for (const p of pages) {
       const { check, html } = await checkPage(p.url, p.label);
       checks.push(check);
-      if (p.url === `${SITE_URL}/`) homeHtml = html;
+      if (p.url === `${base}/`) homeHtml = html;
     }
 
     checks.push(
-      await checkAsset(`${SITE_URL}/sitemap.xml`, "Sitemap", (b) =>
+      await checkAsset(`${base}/sitemap.xml`, "Sitemap", (b) =>
         b.includes("<urlset") || b.includes("<sitemapindex") ? null : "Sitemap invalide",
       ),
     );
     checks.push(
-      await checkAsset(`${SITE_URL}/robots.txt`, "robots.txt", (b) =>
+      await checkAsset(`${base}/robots.txt`, "robots.txt", (b) =>
         b.toLowerCase().includes("user-agent") ? null : "robots.txt invalide",
       ),
     );
 
     if (homeHtml) {
-      for (const img of extractImages(homeHtml)) checks.push(await checkImage(img));
+      for (const img of extractImages(homeHtml, base)) checks.push(await checkImage(img));
     }
 
     checks.push(await checkDatabase());
+
+    // Drop stale rows pointing at a previously monitored origin so the
+    // dashboard only reflects the site currently being watched.
+    const keep = new Set(checks.map((c) => c.target));
+    const { data: staleRows } = await supabaseAdmin
+      .from("site_health_checks" as any)
+      .select("target");
+    const stale = ((staleRows as any[]) ?? [])
+      .map((r) => r.target as string)
+      .filter((t) => !keep.has(t) && /^https?:\/\//i.test(t));
+    if (stale.length) {
+      await supabaseAdmin.from("site_health_checks" as any).delete().in("target", stale);
+    }
 
     // --- Compare with previous state ---
     const { data: previousRows } = await supabaseAdmin

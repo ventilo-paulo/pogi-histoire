@@ -65,9 +65,19 @@ export const healthSaveSettings = createServerFn({ method: "POST" })
       email_enabled?: boolean;
       daily_summary_enabled?: boolean;
       notify_email?: string;
+      monitor_base_url?: string | null;
     }) => {
     if (input.notify_email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(input.notify_email)) {
       throw new Error("Adresse email invalide");
+    }
+    if (input.monitor_base_url) {
+      try {
+        const u = new URL(input.monitor_base_url);
+        if (!/^https?:$/.test(u.protocol)) throw new Error("bad");
+        input.monitor_base_url = u.origin;
+      } catch {
+        throw new Error("Adresse de site invalide (ex : https://pogi-histoire.com)");
+      }
     }
     return input;
   })
