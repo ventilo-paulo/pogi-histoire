@@ -261,9 +261,183 @@ function AdminAnalytics() {
             <TopList title="Navigation (menu)" data={stats.topNav} />
             <TopList title="Sites référents" data={stats.topReferrers} />
           </div>
+
+          <h2 className="font-display text-2xl uppercase text-white pt-2">Recherche — détail par catégorie et par type</h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            <TopList title="Requêtes sans résultat (avec catégorie)" data={stats.noResultsDetailed} />
+            <TopList title="Sans résultat par catégorie" data={stats.noResultsByCategory} />
+            <TopList title="Clics résultats par type" data={stats.clicksByKind} />
+            <TopList title="Clics résultats par catégorie" data={stats.clicksByCategory} />
+            <TopList title="Résultats cliqués — articles" data={stats.clicksArticles} />
+            <TopList title="Résultats cliqués — collections" data={stats.clicksCollections} />
+            <TopList title="Résultats cliqués — vidéos" data={stats.clicksVideos} />
+          </div>
+
+          <AlertSettings />
         </>
       )}
     </div>
+  );
+}
+
+function AlertSettings() {
+  const load = useServerFn(getSearchAlertSettings);
+  const save = useServerFn(saveSearchAlertSettings);
+  const runNow = useServerFn(runSearchAlertCheckNow);
+
+  const [form, setForm] = useState<{
+    enabled: boolean;
+    window_days: number;
+    min_searches: number;
+    no_results_threshold_pct: number;
+    empty_threshold_pct: number;
+    email_enabled: boolean;
+    notify_email: string;
+  } | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const [lastAlertAt, setLastAlertAt] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const s: any = await load();
+        if (cancelled) return;
+        setForm({
+          enabled: !!s.enabled,
+          window_days: s.window_days ?? 7,
+          min_searches: s.min_searches ?? 20,
+          no_results_threshold_pct: s.no_results_threshold_pct ?? 25,
+          empty_threshold_pct: s.empty_threshold_pct ?? 50,
+          email_enabled: !!s.email_enabled,
+          notify_email: s.notify_email ?? "",
+        });
+        setLastAlertAt(s.last_alert_at ?? null);
+      } catch (e: any) {
+        if (!cancelled) setErr(e?.message ?? "Chargement impossible");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [load]);
+
+  if (err && !form) return <Panel title="Alertes recherche" icon={<BellRing size={16} />}><p className="text-red-400 text-sm">{err}</p></Panel>;
+  if (!form) return <Panel title="Alertes recherche" icon={<BellRing size={16} />}><p className="text-white/50 text-sm">Chargement…</p></Panel>;
+
+  const num = (k: keyof typeof form) => ({
+    type: "number" as const,
+    value: form[k] as number,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, [k]: Number(e.target.value) }),
+    className:
+      "w-full rounded-md bg-white/5 border border-white/10 px-3 py-2 text-white text-sm focus:outline-none focus:border-pogi-yellow/60",
+  });
+
+  const submit = async () => {
+    setBusy(true);
+    setMsg(null);
+    setErr(null);
+    try {
+      await save({ data: { ...form, notify_email: form.notify_email || null } });
+      setMsg("Seuils enregistrés.");
+    } catch (e: any) {
+      setErr(e?.message ?? "Enregistrement impossible");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const check = async () => {
+    setBusy(true);
+    setMsg(null);
+    setErr(null);
+    try {
+      const r: any = await runNow();
+      setMsg(
+        r?.alerts?.length
+          ? `Seuil dépassé : ${r.alerts.join(" · ")} — alerte enregistrée${form.email_enabled && form.notify_email ? " et e-mail envoyé" : ""}.`
+          : `Aucun seuil dépassé — ${r?.searches ?? 0} recherche(s), ${r?.no_results_pct ?? 0}% sans résultat, ${r?.empty_pct ?? 0}% vides sur ${r?.window_days ?? form.window_days} jours.`,
+      );
+      if (r?.alerts?.length) setLastAlertAt(new Date().toISOString());
+    } catch (e: any) {
+      setErr(e?.message ?? "Vérification impossible");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Panel title="Alertes recherche (seuils configurables)" icon={<BellRing size={16} />}>
+      <p className="text-white/60 text-sm mb-4">
+        Une alerte est enregistrée (et envoyée par e-mail) dès que le taux de recherches sans résultat ou de recherches
+        vides/abandonnées dépasse le seuil, avec un résumé des requêtes concernées. Vérification automatique quotidienne.
+        {lastAlertAt && ` Dernière alerte : ${new Date(lastAlertAt).toLocaleString("fr-FR")}.`}
+      </p>
+
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <label className="text-sm text-white/70 space-y-1 block">
+          <span>Fenêtre (jours)</span>
+          <input {...num("window_days")} min={1} max={90} />
+        </label>
+        <label className="text-sm text-white/70 space-y-1 block">
+          <span>Recherches minimum</span>
+          <input {...num("min_searches")} min={1} />
+        </label>
+        <label className="text-sm text-white/70 space-y-1 block">
+          <span>Seuil % sans résultat</span>
+          <input {...num("no_results_threshold_pct")} min={1} max={100} />
+        </label>
+        <label className="text-sm text-white/70 space-y-1 block">
+          <span>Seuil % recherches vides</span>
+          <input {...num("empty_threshold_pct")} min={1} max={100} />
+        </label>
+        <label className="text-sm text-white/70 space-y-1 block sm:col-span-2">
+          <span>E-mail de notification</span>
+          <input
+            type="email"
+            value={form.notify_email}
+            onChange={(e) => setForm({ ...form, notify_email: e.target.value })}
+            placeholder="pogi.videos@gmail.com"
+            className="w-full rounded-md bg-white/5 border border-white/10 px-3 py-2 text-white text-sm focus:outline-none focus:border-pogi-yellow/60"
+          />
+        </label>
+        <div className="flex flex-col gap-2 justify-end text-sm text-white/80">
+          <label className="flex items-center gap-2">
+            <input type="checkbox" checked={form.enabled} onChange={(e) => setForm({ ...form, enabled: e.target.checked })} />
+            Alertes activées
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={form.email_enabled}
+              onChange={(e) => setForm({ ...form, email_enabled: e.target.checked })}
+            />
+            Envoyer un e-mail
+          </label>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3 mt-5">
+        <button
+          onClick={submit}
+          disabled={busy}
+          className="px-4 py-2 rounded-md bg-pogi-yellow text-pogi-dark font-semibold text-sm disabled:opacity-50"
+        >
+          Enregistrer les seuils
+        </button>
+        <button
+          onClick={check}
+          disabled={busy}
+          className="px-4 py-2 rounded-md bg-white/5 text-white/80 hover:bg-white/10 text-sm disabled:opacity-50"
+        >
+          Vérifier maintenant
+        </button>
+        {msg && <span className="text-emerald-400 text-sm">{msg}</span>}
+        {err && <span className="text-red-400 text-sm">{err}</span>}
+      </div>
+    </Panel>
   );
 }
 
