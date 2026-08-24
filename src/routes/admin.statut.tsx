@@ -74,10 +74,13 @@ function AdminStatut() {
   const indexed = seoStatuses.filter((s) => s.verdict === "PASS").length;
   const incidents: any[] = useMemo(() => {
     const all = [...(health?.alerts ?? []), ...(seo?.alerts ?? [])];
-    return all
+    const unique = new Map<string, any>();
+    for (const a of all) unique.set(String(a?.id ?? `${a?.kind}-${a?.created_at}-${a?.title}`), a);
+    return [...unique.values()]
       .sort((a, b) => (a.created_at < b.created_at ? 1 : -1))
       .slice(0, 12);
   }, [health, seo]);
+
 
   const allGood = failing.length === 0;
 
