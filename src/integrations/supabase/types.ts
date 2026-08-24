@@ -601,6 +601,8 @@ export type Database = {
           last_daily_summary_at: string | null
           monitor_base_url: string | null
           notify_email: string | null
+          retest_at: string | null
+          retest_reason: string | null
           updated_at: string
         }
         Insert: {
@@ -611,6 +613,8 @@ export type Database = {
           last_daily_summary_at?: string | null
           monitor_base_url?: string | null
           notify_email?: string | null
+          retest_at?: string | null
+          retest_reason?: string | null
           updated_at?: string
         }
         Update: {
@@ -621,6 +625,8 @@ export type Database = {
           last_daily_summary_at?: string | null
           monitor_base_url?: string | null
           notify_email?: string | null
+          retest_at?: string | null
+          retest_reason?: string | null
           updated_at?: string
         }
         Relationships: []

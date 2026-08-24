@@ -51,10 +51,22 @@ export const Route = createFileRoute("/api/public/hooks/health-check")({
           const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
           const { data: settings } = await supabaseAdmin
             .from("site_health_settings" as any)
-            .select("enabled")
+            .select("enabled, retest_at")
             .maybeSingle();
           if ((settings as any) && (settings as any).enabled === false) {
             return Response.json({ ok: true, skipped: "disabled" });
+          }
+          if (mode === "retest") {
+            const due = (settings as any)?.retest_at as string | null | undefined;
+            if (!due || new Date(due).getTime() > Date.now()) {
+              return Response.json({ ok: true, skipped: "no-retest-due" });
+            }
+            await supabaseAdmin
+              .from("site_health_settings" as any)
+              .update({ retest_at: null, retest_reason: null })
+              .eq("id", true);
+            const { runSiteHealthCheck } = await import("@/lib/health-check.server");
+            return Response.json(await runSiteHealthCheck("cron"), { status: 200 });
           }
           if (mode === "daily-summary") {
             const { runDailyHealthSummary } = await import("@/lib/health-check.server");
@@ -66,6 +78,7 @@ export const Route = createFileRoute("/api/public/hooks/health-check")({
         } catch (e: any) {
           return Response.json({ ok: false, error: e?.message ?? "error" }, { status: 500 });
         }
+
       },
     },
   },
