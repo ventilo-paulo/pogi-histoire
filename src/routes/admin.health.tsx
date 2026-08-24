@@ -80,7 +80,10 @@ type Settings = {
   daily_summary_enabled?: boolean;
   notify_email: string | null;
   monitor_base_url?: string | null;
+  retest_at?: string | null;
+  retest_reason?: string | null;
 } | null;
+
 
 function fmt(d?: string | null) {
   if (!d) return "—";
