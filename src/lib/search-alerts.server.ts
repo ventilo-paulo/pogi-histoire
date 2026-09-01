@@ -142,16 +142,26 @@ export async function runSearchAlertCheck(trigger: "cron" | "manual" = "cron") {
   );
 
   if (s.email_enabled && s.notify_email) {
+    const esc = (v: unknown) =>
+      String(v)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
     const list = (t: [string, number][]) =>
-      t.length ? `<ul>${t.map(([k, n]) => `<li>${k} — ${n}</li>`).join("")}</ul>` : "<p>Aucune requête enregistrée.</p>";
+      t.length
+        ? `<ul>${t.map(([k, n]) => `<li>${esc(k)} — ${esc(n)}</li>`).join("")}</ul>`
+        : "<p>Aucune requête enregistrée.</p>";
     const html = `<div style="font-family:system-ui,Arial,sans-serif;font-size:15px;line-height:1.6">
       <h2>Alerte recherche — POGI</h2>
-      <p>Sur les ${s.window_days} derniers jours : ${total} recherche(s), ${noResults.length} sans résultat (${noResultsPct}%), ${empties.length} vide(s)/abandon(s) (${emptyPct}%).</p>
-      <ul>${breaches.map((b) => `<li><strong>${b.title}</strong><br/>${b.detail}</li>`).join("")}</ul>
+      <p>Sur les ${esc(s.window_days)} derniers jours : ${esc(total)} recherche(s), ${esc(noResults.length)} sans résultat (${esc(noResultsPct)}%), ${esc(empties.length)} vide(s)/abandon(s) (${esc(emptyPct)}%).</p>
+      <ul>${breaches.map((b) => `<li><strong>${esc(b.title)}</strong><br/>${esc(b.detail)}</li>`).join("")}</ul>
       <h3>Requêtes sans résultat</h3>${list(topNoResults)}
       <h3>Requêtes abandonnées</h3>${list(topEmpty)}
-      <p><a href="${SITE_URL}">${SITE_URL}</a> — détail dans Admin &gt; Audience.</p>
+      <p><a href="${esc(SITE_URL)}">${esc(SITE_URL)}</a> — détail dans Admin &gt; Audience.</p>
     </div>`;
+
     await notifyByEmail(
       `Alerte recherche POGI — ${breaches.length} seuil(s) dépassé(s)`,
       html,
