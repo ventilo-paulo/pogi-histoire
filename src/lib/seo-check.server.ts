@@ -17,7 +17,7 @@ function gatewayHeaders() {
   };
 }
 
-async function gsc(path: string, init?: RequestInit) {
+export async function gsc(path: string, init?: RequestInit) {
   const response = await fetch(`${GATEWAY}${path}`, {
     ...init,
     headers: { ...gatewayHeaders(), ...(init?.headers ?? {}) },
@@ -44,7 +44,7 @@ function coversTarget(siteUrl: string, target: URL) {
   }
 }
 
-async function resolveSiteUrl() {
+export async function resolveSiteUrl() {
   const { siteEntry = [] } = (await gsc("/webmasters/v3/sites")) as { siteEntry?: SiteEntry[] };
   const target = new URL(SITE_URL);
   const matches = siteEntry.filter(
@@ -249,6 +249,14 @@ export async function runSeoIndexCheck(trigger: "cron" | "manual" = "cron") {
           message: `${counts.indexed} indexées / ${urls.length}`,
         })
         .eq("id", runId);
+    }
+
+    // Keep the per-query position history fresh (never fatal for the run).
+    try {
+      const { refreshQueryRanks } = await import("@/lib/seo-rank.server");
+      await refreshQueryRanks(28);
+    } catch (e) {
+      console.error("refreshQueryRanks failed", e);
     }
 
     if (alerts.length) {

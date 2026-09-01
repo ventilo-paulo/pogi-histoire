@@ -37,12 +37,39 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
   });
 }
 
+// Long-lived caching for immutable static assets (fonts, images, hashed build output).
+const IMMUTABLE_ASSET = /\.(woff2?|ttf|otf|webp|avif|png|jpe?g|gif|svg|ico|mp4|webm)$/i;
+const HASHED_BUILD = /^\/(_build|assets|_server)\//;
+
+function withCacheHeaders(request: Request, response: Response): Response {
+  if (request.method !== "GET" || !response.ok) return response;
+  if (response.headers.has("cache-control")) return response;
+
+  const { pathname } = new URL(request.url);
+  const isBuildAsset = HASHED_BUILD.test(pathname);
+  const isStatic = IMMUTABLE_ASSET.test(pathname) || pathname.startsWith("/fonts/");
+  if (!isBuildAsset && !isStatic) return response;
+
+  const headers = new Headers(response.headers);
+  headers.set(
+    "cache-control",
+    isBuildAsset
+      ? "public, max-age=31536000, immutable"
+      : "public, max-age=604800, stale-while-revalidate=86400",
+  );
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return await normalizeCatastrophicSsrResponse(response);
+      return withCacheHeaders(request, await normalizeCatastrophicSsrResponse(response));
     } catch (error) {
       console.error(error);
       return new Response(renderErrorPage(), {
@@ -52,3 +79,4 @@ export default {
     }
   },
 };
+

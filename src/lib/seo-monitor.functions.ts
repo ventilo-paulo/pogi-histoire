@@ -60,3 +60,21 @@ export const seoMarkAlertsRead = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+/** Per-query Google position history (stored snapshots). */
+export const seoRankState = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await requireAdmin(context as any);
+    const { getQueryRankSummary } = await import("@/lib/seo-rank.server");
+    return getQueryRankSummary(150);
+  });
+
+/** Pull fresh Search Console query data and store it. */
+export const seoRefreshRanks = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await requireAdmin(context as any);
+    const { refreshQueryRanks } = await import("@/lib/seo-rank.server");
+    return refreshQueryRanks(28);
+  });

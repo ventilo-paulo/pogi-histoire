@@ -466,6 +466,39 @@ export type Database = {
         }
         Relationships: []
       }
+      seo_query_ranks: {
+        Row: {
+          captured_at: string
+          clicks: number
+          ctr: number
+          date: string
+          id: string
+          impressions: number
+          position: number
+          query: string
+        }
+        Insert: {
+          captured_at?: string
+          clicks?: number
+          ctr?: number
+          date: string
+          id?: string
+          impressions?: number
+          position?: number
+          query: string
+        }
+        Update: {
+          captured_at?: string
+          clicks?: number
+          ctr?: number
+          date?: string
+          id?: string
+          impressions?: number
+          position?: number
+          query?: string
+        }
+        Relationships: []
+      }
       seo_url_status: {
         Row: {
           checked_at: string
