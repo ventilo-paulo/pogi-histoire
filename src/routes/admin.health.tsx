@@ -423,14 +423,6 @@ function AdminHealth() {
                 {settings.retest_reason ? ` — ${settings.retest_reason}` : ""}
               </p>
             )}
-            <a
-              href="/statut"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-block text-xs text-pogi-yellow hover:underline"
-            >
-              Voir la page publique de statut
-            </a>
           </section>
 
 
