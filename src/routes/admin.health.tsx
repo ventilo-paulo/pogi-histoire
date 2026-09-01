@@ -186,6 +186,29 @@ function AdminHealth() {
     }
   };
 
+  const onRepair = async () => {
+    setBusy(true);
+    setError(null);
+    setNotice(null);
+    setRepair(null);
+    try {
+      const r: any = await autoRepair({ data: {} as any });
+      setRepair({ steps: r.steps ?? [], fixed: r.fixed ?? 0 });
+      setNotice(
+        r?.remaining?.length
+          ? `Réparation terminée : ${r.fixed} correction(s), ${r.remaining.length} problème(s) restant(s).`
+          : `Réparation terminée : ${r.fixed} correction(s), tout est au vert.`,
+      );
+      await load();
+    } catch (e: any) {
+      setError(e?.message ?? "La réparation a échoué");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+
+
   const onSave = async (patch: Record<string, unknown>) => {
     setBusy(true);
     setError(null);
