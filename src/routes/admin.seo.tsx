@@ -12,6 +12,7 @@ import {
   seoRunCheckNow,
   seoMarkAlertsRead,
 } from "@/lib/seo-monitor.functions";
+import { sitemapRefresh } from "@/lib/sitemap.functions";
 import { SeoQueryRanks } from "@/components/admin/SeoQueryRanks";
 import { RefreshCw, Upload, CheckCircle2, AlertTriangle, XCircle, Clock, Search, Bell, BellOff, Play, CalendarClock } from "lucide-react";
 
@@ -85,6 +86,7 @@ function AdminSeo() {
   const submitSitemap = useServerFn(gscSubmitSitemap);
   const listUrls = useServerFn(gscListSiteUrls);
   const inspect = useServerFn(gscInspectUrls);
+  const refreshSitemap = useServerFn(sitemapRefresh);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -97,6 +99,7 @@ function AdminSeo() {
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const [sitemapInfo, setSitemapInfo] = useState<any>(null);
   const [query, setQuery] = useState("");
   const monitorState = useServerFn(seoMonitorState);
   const runCheckNow = useServerFn(seoRunCheckNow);
@@ -322,6 +325,13 @@ function AdminSeo() {
           >
             <Upload size={16} /> Soumettre le sitemap
           </button>
+          <button
+            onClick={onRefreshSitemap}
+            disabled={busy}
+            className="inline-flex items-center gap-2 rounded-md border border-pogi-yellow/60 px-4 py-2 text-sm font-bold uppercase text-pogi-yellow hover:bg-pogi-yellow/10 disabled:opacity-50"
+          >
+            <RefreshCw size={16} /> Mettre à jour le sitemap
+          </button>
 
         </div>
       </div>
@@ -332,6 +342,16 @@ function AdminSeo() {
       {notice && (
         <div className="rounded-md border border-emerald-500/40 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
           {notice}
+        </div>
+      )}
+
+      {sitemapInfo && (
+        <div className="rounded-md border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/70">
+          Dernière mise à jour du sitemap : {fmt(sitemapInfo.refreshedAt)} — {sitemapInfo.total} URLs (
+          {sitemapInfo.articles} articles, {sitemapInfo.videos} vidéos, {sitemapInfo.pages} pages).{" "}
+          <a href={sitemapInfo.sitemapUrl} target="_blank" rel="noreferrer" className="text-pogi-yellow underline">
+            Voir le sitemap
+          </a>
         </div>
       )}
 
