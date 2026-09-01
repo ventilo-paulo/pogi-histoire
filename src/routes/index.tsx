@@ -96,7 +96,7 @@ function FeaturedArticleCard({ a }: { a: ArticleLite }) {
       className="group relative shrink-0 w-[200px] h-[280px] rounded-[16px] overflow-hidden card-hover block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
     >
       {a.image_url ? (
-        <img src={a.image_url} alt={a.title} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+        <img src={a.image_url} alt={a.title} loading="lazy" decoding="async" width={400} height={560} sizes="200px" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
       ) : (
         <div className="absolute inset-0 bg-pogi-darker" />
       )}
@@ -200,7 +200,7 @@ function Home() {
                   onClick={() => track("collection_click", { label: c.label, slug: c.hash, meta: { placement: "home" } })}
                   className="relative shrink-0 w-[180px] h-[180px] rounded-[16px] overflow-hidden card-hover block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
                 >
-                  <img src={c.img} alt="" loading="lazy" decoding="async" style={{ objectPosition: c.objectPosition }} className="absolute inset-0 h-full w-full object-cover" />
+                  <img src={c.img} alt="" loading="lazy" decoding="async" width={640} height={420} sizes="(max-width: 768px) 60vw, 320px" style={{ objectPosition: c.objectPosition }} className="absolute inset-0 h-full w-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/30" />
                   <span className="absolute inset-0 grid place-items-center text-center text-white font-bold text-base px-3">
                     {c.label}
@@ -249,7 +249,7 @@ function FeaturedArticlesSection() {
                   aria-label={`Voir les articles — ${a.alt}`}
                   className="relative shrink-0 w-[200px] h-[280px] rounded-[16px] overflow-hidden card-hover cursor-pointer block outline-none focus-visible:ring-4 focus-visible:ring-pogi-yellow/60"
                 >
-                  <img src={a.img} alt={a.alt} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+                  <img src={a.img} alt={a.alt} loading="lazy" decoding="async" width={400} height={560} sizes="200px" className="absolute inset-0 h-full w-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
                   <span className="absolute bottom-3 left-3 right-3 text-white font-display uppercase text-sm">{a.alt}</span>
                 </Link>

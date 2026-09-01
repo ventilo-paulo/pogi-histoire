@@ -1,10 +1,13 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, Search, X } from "lucide-react";
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { Suspense, lazy, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import pogiLogo from "@/assets/pogi-logo.png.asset.json";
 import { publishedArticlesStore, INTERVIEWS_CATEGORY } from "@/lib/realtime-stores";
-import { SearchDialog } from "@/components/SearchDialog";
+// Loaded on demand: the search modal never blocks first paint.
+const SearchDialog = lazy(() =>
+  import("@/components/SearchDialog").then((m) => ({ default: m.SearchDialog })),
+);
 import { track } from "@/lib/analytics";
 
 const ALL_LINKS = [
@@ -131,7 +134,11 @@ export function Navbar() {
           document.body,
         )}
 
-      <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} />
+      {searchOpen && (
+        <Suspense fallback={null}>
+          <SearchDialog open onClose={() => setSearchOpen(false)} />
+        </Suspense>
+      )}
     </header>
   );
 }
