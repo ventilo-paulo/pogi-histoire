@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   healthState,
   healthRunNow,
+  healthAutoRepair,
   healthSaveSettings,
   healthMarkAlertsRead,
   healthSendDigest,
@@ -21,7 +22,9 @@ import {
   RefreshCw,
   XCircle,
   Mail,
+  Wrench,
 } from "lucide-react";
+
 
 export const Route = createFileRoute("/admin/health")({
   head: () => ({
