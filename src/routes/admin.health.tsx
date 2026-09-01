@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   healthState,
   healthRunNow,
+  healthAutoRepair,
   healthSaveSettings,
   healthMarkAlertsRead,
   healthSendDigest,
@@ -21,7 +22,9 @@ import {
   RefreshCw,
   XCircle,
   Mail,
+  Wrench,
 } from "lucide-react";
+
 
 export const Route = createFileRoute("/admin/health")({
   head: () => ({
@@ -107,17 +110,22 @@ function AdminHealth() {
   const saveSettings = useServerFn(healthSaveSettings);
   const markRead = useServerFn(healthMarkAlertsRead);
   const sendDigest = useServerFn(healthSendDigest);
+  const autoRepair = useServerFn(healthAutoRepair);
 
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [repair, setRepair] = useState<
+    { steps: { id: string; label: string; status: string; detail: string }[]; fixed: number } | null
+  >(null);
   const [runs, setRuns] = useState<Run[]>([]);
   const [checks, setChecks] = useState<Check[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [settings, setSettings] = useState<Settings>(null);
   const [email, setEmail] = useState("");
   const [baseUrl, setBaseUrl] = useState("");
+
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -178,6 +186,29 @@ function AdminHealth() {
     }
   };
 
+  const onRepair = async () => {
+    setBusy(true);
+    setError(null);
+    setNotice(null);
+    setRepair(null);
+    try {
+      const r: any = await autoRepair({ data: {} as any });
+      setRepair({ steps: r.steps ?? [], fixed: r.fixed ?? 0 });
+      setNotice(
+        r?.remaining?.length
+          ? `Réparation terminée : ${r.fixed} correction(s), ${r.remaining.length} problème(s) restant(s).`
+          : `Réparation terminée : ${r.fixed} correction(s), tout est au vert.`,
+      );
+      await load();
+    } catch (e: any) {
+      setError(e?.message ?? "La réparation a échoué");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+
+
   const onSave = async (patch: Record<string, unknown>) => {
     setBusy(true);
     setError(null);
@@ -217,9 +248,16 @@ function AdminHealth() {
           <button
             onClick={() => void onRun()}
             disabled={busy}
-            className="inline-flex items-center gap-2 rounded-md bg-pogi-yellow px-4 py-2 text-sm font-bold uppercase text-pogi-dark disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-md border border-white/15 px-4 py-2 text-sm text-white/80 hover:bg-white/5 disabled:opacity-50"
           >
             <Play size={16} /> Lancer un contrôle
+          </button>
+          <button
+            onClick={() => void onRepair()}
+            disabled={busy}
+            className="inline-flex items-center gap-2 rounded-md bg-pogi-yellow px-4 py-2 text-sm font-bold uppercase text-pogi-dark disabled:opacity-50"
+          >
+            <Wrench size={16} /> {busy ? "Réparation…" : "Réparer les problèmes"}
           </button>
         </div>
       </div>
@@ -234,6 +272,32 @@ function AdminHealth() {
           {notice}
         </div>
       )}
+
+      {repair && (
+        <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
+          <h2 className="font-display uppercase text-white text-lg mb-3">Rapport de réparation</h2>
+          <ul className="space-y-2">
+            {repair.steps.map((s) => (
+              <li key={s.id} className="flex items-start gap-3 text-sm">
+                <span className="mt-0.5">
+                  {s.status === "failed" ? (
+                    <XCircle size={16} className="text-red-400" />
+                  ) : s.status === "fixed" ? (
+                    <Wrench size={16} className="text-pogi-yellow" />
+                  ) : (
+                    <CheckCircle2 size={16} className="text-emerald-400" />
+                  )}
+                </span>
+                <span>
+                  <span className="text-white">{s.label}</span>
+                  <span className="text-white/60"> — {s.detail}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
 
       {loading ? (
         <p className="text-white/60">Chargement…</p>

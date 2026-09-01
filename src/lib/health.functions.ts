@@ -48,6 +48,16 @@ export const healthRunNow = createServerFn({ method: "POST" })
     return runSiteHealthCheck("manual");
   });
 
+/** Diagnose + auto-fix the common site problems, then re-run the crawl. */
+export const healthAutoRepair = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await requireAdmin(context as any);
+    const { runHealthAutoRepair } = await import("@/lib/health-repair.server");
+    return runHealthAutoRepair();
+  });
+
+
 /** Send the daily digest email on demand. */
 export const healthSendDigest = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
