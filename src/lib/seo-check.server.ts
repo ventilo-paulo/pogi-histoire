@@ -251,6 +251,14 @@ export async function runSeoIndexCheck(trigger: "cron" | "manual" = "cron") {
         .eq("id", runId);
     }
 
+    // Keep the per-query position history fresh (never fatal for the run).
+    try {
+      const { refreshQueryRanks } = await import("@/lib/seo-rank.server");
+      await refreshQueryRanks(28);
+    } catch (e) {
+      console.error("refreshQueryRanks failed", e);
+    }
+
     if (alerts.length) {
       await supabaseAdmin
         .from("seo_alerts" as any)
