@@ -11,7 +11,7 @@ const navLinks = [
 
 const aboutLinks = [
   { to: "/a-propos", label: "À propos" },
-  { to: "/statut", label: "Statut du site" },
+  
   { href: "mailto:pogi.videos@gmail.com", label: "Contact" },
 ] as const;
 
