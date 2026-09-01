@@ -12,6 +12,7 @@ import {
   seoRunCheckNow,
   seoMarkAlertsRead,
 } from "@/lib/seo-monitor.functions";
+import { SeoQueryRanks } from "@/components/admin/SeoQueryRanks";
 import { RefreshCw, Upload, CheckCircle2, AlertTriangle, XCircle, Clock, Search, Bell, BellOff, Play, CalendarClock } from "lucide-react";
 
 export const Route = createFileRoute("/admin/seo")({
@@ -584,6 +585,8 @@ function AdminSeo() {
                   </table>
                 </div>
               </section>
+
+              <SeoQueryRanks />
             </>
           )}
         </>
