@@ -110,17 +110,22 @@ function AdminHealth() {
   const saveSettings = useServerFn(healthSaveSettings);
   const markRead = useServerFn(healthMarkAlertsRead);
   const sendDigest = useServerFn(healthSendDigest);
+  const autoRepair = useServerFn(healthAutoRepair);
 
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [repair, setRepair] = useState<
+    { steps: { id: string; label: string; status: string; detail: string }[]; fixed: number } | null
+  >(null);
   const [runs, setRuns] = useState<Run[]>([]);
   const [checks, setChecks] = useState<Check[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [settings, setSettings] = useState<Settings>(null);
   const [email, setEmail] = useState("");
   const [baseUrl, setBaseUrl] = useState("");
+
 
   const load = useCallback(async () => {
     setLoading(true);
