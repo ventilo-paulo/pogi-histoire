@@ -81,6 +81,19 @@ async function listVerifiedProperties() {
   );
 }
 
+/** Server-side helper: (re)submit the sitemap to every verified property. */
+export async function submitSitemapToSearchConsole(sitemapUrl = `${SITE_URL}/sitemap.xml`) {
+  const matches = await listVerifiedProperties();
+  if (matches.length === 0) throw new Error("Aucune propriété Search Console vérifiée pour ce site.");
+  for (const m of matches) {
+    await gsc(
+      `/webmasters/v3/sites/${encodeURIComponent(m.siteUrl)}/sitemaps/${encodeURIComponent(sitemapUrl)}`,
+      { method: "PUT" },
+    );
+  }
+  return matches.map((m) => m.siteUrl);
+}
+
 /** Sitemap status + list of verified properties covering the site. */
 export const gscOverview = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

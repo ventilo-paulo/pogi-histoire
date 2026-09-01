@@ -27,6 +27,9 @@ export const Route = createFileRoute("/collections")({
       { name: "twitter:image", content: absUrl(cWWII) },
       { property: "og:url", content: "https://pogi-histoire.com/collections" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:type", content: "website" },
+      { property: "og:image:alt", content: "Collections POGI Histoire" },
+      { name: "twitter:image:alt", content: "Collections POGI Histoire" },
     ],
     links: [{ rel: "canonical", href: "https://pogi-histoire.com/collections" }],
     scripts: [
