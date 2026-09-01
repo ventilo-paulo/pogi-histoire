@@ -32,6 +32,36 @@ export const Route = createFileRoute("/")({
       { name: "twitter:image", content: absUrl(heroConcert) },
       { property: "og:url", content: "https://pogi-histoire.com/" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "POGI Histoire" },
+      { property: "og:locale", content: "fr_FR" },
+      { property: "og:image:alt", content: "POGI Histoire — récits d'histoire documentés" },
+      { name: "twitter:image:alt", content: "POGI Histoire — récits d'histoire documentés" },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "@id": "https://pogi-histoire.com/#webpage",
+          url: "https://pogi-histoire.com/",
+          name: "POGI Histoire — Accueil",
+          description:
+            "POGI Histoire : récits d'histoire documentés et sourcés, articles, collections thématiques et vidéos.",
+          inLanguage: "fr-FR",
+          isPartOf: { "@id": "https://pogi-histoire.com/#website" },
+          publisher: { "@id": "https://pogi-histoire.com/#organization" },
+          primaryImageOfPage: { "@type": "ImageObject", url: "https://pogi-histoire.com/assets/hero-versailles-1440.webp" },
+          hasPart: [
+            { "@type": "SiteNavigationElement", name: "Articles", url: "https://pogi-histoire.com/articles" },
+            { "@type": "SiteNavigationElement", name: "Vidéos", url: "https://pogi-histoire.com/videos" },
+            { "@type": "SiteNavigationElement", name: "Interviews", url: "https://pogi-histoire.com/interviews" },
+            { "@type": "SiteNavigationElement", name: "Collections", url: "https://pogi-histoire.com/collections" },
+            { "@type": "SiteNavigationElement", name: "À propos", url: "https://pogi-histoire.com/a-propos" },
+          ],
+        }),
+      },
     ],
     links: [
       { rel: "canonical", href: "https://pogi-histoire.com/" },
