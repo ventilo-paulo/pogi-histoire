@@ -220,6 +220,25 @@ function AdminSeo() {
     }
   }
 
+  async function onRefreshSitemap() {
+    setBusy(true);
+    setNotice(null);
+    setError(null);
+    try {
+      const r = (await refreshSitemap()) as any;
+      setSitemapInfo(r);
+      setNotice(
+        `Sitemap régénéré : ${r.total} URLs (${r.articles} articles, ${r.videos} vidéos, ${r.pages} pages).` +
+          (r.submitted ? " Envoyé à Search Console." : ` Envoi à Search Console impossible : ${r.submitError ?? "inconnu"}`),
+      );
+      await load(siteUrl ?? undefined);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erreur inconnue");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function runInspection() {
     if (!siteUrl || urls.length === 0) return;
     setBusy(true);
