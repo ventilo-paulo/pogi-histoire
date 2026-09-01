@@ -17,7 +17,7 @@ function gatewayHeaders() {
   };
 }
 
-async function gsc(path: string, init?: RequestInit) {
+export async function gsc(path: string, init?: RequestInit) {
   const response = await fetch(`${GATEWAY}${path}`, {
     ...init,
     headers: { ...gatewayHeaders(), ...(init?.headers ?? {}) },
@@ -44,7 +44,7 @@ function coversTarget(siteUrl: string, target: URL) {
   }
 }
 
-async function resolveSiteUrl() {
+export async function resolveSiteUrl() {
   const { siteEntry = [] } = (await gsc("/webmasters/v3/sites")) as { siteEntry?: SiteEntry[] };
   const target = new URL(SITE_URL);
   const matches = siteEntry.filter(
