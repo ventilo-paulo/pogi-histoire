@@ -339,7 +339,8 @@ async function notifyByEmail(subject: string, lines: string[], label = "site-hea
         text: lines.join("\n").replace(/<[^>]+>/g, " "),
         purpose: "transactional",
         label,
-        message_id: crypto.randomUUID(),
+        message_id: msgId,
+        idempotency_key: msgId,
         queued_at: new Date().toISOString(),
       },
     } as any);

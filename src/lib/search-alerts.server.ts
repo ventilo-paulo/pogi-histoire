@@ -55,7 +55,8 @@ async function notifyByEmail(subject: string, html: string, text: string, to: st
         text,
         purpose: "transactional",
         label: "search-alert",
-        message_id: crypto.randomUUID(),
+        message_id: msgId,
+        idempotency_key: msgId,
         queued_at: new Date().toISOString(),
       },
     } as any);
