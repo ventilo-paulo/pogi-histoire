@@ -328,6 +328,7 @@ async function notifyByEmail(subject: string, lines: string[], label = "site-hea
   </div>`;
 
   try {
+    const msgId = crypto.randomUUID();
     await supabaseAdmin.rpc("enqueue_email" as any, {
       queue_name: "transactional_emails",
       payload: {
@@ -339,7 +340,8 @@ async function notifyByEmail(subject: string, lines: string[], label = "site-hea
         text: lines.join("\n").replace(/<[^>]+>/g, " "),
         purpose: "transactional",
         label,
-        message_id: crypto.randomUUID(),
+        message_id: msgId,
+        idempotency_key: msgId,
         queued_at: new Date().toISOString(),
       },
     } as any);

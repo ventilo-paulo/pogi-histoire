@@ -44,6 +44,7 @@ function topTerms(rows: { label: string | null }[], limit = 10) {
 
 async function notifyByEmail(subject: string, html: string, text: string, to: string) {
   try {
+    const msgId = crypto.randomUUID();
     await supabaseAdmin.rpc("enqueue_email" as any, {
       queue_name: "transactional_emails",
       payload: {
@@ -55,7 +56,8 @@ async function notifyByEmail(subject: string, html: string, text: string, to: st
         text,
         purpose: "transactional",
         label: "search-alert",
-        message_id: crypto.randomUUID(),
+        message_id: msgId,
+        idempotency_key: msgId,
         queued_at: new Date().toISOString(),
       },
     } as any);
