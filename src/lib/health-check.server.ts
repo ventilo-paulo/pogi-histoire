@@ -328,6 +328,7 @@ async function notifyByEmail(subject: string, lines: string[], label = "site-hea
   </div>`;
 
   try {
+    const msgId = crypto.randomUUID();
     await supabaseAdmin.rpc("enqueue_email" as any, {
       queue_name: "transactional_emails",
       payload: {
