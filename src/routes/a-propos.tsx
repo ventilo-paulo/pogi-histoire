@@ -76,7 +76,7 @@ function AboutPage() {
               <Youtube size={18} /> La chaîne YouTube POGI Histoire
             </a>
             <a
-              href="mailto:paul.lesaulnier27@gmail.com"
+              href="mailto:pogi.videos@gmail.com"
               className="inline-flex items-center gap-2 rounded-full border border-pogi-dark/20 px-5 py-3 font-semibold hover:border-pogi-yellow hover:text-pogi-dark transition-colors"
             >
               Nous écrire
