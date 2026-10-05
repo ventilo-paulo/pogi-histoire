@@ -40,13 +40,15 @@ function clip(text: string | null | undefined, max: number, fallback: string) {
 
 export const Route = createFileRoute("/videos/$slug")({
   loader: async ({ params }) => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("videos")
       .select("title,slug,subtitle,description,thumbnail_url,video_url,category,published_at")
       .eq("slug", params.slug)
       .eq("published", true)
       .maybeSingle();
-    return { meta: (data as VideoMeta | null) ?? null };
+    if (error) throw new Error(error.message);
+    if (!data) throw notFound();
+    return { meta: data as VideoMeta };
   },
   head: ({ params, loaderData }) => {
     const v = loaderData?.meta ?? null;
@@ -67,6 +69,7 @@ export const Route = createFileRoute("/videos/$slug")({
         { property: "og:type", content: "video.other" },
         { property: "og:url", content: url },
         { name: "twitter:card", content: "summary_large_image" },
+        ...(loaderData ? [] : [{ name: "robots", content: "noindex" }]),
         ...(image
           ? [
               { property: "og:image", content: image },
