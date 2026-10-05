@@ -1,0 +1,42 @@
+name: Regression tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      TEST_BASE_URL: http://localhost:8080
+      REQUIRE_LIVE_TESTS: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile || bun install
+
+      - name: Start site preview
+        run: |
+          nohup bunx vite dev --host 127.0.0.1 --port 8080 --strictPort > /tmp/preview.log 2>&1 &
+          echo "Waiting for preview..."
+          for i in $(seq 1 90); do
+            if curl -sf -o /dev/null http://localhost:8080/; then
+              echo "Preview ready after ${i}s"; exit 0
+            fi
+            sleep 2
+          done
+          echo "Preview did not start"; cat /tmp/preview.log; exit 1
+
+      - name: Run regression tests
+        run: bunx vitest run tests/
+
+      - name: Preview logs (on failure)
+        if: failure()
+        run: cat /tmp/preview.log || true
