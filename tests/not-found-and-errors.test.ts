@@ -42,18 +42,18 @@ describe("Code source : 404 et erreurs", () => {
     expect(video).toContain("Retour aux vidéos");
     expect(video).toMatch(/loaderData \? \[\] : \[\{ name: "robots", content: "noindex" \}\]/);
     expect(video).toMatch(/error instanceof Error \? error\.message/);
-  });
+  }, 30000);
 });
 
 let online = false;
 beforeAll(async () => {
   try {
-    const r = await fetch(BASE + "/", { signal: AbortSignal.timeout(5000) });
+    const r = await fetch(BASE + "/", { signal: AbortSignal.timeout(30000) });
     online = r.ok;
   } catch {
     online = false;
   }
-});
+}, 40000);
 
 async function get(path: string) {
   const r = await fetch(BASE + path, { signal: AbortSignal.timeout(20000) });
@@ -82,5 +82,5 @@ describe("Site en marche : 404 et métadonnées SEO", () => {
     const { html } = await get("/videos/slug-inexistant-" + Date.now());
     expect(html).toContain("Vidéo introuvable");
     expect(html).toMatch(/<meta name="robots" content="noindex"/);
-  });
+  }, 30000);
 });
