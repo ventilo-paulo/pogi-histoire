@@ -95,7 +95,7 @@ export const Route = createFileRoute("/articles/$slug")({
       <div className="max-w-[820px] mx-auto px-6 py-24 text-center">
         <p className="text-pogi-yellow uppercase tracking-widest text-xs mb-3">Erreur</p>
         <h1 className="font-display text-4xl uppercase">Cet article n'a pas pu être chargé</h1>
-        <p className="text-gray-600 mt-3 text-sm">{error.message}</p>
+        <p className="text-gray-600 mt-3 text-sm">{error instanceof Error ? error.message : String(error)}</p>
         <div className="mt-8 flex items-center justify-center gap-3 flex-wrap">
           <button onClick={reset} className="btn btn-primary">Réessayer</button>
           <Link to="/articles" className="btn btn-ghost">Retour aux articles</Link>

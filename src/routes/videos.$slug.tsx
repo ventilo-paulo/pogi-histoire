@@ -118,7 +118,7 @@ export const Route = createFileRoute("/videos/$slug")({
       <main>
       <div className="max-w-[820px] mx-auto px-6 py-24 text-center">
         <h1 className="font-display text-3xl uppercase">Erreur</h1>
-        <p className="text-white/70 mt-3 text-sm">{error.message}</p>
+        <p className="text-white/70 mt-3 text-sm">{error instanceof Error ? error.message : String(error)}</p>
         <Link to="/videos" className="inline-block mt-8 bg-pogi-yellow text-pogi-dark font-bold uppercase px-5 py-2 rounded-md">
           Retour aux vidéos
         </Link>
