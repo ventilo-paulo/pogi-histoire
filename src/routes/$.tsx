@@ -1,16 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { NotFound } from "@/components/NotFound";
 
-/** Ensures unknown URLs answer with a real HTTP 404 (crawlers, monitoring). */
-const flag404 = createServerFn({ method: "GET" }).handler(async () => {
-  const { setResponseStatus } = await import("@tanstack/react-start/server");
-  setResponseStatus(404);
-  return null;
-});
-
+/** Unknown URLs throw notFound() so SSR answers with a real HTTP 404. */
 export const Route = createFileRoute("/$")({
-  loader: () => flag404(),
+  loader: () => {
+    throw notFound();
+  },
   head: () => ({
     meta: [
       { title: "Page introuvable — POGI Histoire" },
@@ -19,4 +14,5 @@ export const Route = createFileRoute("/$")({
     ],
   }),
   component: NotFound,
+  notFoundComponent: NotFound,
 });
