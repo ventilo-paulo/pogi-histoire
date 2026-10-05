@@ -18,7 +18,6 @@ import { Route as CollectionsRouteImport } from './routes/collections'
 import { Route as InterviewsRouteImport } from './routes/interviews'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as VideosRouteImport } from './routes/videos'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
@@ -35,6 +34,7 @@ import { Route as AdminStatutRouteImport } from './routes/admin.statut'
 import { Route as AdminVideosRouteImport } from './routes/admin.videos'
 import { Route as ArticlesIndexRouteImport } from './routes/articles.index'
 import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
+import { Route as VideosIndexRouteImport } from './routes/videos.index'
 import { Route as VideosSlugRouteImport } from './routes/videos.$slug'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
@@ -87,11 +87,6 @@ const McpRoute = McpRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VideosRoute = VideosRouteImport.update({
-  id: '/videos',
-  path: '/videos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Char91DotmcpChar93ListToolsRoute =
@@ -176,6 +171,11 @@ const ArticlesSlugRoute = ArticlesSlugRouteImport.update({
   path: '/articles/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VideosIndexRoute = VideosIndexRouteImport.update({
+  id: '/videos/',
+  path: '/videos/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VideosSlugRoute = VideosSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -232,7 +232,6 @@ export interface FileRoutesByFullPath {
   '/interviews': typeof InterviewsRoute
   '/mcp': typeof McpRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/videos': typeof VideosRouteWithChildren
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
@@ -250,6 +249,7 @@ export interface FileRoutesByFullPath {
   '/videos/$slug': typeof VideosSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/articles/': typeof ArticlesIndexRoute
+  '/videos/': typeof VideosIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/hooks/health-check': typeof ApiPublicHooksHealthCheckRoute
@@ -267,7 +267,6 @@ export interface FileRoutesByTo {
   '/interviews': typeof InterviewsRoute
   '/mcp': typeof McpRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/videos': typeof VideosRouteWithChildren
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
@@ -285,6 +284,7 @@ export interface FileRoutesByTo {
   '/videos/$slug': typeof VideosSlugRoute
   '/admin': typeof AdminIndexRoute
   '/articles': typeof ArticlesIndexRoute
+  '/videos': typeof VideosIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/hooks/health-check': typeof ApiPublicHooksHealthCheckRoute
@@ -304,7 +304,6 @@ export interface FileRoutesById {
   '/interviews': typeof InterviewsRoute
   '/mcp': typeof McpRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/videos': typeof VideosRouteWithChildren
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
@@ -322,6 +321,7 @@ export interface FileRoutesById {
   '/videos/$slug': typeof VideosSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/articles/': typeof ArticlesIndexRoute
+  '/videos/': typeof VideosIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/hooks/health-check': typeof ApiPublicHooksHealthCheckRoute
@@ -342,7 +342,6 @@ export interface FileRouteTypes {
     | '/interviews'
     | '/mcp'
     | '/sitemap.xml'
-    | '/videos'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/admin/analytics'
@@ -360,6 +359,7 @@ export interface FileRouteTypes {
     | '/videos/$slug'
     | '/admin/'
     | '/articles/'
+    | '/videos/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/hooks/health-check'
@@ -377,7 +377,6 @@ export interface FileRouteTypes {
     | '/interviews'
     | '/mcp'
     | '/sitemap.xml'
-    | '/videos'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/admin/analytics'
@@ -395,6 +394,7 @@ export interface FileRouteTypes {
     | '/videos/$slug'
     | '/admin'
     | '/articles'
+    | '/videos'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/hooks/health-check'
@@ -413,7 +413,6 @@ export interface FileRouteTypes {
     | '/interviews'
     | '/mcp'
     | '/sitemap.xml'
-    | '/videos'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/admin/analytics'
@@ -431,6 +430,7 @@ export interface FileRouteTypes {
     | '/videos/$slug'
     | '/admin/'
     | '/articles/'
+    | '/videos/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/hooks/health-check'
@@ -450,11 +450,11 @@ export interface RootRouteChildren {
   InterviewsRoute: typeof InterviewsRoute
   McpRoute: typeof McpRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  VideosRoute: typeof VideosRouteWithChildren
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   ArticlesSlugRoute: typeof ArticlesSlugRoute
   ArticlesIndexRoute: typeof ArticlesIndexRoute
+  VideosIndexRoute: typeof VideosIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicHooksHealthCheckRoute: typeof ApiPublicHooksHealthCheckRoute
@@ -527,13 +527,6 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/videos': {
-      id: '/videos'
-      path: '/videos'
-      fullPath: '/videos'
-      preLoaderRoute: typeof VideosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.mcp/list-tools': {
@@ -648,6 +641,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArticlesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/videos/': {
+      id: '/videos/'
+      path: '/videos'
+      fullPath: '/videos/'
+      preLoaderRoute: typeof VideosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/videos/$slug': {
       id: '/videos/$slug'
       path: '/$slug'
@@ -739,17 +739,6 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
-interface VideosRouteChildren {
-  VideosSlugRoute: typeof VideosSlugRoute
-}
-
-const VideosRouteChildren: VideosRouteChildren = {
-  VideosSlugRoute: VideosSlugRoute,
-}
-
-const VideosRouteWithChildren =
-  VideosRoute._addFileChildren(VideosRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
@@ -760,12 +749,12 @@ const rootRouteChildren: RootRouteChildren = {
   InterviewsRoute: InterviewsRoute,
   McpRoute: McpRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  VideosRoute: VideosRouteWithChildren,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   ArticlesSlugRoute: ArticlesSlugRoute,
   ArticlesIndexRoute: ArticlesIndexRoute,
+  VideosIndexRoute: VideosIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicHooksHealthCheckRoute: ApiPublicHooksHealthCheckRoute,
