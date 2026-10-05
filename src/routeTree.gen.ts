@@ -177,9 +177,9 @@ const VideosIndexRoute = VideosIndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const VideosSlugRoute = VideosSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => VideosRoute,
+  id: '/videos/$slug',
+  path: '/videos/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
   id: '/.lovable/oauth/consent',
@@ -453,6 +453,7 @@ export interface RootRouteChildren {
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   ArticlesSlugRoute: typeof ArticlesSlugRoute
+  VideosSlugRoute: typeof VideosSlugRoute
   ArticlesIndexRoute: typeof ArticlesIndexRoute
   VideosIndexRoute: typeof VideosIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
@@ -650,10 +651,10 @@ declare module '@tanstack/react-router' {
     }
     '/videos/$slug': {
       id: '/videos/$slug'
-      path: '/$slug'
+      path: '/videos/$slug'
       fullPath: '/videos/$slug'
       preLoaderRoute: typeof VideosSlugRouteImport
-      parentRoute: typeof VideosRoute
+      parentRoute: typeof rootRouteImport
     }
     '/.lovable/oauth/consent': {
       id: '/.lovable/oauth/consent'
@@ -753,6 +754,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   ArticlesSlugRoute: ArticlesSlugRoute,
+  VideosSlugRoute: VideosSlugRoute,
   ArticlesIndexRoute: ArticlesIndexRoute,
   VideosIndexRoute: VideosIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
