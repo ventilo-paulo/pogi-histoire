@@ -29,13 +29,15 @@ function clip(text: string | null | undefined, max: number, fallback: string) {
 
 export const Route = createFileRoute("/articles/$slug")({
   loader: async ({ params }) => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("articles")
       .select("title,slug,excerpt,image_url,author,category,published_at,updated_at")
       .eq("slug", params.slug)
       .eq("published", true)
       .maybeSingle();
-    return { meta: (data as ArticleMeta | null) ?? null };
+    if (error) throw new Error(error.message);
+    if (!data) throw notFound();
+    return { meta: data as ArticleMeta };
   },
   head: ({ params, loaderData }) => {
     const a = loaderData?.meta ?? null;
