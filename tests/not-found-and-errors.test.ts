@@ -50,7 +50,8 @@ beforeAll(async () => {
   try {
     const r = await fetch(BASE + "/", { signal: AbortSignal.timeout(30000) });
     online = r.ok;
-  } catch {
+  } catch (e) {
+    console.warn("Serveur injoignable, tests en direct ignorés:", String(e));
     online = false;
   }
 }, 40000);
