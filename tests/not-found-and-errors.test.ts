@@ -54,6 +54,9 @@ beforeAll(async () => {
     console.warn("Serveur injoignable, tests en direct ignorés:", String(e));
     online = false;
   }
+  if (!online && process.env.REQUIRE_LIVE_TESTS) {
+    throw new Error(`Aperçu injoignable sur ${BASE} : les tests en direct sont obligatoires en CI.`);
+  }
 }, 40000);
 
 async function get(path: string) {
