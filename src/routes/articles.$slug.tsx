@@ -56,6 +56,7 @@ export const Route = createFileRoute("/articles/$slug")({
         { property: "og:type", content: "article" },
         { property: "og:url", content: url },
         { name: "twitter:card", content: "summary_large_image" },
+        ...(loaderData ? [] : [{ name: "robots", content: "noindex" }]),
         ...(image
           ? [
               { property: "og:image", content: image },

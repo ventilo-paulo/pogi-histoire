@@ -67,6 +67,7 @@ export const Route = createFileRoute("/videos/$slug")({
         { property: "og:type", content: "video.other" },
         { property: "og:url", content: url },
         { name: "twitter:card", content: "summary_large_image" },
+        ...(loaderData ? [] : [{ name: "robots", content: "noindex" }]),
         ...(image
           ? [
               { property: "og:image", content: image },
