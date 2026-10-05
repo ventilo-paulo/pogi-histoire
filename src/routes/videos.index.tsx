@@ -13,7 +13,7 @@ import { absUrl } from "@/lib/site";
 import vOradour from "@/assets/video-oradour.webp";
 import { track } from "@/lib/analytics";
 
-export const Route = createFileRoute("/videos")({
+export const Route = createFileRoute("/videos/")({
   head: () => ({
     meta: [
       { title: "Vidéos — POGI Histoire" },
