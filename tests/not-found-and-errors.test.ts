@@ -1,7 +1,7 @@
 /**
  * Régression : pages introuvables et erreurs de chargement (articles / vidéos).
  * 1) Vérifications statiques du code source (toujours exécutées).
- * 2) Vérifications sur le site en marche (BASE_URL, défaut http://localhost:8080),
+ * 2) Vérifications sur le site en marche (TEST_BASE_URL, défaut http://localhost:8080),
  *    ignorées automatiquement si le serveur ne répond pas.
  */
 import { describe, it, expect, beforeAll } from "vitest";
@@ -9,7 +9,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const read = (p: string) => readFileSync(resolve(process.cwd(), p), "utf8");
-const BASE = process.env.BASE_URL ?? "http://localhost:8080";
+const BASE = process.env.TEST_BASE_URL ?? "http://localhost:8080";
 
 describe("Code source : 404 et erreurs", () => {
   const catchAll = read("src/routes/$.tsx");
