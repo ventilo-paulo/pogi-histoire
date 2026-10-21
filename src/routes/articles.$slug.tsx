@@ -347,7 +347,13 @@ function ArticleBySlug() {
               </div>
             </div>
 
-            <ShareButtons title={article.title} />
+            <ShareButtons
+              title={article.title}
+              path={`/articles/${article.slug}`}
+              slug={article.slug}
+              kind="article"
+              placement="article_top"
+            />
           </div>
         </div>
 
@@ -398,11 +404,18 @@ function ArticleBySlug() {
             )}
 
             {/* Share (bottom) */}
-            <div className="mt-12 flex items-center justify-between gap-4 flex-wrap">
+            <div className="mt-12 pt-8 border-t border-black/10 flex flex-col gap-3">
               <p className="text-sm text-gray-600 uppercase tracking-wider font-semibold">
                 Cet article vous a plu ? Partagez-le
               </p>
-              <ShareButtons title={article.title} />
+              <ShareButtons
+                title={article.title}
+                path={`/articles/${article.slug}`}
+                slug={article.slug}
+                kind="article"
+                placement="article_bottom"
+                showLinkField
+              />
             </div>
 
             {/* Tags (clickable → recherche) */}

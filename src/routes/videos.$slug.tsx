@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { InternalLinks } from "@/components/InternalLinks";
+import { ShareButtons } from "@/components/ShareButtons";
 import { Skeleton } from "@/components/Skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, ExternalLink } from "lucide-react";
@@ -253,6 +254,21 @@ function VideoBySlug() {
             {video.description}
           </div>
         )}
+
+        <div className="mt-10 pt-8 border-t border-white/10 max-w-[720px] flex flex-col gap-3">
+          <p className="text-sm text-white/60 uppercase tracking-wider font-semibold">
+            Cette vidéo vous a plu ? Partagez-la
+          </p>
+          <ShareButtons
+            title={video.title}
+            path={`/videos/${video.slug}`}
+            slug={video.slug}
+            kind="video"
+            placement="video_page"
+            variant="dark"
+            showLinkField
+          />
+        </div>
       </div>
       <InternalLinks variant="dark" showArticles={false} category={video.category} excludeVideoSlug={video.slug} />
       </main>
