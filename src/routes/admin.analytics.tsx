@@ -7,7 +7,8 @@ import {
   saveSearchAlertSettings,
   runSearchAlertCheckNow,
 } from "@/lib/search-alerts.functions";
-import { BarChart3, BellRing, Download, Eye, MousePointerClick, Search, SearchX, Users } from "lucide-react";
+import { BarChart3, BellRing, Download, Eye, MousePointerClick, Search, SearchX, Share2, Users } from "lucide-react";
+import { NETWORK_LABEL, SHARE_MEDIUM, type ShareNetwork } from "@/lib/share";
 
 export const Route = createFileRoute("/admin/analytics")({
   head: () => ({ meta: [{ title: "Audience — Admin POGI" }, { name: "robots", content: "noindex" }] }),
@@ -170,6 +171,25 @@ function AdminAnalytics() {
       searchEventCount: list.filter((r) => SEARCH_EVENTS.includes(r.event)).length,
       topNav: topOf(list.filter((r) => r.event === "nav_click"), (r) => r.label),
       topReferrers: topOf(list, (r) => r.referrer),
+      ...(() => {
+        const shares = list.filter((r) => r.event === "share_click");
+        const shareVisits = views.filter((r) => metaStr(r, "utm_medium") === SHARE_MEDIUM);
+        const net = (k: string | null) => (k ? (NETWORK_LABEL[k as ShareNetwork] ?? k) : null);
+        return {
+          shareClicks: shares.length,
+          shareVisits: shareVisits.length,
+          shareSessions: new Set(shareVisits.map((r) => r.session_id).filter(Boolean)).size,
+          sharesByNetwork: topOf(shares, (r) => net(metaStr(r, "network"))),
+          sharesByContent: topOf(shares, (r) => r.slug),
+          shareVisitsByNetwork: topOf(shareVisits, (r) => net(metaStr(r, "utm_source"))),
+          shareVisitsByContent: topOf(shareVisits, (r) => metaStr(r, "utm_campaign")),
+          shareVisitsDetailed: topOf(
+            shareVisits,
+            (r) => `${metaStr(r, "utm_campaign") ?? "?"} · ${net(metaStr(r, "utm_source")) ?? "?"}`,
+            15,
+          ),
+        };
+      })(),
       perDay: (() => {
         const m = new Map<string, number>();
         for (const v of views) {
@@ -271,6 +291,24 @@ function AdminAnalytics() {
             <TopList title="Résultats cliqués — articles" data={stats.clicksArticles} />
             <TopList title="Résultats cliqués — collections" data={stats.clicksCollections} />
             <TopList title="Résultats cliqués — vidéos" data={stats.clicksVideos} />
+          </div>
+
+          <h2 className="font-display text-2xl uppercase text-white pt-2">Partages — visites apportées</h2>
+          <p className="text-white/60 text-sm -mt-4">
+            Chaque lien partagé (WhatsApp, réseaux sociaux, lien copié…) porte un code de suivi : on voit combien de
+            visites chaque réseau et chaque contenu ont ramenées.
+          </p>
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            <Kpi icon={<Share2 size={18} />} label="Partages effectués" value={stats.shareClicks} />
+            <Kpi icon={<Eye size={18} />} label="Visites venues d'un partage" value={stats.shareVisits} />
+            <Kpi icon={<Users size={18} />} label="Visiteurs venus d'un partage" value={stats.shareSessions} />
+          </div>
+          <div className="grid md:grid-cols-2 gap-6">
+            <TopList title="Visites apportées par réseau" data={stats.shareVisitsByNetwork} />
+            <TopList title="Visites apportées par contenu" data={stats.shareVisitsByContent} />
+            <TopList title="Partages par réseau" data={stats.sharesByNetwork} />
+            <TopList title="Contenus les plus partagés" data={stats.sharesByContent} />
+            <TopList title="Visites par contenu et réseau" data={stats.shareVisitsDetailed} />
           </div>
 
           <AlertSettings />

@@ -15,6 +15,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { NotFound as NotFoundComponent } from "@/components/NotFound";
 import { track } from "@/lib/analytics";
+import { readUtm } from "@/lib/share";
 
 
 function ErrorComponent({ error, reset }: ErrorComponentProps) {
