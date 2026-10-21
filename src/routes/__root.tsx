@@ -15,6 +15,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { NotFound as NotFoundComponent } from "@/components/NotFound";
 import { track } from "@/lib/analytics";
+import { readUtm } from "@/lib/share";
 
 
 function ErrorComponent({ error, reset }: ErrorComponentProps) {
@@ -155,7 +156,9 @@ function RootComponent() {
   const { location } = useRouterState();
 
   useEffect(() => {
-    track("page_view", { label: document.title });
+    // Visits arriving from a shared link carry utm_* parameters: keep them on the page view.
+    const utm = readUtm(window.location.search);
+    track("page_view", { label: document.title, meta: utm ?? undefined });
   }, [location.pathname]);
 
   return (

@@ -6,9 +6,6 @@ import {
   Clock,
   Calendar,
   RefreshCw,
-  Share2,
-  Link as LinkIcon,
-  Check,
   ChevronLeft,
   ChevronRight,
   List,
@@ -16,6 +13,7 @@ import {
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { InternalLinks } from "@/components/InternalLinks";
+import { ShareButtons } from "@/components/ShareButtons";
 import { Skeleton } from "@/components/Skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { SITE_URL, absUrl } from "@/lib/site";
@@ -349,7 +347,13 @@ function ArticleBySlug() {
               </div>
             </div>
 
-            <ShareButtons title={article.title} />
+            <ShareButtons
+              title={article.title}
+              path={`/articles/${article.slug}`}
+              slug={article.slug}
+              kind="article"
+              placement="article_top"
+            />
           </div>
         </div>
 
@@ -400,11 +404,18 @@ function ArticleBySlug() {
             )}
 
             {/* Share (bottom) */}
-            <div className="mt-12 flex items-center justify-between gap-4 flex-wrap">
+            <div className="mt-12 pt-8 border-t border-black/10 flex flex-col gap-3">
               <p className="text-sm text-gray-600 uppercase tracking-wider font-semibold">
                 Cet article vous a plu ? Partagez-le
               </p>
-              <ShareButtons title={article.title} />
+              <ShareButtons
+                title={article.title}
+                path={`/articles/${article.slug}`}
+                slug={article.slug}
+                kind="article"
+                placement="article_bottom"
+                showLinkField
+              />
             </div>
 
             {/* Tags (clickable → recherche) */}
@@ -563,97 +574,6 @@ function BackToTop() {
     >
       <ArrowUp size={20} />
     </button>
-  );
-}
-
-/* -------------------- Share buttons -------------------- */
-
-function ShareButtons({ title }: { title: string }) {
-  const [copied, setCopied] = useState(false);
-  const url = typeof window !== "undefined" ? window.location.href : "";
-
-  async function copyLink() {
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch {
-      /* noop */
-    }
-  }
-
-  async function nativeShare() {
-    if (typeof navigator !== "undefined" && (navigator as any).share) {
-      try {
-        await (navigator as any).share({ title, url });
-        return;
-      } catch {
-        /* user cancelled */
-      }
-    }
-    copyLink();
-  }
-
-  const enc = encodeURIComponent;
-  const items = [
-    {
-      label: "Partager sur X",
-      href: `https://twitter.com/intent/tweet?text=${enc(title)}&url=${enc(url)}`,
-      icon: (
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden>
-          <path d="M18.244 2H21l-6.53 7.463L22 22h-6.828l-4.77-6.03L4.8 22H2l7.02-8.02L2 2h6.914l4.29 5.5L18.244 2Zm-2.393 18h1.79L8.24 4H6.34L15.85 20Z" />
-        </svg>
-      ),
-    },
-    {
-      label: "Partager sur Facebook",
-      href: `https://www.facebook.com/sharer/sharer.php?u=${enc(url)}`,
-      icon: (
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden>
-          <path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.6 1.6-1.6H17V4.3c-.3 0-1.4-.1-2.6-.1-2.6 0-4.4 1.6-4.4 4.5v2.1H7v3.2h3v8h3.5Z" />
-        </svg>
-      ),
-    },
-    {
-      label: "Partager sur LinkedIn",
-      href: `https://www.linkedin.com/sharing/share-offsite/?url=${enc(url)}`,
-      icon: (
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden>
-          <path d="M4.98 3.5A2.5 2.5 0 1 1 5 8.5a2.5 2.5 0 0 1-.02-5ZM3 9.5h4V21H3V9.5Zm7 0h3.8v1.6h.1c.5-1 1.9-2 3.9-2 4.2 0 5 2.7 5 6.3V21H18v-5c0-1.2 0-2.8-1.7-2.8-1.8 0-2 1.4-2 2.7V21h-4V9.5Z" />
-        </svg>
-      ),
-    },
-  ];
-
-  return (
-    <div className="flex items-center gap-1.5">
-      {items.map((it) => (
-        <a
-          key={it.label}
-          href={it.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={it.label}
-          className="h-9 w-9 grid place-items-center rounded-full bg-black/5 text-pogi-dark hover:bg-pogi-yellow transition-colors"
-        >
-          {it.icon}
-        </a>
-      ))}
-      <button
-        onClick={copyLink}
-        aria-label="Copier le lien"
-        className="h-9 w-9 grid place-items-center rounded-full bg-black/5 text-pogi-dark hover:bg-pogi-yellow transition-colors"
-      >
-        {copied ? <Check size={16} /> : <LinkIcon size={16} />}
-      </button>
-      <button
-        onClick={nativeShare}
-        aria-label="Partager"
-        className="h-9 w-9 grid place-items-center rounded-full bg-black/5 text-pogi-dark hover:bg-pogi-yellow transition-colors sm:hidden"
-      >
-        <Share2 size={16} />
-      </button>
-    </div>
   );
 }
 
