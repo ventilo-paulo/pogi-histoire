@@ -142,6 +142,9 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="fr">
       <head>
         <HeadContent />
+        {/* Second Google Search Console owner (pogi-histoire.com property). Kept outside head() because
+            TanStack de-duplicates meta tags by name. */}
+        <meta name="google-site-verification" content="DwSV9OKpIKxALGERfUIHOxGcdyoeGYhQEaDozSM0GmY" />
       </head>
       <body>
         {children}

@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, Link, useNavigate } from "@tanstack/react-rout
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import pogiLogo from "@/assets/pogi-logo.png.asset.json";
-import { LogOut, FileText, Video, LayoutDashboard, Database, Tag, Mic, Image as ImageIcon, Type, Gauge, HeartPulse, ShieldCheck, BarChart3 } from "lucide-react";
+import { LogOut, FileText, Video, LayoutDashboard, Database, Tag, Mic, Image as ImageIcon, Type, Gauge, HeartPulse, ShieldCheck, BarChart3, Lightbulb, Search } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin — POGI", name: "robots", content: "noindex" }] }),
@@ -78,12 +78,14 @@ function AdminLayout() {
           <NavItem to="/admin/videos" icon={<Video size={18} />} label="Vidéos" />
           <NavItem to="/admin/interviews" icon={<Mic size={18} />} label="Interviews" />
           <NavItem to="/admin/media" icon={<ImageIcon size={18} />} label="Médiathèque" />
+          <NavItem to="/admin/idees" icon={<Lightbulb size={18} />} label="Idées d'articles" />
           <NavItem to="/admin/charte" icon={<Type size={18} />} label="Charte" />
 
           <p className="hidden md:block px-3 pt-4 pb-1 text-[11px] uppercase tracking-widest text-white/35">
             Supervision
           </p>
           <NavItem to="/admin/analytics" icon={<BarChart3 size={18} />} label="Audience" />
+          <NavItem to="/admin/google" icon={<Search size={18} />} label="Recherche Google" />
           <NavItem to="/admin/statut" icon={<ShieldCheck size={18} />} label="Statut du site" />
           <NavItem to="/admin/health" icon={<HeartPulse size={18} />} label="Santé du site" />
           <NavItem to="/admin/seo" icon={<Gauge size={18} />} label="Indexation" />
