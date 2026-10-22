@@ -28,7 +28,14 @@ export async function refreshSearchPerformance(days = 90) {
   const endDate = isoDay(2);
   const capturedAt = new Date().toISOString();
 
-  const daily = await searchQuery(siteUrl, { startDate, endDate, dimensions: ["date"], rowLimit: 1000, dataState: "final" });
+  // Daily totals cover twice the longest period so « vs période précédente » is meaningful.
+  const daily = await searchQuery(siteUrl, {
+    startDate: isoDay(Math.max(days * 2, 182) + 2),
+    endDate,
+    dimensions: ["date"],
+    rowLimit: 1000,
+    dataState: "final",
+  });
   await upsertChunks(
     "seo_search_daily",
     daily.map((r) => ({

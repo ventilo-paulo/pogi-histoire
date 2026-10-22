@@ -49,7 +49,8 @@ export function comparePeriods(rows: DailyRow[], endDate: string, days = 28) {
   return {
     current: totalsFor(current),
     previous: totalsFor(previous),
-    hasPrevious: previous.length > 0,
+    // Only compare when most of the previous period is known.
+    hasPrevious: previous.length >= Math.ceil(days * 0.75),
     range: { currentStart, endDate, previousStart, previousEnd },
   };
 }
