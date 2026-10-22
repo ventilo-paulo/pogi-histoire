@@ -149,6 +149,66 @@ export type Database = {
         }
         Relationships: []
       }
+      editorial_angle_runs: {
+        Row: {
+          angles: Json
+          context: Json
+          created_at: string
+          created_by: string | null
+          focus: string | null
+          id: string
+          model: string | null
+        }
+        Insert: {
+          angles?: Json
+          context?: Json
+          created_at?: string
+          created_by?: string | null
+          focus?: string | null
+          id?: string
+          model?: string | null
+        }
+        Update: {
+          angles?: Json
+          context?: Json
+          created_at?: string
+          created_by?: string | null
+          focus?: string | null
+          id?: string
+          model?: string | null
+        }
+        Relationships: []
+      }
+      editorial_topics: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          notes: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          notes?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          notes?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
@@ -496,6 +556,66 @@ export type Database = {
           impressions?: number
           position?: number
           query?: string
+        }
+        Relationships: []
+      }
+      seo_search_daily: {
+        Row: {
+          captured_at: string
+          clicks: number
+          ctr: number
+          date: string
+          impressions: number
+          position: number
+        }
+        Insert: {
+          captured_at?: string
+          clicks?: number
+          ctr?: number
+          date: string
+          impressions?: number
+          position?: number
+        }
+        Update: {
+          captured_at?: string
+          clicks?: number
+          ctr?: number
+          date?: string
+          impressions?: number
+          position?: number
+        }
+        Relationships: []
+      }
+      seo_search_pages: {
+        Row: {
+          captured_at: string
+          clicks: number
+          ctr: number
+          date: string
+          id: string
+          impressions: number
+          page: string
+          position: number
+        }
+        Insert: {
+          captured_at?: string
+          clicks?: number
+          ctr?: number
+          date: string
+          id?: string
+          impressions?: number
+          page: string
+          position?: number
+        }
+        Update: {
+          captured_at?: string
+          clicks?: number
+          ctr?: number
+          date?: string
+          id?: string
+          impressions?: number
+          page?: string
+          position?: number
         }
         Relationships: []
       }

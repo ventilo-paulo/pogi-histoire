@@ -51,7 +51,9 @@ export async function resolveSiteUrl() {
     (e) => e.permissionLevel !== "siteUnverifiedUser" && coversTarget(e.siteUrl, target),
   );
   if (matches.length === 0) throw new Error("Aucune propriété Search Console vérifiée pour ce site.");
-  return matches[0].siteUrl;
+  // Prefer the exact root property of the site when Google lists several.
+  const exact = matches.find((e) => e.siteUrl === `${SITE_URL}/`);
+  return (exact ?? matches[0]).siteUrl;
 }
 
 export async function listSiteUrls() {
@@ -251,12 +253,13 @@ export async function runSeoIndexCheck(trigger: "cron" | "manual" = "cron") {
         .eq("id", runId);
     }
 
-    // Keep the per-query position history fresh (never fatal for the run).
+    // Keep the per-query position history and search totals fresh (never fatal for the run).
     try {
-      const { refreshQueryRanks } = await import("@/lib/seo-rank.server");
-      await refreshQueryRanks(28);
+      const { refreshQueryRanks, refreshSearchPerformance } = await import("@/lib/seo-rank.server");
+      await refreshQueryRanks(60);
+      await refreshSearchPerformance(90);
     } catch (e) {
-      console.error("refreshQueryRanks failed", e);
+      console.error("search stats refresh failed", e);
     }
 
     if (alerts.length) {

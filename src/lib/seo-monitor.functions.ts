@@ -78,3 +78,39 @@ export const seoRefreshRanks = createServerFn({ method: "POST" })
     const { refreshQueryRanks } = await import("@/lib/seo-rank.server");
     return refreshQueryRanks(28);
   });
+
+/** Stored Google Search indicators (clicks, impressions, queries, pages). */
+export const seoSearchPerformance = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { days?: number } | undefined) => {
+    const days = Number(input?.days ?? 28);
+    return { days: [7, 28, 90].includes(days) ? days : 28 };
+  })
+  .handler(async ({ data, context }) => {
+    await requireAdmin(context as any);
+    const { getSearchPerformance } = await import("@/lib/seo-rank.server");
+    return getSearchPerformance(data.days);
+  });
+
+/** Fetch fresh numbers from Google Search Console and store them. */
+export const seoRefreshSearchPerformance = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await requireAdmin(context as any);
+    const { refreshQueryRanks, refreshSearchPerformance } = await import("@/lib/seo-rank.server");
+    try {
+      await refreshQueryRanks(60);
+      const r = await refreshSearchPerformance(90);
+      return { ok: true as const, capturedAt: r.capturedAt, days: r.days };
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "Erreur inconnue";
+      if (message.includes("Aucune propriété")) {
+        return {
+          ok: false as const,
+          error:
+            "Google Search Console n'a pas encore confirmé que pogi-histoire.com vous appartient. Les chiffres apparaîtront dès que ce sera fait.",
+        };
+      }
+      return { ok: false as const, error: message };
+    }
+  });
