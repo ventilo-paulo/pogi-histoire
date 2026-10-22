@@ -40,7 +40,6 @@ export function summarizeAudience(events: AudienceEvent[]) {
   const noResults = new Map<string, number>();
   const shares = new Map<string, number>();
   const referrers = new Map<string, number>();
-  const sessions = new Set<string>();
   let pageViews = 0;
 
   for (const e of events) {
@@ -67,7 +66,6 @@ export function summarizeAudience(events: AudienceEvent[]) {
     searchesWithoutResult: top(noResults, 15),
     shares: top(shares, 10),
     referrers: top(referrers, 10),
-    sessions: sessions.size,
   };
 }
 
