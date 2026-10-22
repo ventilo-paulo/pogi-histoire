@@ -107,7 +107,12 @@ function GooglePage() {
     try {
       const res = await refresh();
       if (!res.ok) setError(res.error);
-      else setNotice(`Chiffres mis à jour depuis Google (${res.days} jours de données).`);
+      else
+        setNotice(
+          res.days > 0
+            ? `Chiffres mis à jour depuis Google (${res.days} jours de données).`
+            : "Google a bien répondu, mais n'a pas encore de chiffres à transmettre.",
+        );
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erreur inconnue");
@@ -162,9 +167,9 @@ function GooglePage() {
         <div className="mt-8 rounded-xl border border-white/10 bg-white/[0.03] p-6 text-white/70">
           <p className="font-semibold text-white">Pas encore de chiffres Google pour pogi-histoire.com.</p>
           <p className="mt-2 text-sm">
-            Dès que Google Search Console confirme que le site vous appartient, cliquez sur « Actualiser » : les
-            impressions, clics et requêtes des derniers mois apparaîtront ici. Ensuite, la mise à jour se fait toute seule
-            chaque jour.
+            Google n'a pas encore transmis de chiffres. Pour un site qui vient d'être relié à Google Search Console, les
+            premiers chiffres arrivent en général sous 1 à 3 jours. Cette page se met à jour toute seule chaque jour, et
+            le bouton « Actualiser » permet de vérifier tout de suite.
           </p>
         </div>
       )}
