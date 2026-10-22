@@ -51,7 +51,9 @@ export async function resolveSiteUrl() {
     (e) => e.permissionLevel !== "siteUnverifiedUser" && coversTarget(e.siteUrl, target),
   );
   if (matches.length === 0) throw new Error("Aucune propriété Search Console vérifiée pour ce site.");
-  return matches[0].siteUrl;
+  // Prefer the exact root property of the site when Google lists several.
+  const exact = matches.find((e) => e.siteUrl === `${SITE_URL}/`);
+  return (exact ?? matches[0]).siteUrl;
 }
 
 export async function listSiteUrls() {
