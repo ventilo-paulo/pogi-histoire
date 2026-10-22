@@ -228,7 +228,7 @@ function GooglePage() {
                     formatter={(v: number, name: string) => [nf.format(v), name === "impressions" ? "Impressions" : "Clics"]}
                   />
                   <Area yAxisId="imp" type="monotone" dataKey="impressions" stroke="rgba(255,255,255,0.6)" fill="rgba(255,255,255,0.08)" />
-                  <Area yAxisId="clk" type="monotone" dataKey="clicks" stroke="var(--color-pogi-yellow, #f5c518)" fill="rgba(245,197,24,0.2)" />
+                  <Area yAxisId="clk" type="monotone" dataKey="clicks" stroke="var(--color-pogi-yellow)" fill="rgba(245,200,0,0.2)" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
