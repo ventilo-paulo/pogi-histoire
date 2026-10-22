@@ -88,7 +88,6 @@ function GooglePage() {
     setLoading(true);
     try {
       setPerf((await getPerf({ data: { days: d } })) as Perf);
-      setError(null);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erreur inconnue");
     } finally {
