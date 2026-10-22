@@ -25,6 +25,7 @@ import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as AdminArticlesRouteImport } from './routes/admin.articles'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 import { Route as AdminCharteRouteImport } from './routes/admin.charte'
+import { Route as AdminGoogleRouteImport } from './routes/admin.google'
 import { Route as AdminHealthRouteImport } from './routes/admin.health'
 import { Route as AdminInterviewsRouteImport } from './routes/admin.interviews'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
@@ -124,6 +125,11 @@ const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
 const AdminCharteRoute = AdminCharteRouteImport.update({
   id: '/charte',
   path: '/charte',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminGoogleRoute = AdminGoogleRouteImport.update({
+  id: '/google',
+  path: '/google',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminHealthRoute = AdminHealthRouteImport.update({
@@ -238,6 +244,7 @@ export interface FileRoutesByFullPath {
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/charte': typeof AdminCharteRoute
+  '/admin/google': typeof AdminGoogleRoute
   '/admin/health': typeof AdminHealthRoute
   '/admin/interviews': typeof AdminInterviewsRoute
   '/admin/media': typeof AdminMediaRoute
@@ -273,6 +280,7 @@ export interface FileRoutesByTo {
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/charte': typeof AdminCharteRoute
+  '/admin/google': typeof AdminGoogleRoute
   '/admin/health': typeof AdminHealthRoute
   '/admin/interviews': typeof AdminInterviewsRoute
   '/admin/media': typeof AdminMediaRoute
@@ -310,6 +318,7 @@ export interface FileRoutesById {
   '/admin/articles': typeof AdminArticlesRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/charte': typeof AdminCharteRoute
+  '/admin/google': typeof AdminGoogleRoute
   '/admin/health': typeof AdminHealthRoute
   '/admin/interviews': typeof AdminInterviewsRoute
   '/admin/media': typeof AdminMediaRoute
@@ -348,6 +357,7 @@ export interface FileRouteTypes {
     | '/admin/articles'
     | '/admin/categories'
     | '/admin/charte'
+    | '/admin/google'
     | '/admin/health'
     | '/admin/interviews'
     | '/admin/media'
@@ -383,6 +393,7 @@ export interface FileRouteTypes {
     | '/admin/articles'
     | '/admin/categories'
     | '/admin/charte'
+    | '/admin/google'
     | '/admin/health'
     | '/admin/interviews'
     | '/admin/media'
@@ -419,6 +430,7 @@ export interface FileRouteTypes {
     | '/admin/articles'
     | '/admin/categories'
     | '/admin/charte'
+    | '/admin/google'
     | '/admin/health'
     | '/admin/interviews'
     | '/admin/media'
@@ -579,6 +591,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCharteRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/google': {
+      id: '/admin/google'
+      path: '/google'
+      fullPath: '/admin/google'
+      preLoaderRoute: typeof AdminGoogleRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/health': {
       id: '/admin/health'
       path: '/health'
@@ -713,6 +732,7 @@ interface AdminRouteChildren {
   AdminArticlesRoute: typeof AdminArticlesRoute
   AdminCategoriesRoute: typeof AdminCategoriesRoute
   AdminCharteRoute: typeof AdminCharteRoute
+  AdminGoogleRoute: typeof AdminGoogleRoute
   AdminHealthRoute: typeof AdminHealthRoute
   AdminInterviewsRoute: typeof AdminInterviewsRoute
   AdminMediaRoute: typeof AdminMediaRoute
@@ -728,6 +748,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminArticlesRoute: AdminArticlesRoute,
   AdminCategoriesRoute: AdminCategoriesRoute,
   AdminCharteRoute: AdminCharteRoute,
+  AdminGoogleRoute: AdminGoogleRoute,
   AdminHealthRoute: AdminHealthRoute,
   AdminInterviewsRoute: AdminInterviewsRoute,
   AdminMediaRoute: AdminMediaRoute,
